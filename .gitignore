@@ -1,0 +1,7 @@
+# ZCode 会话工件（计划缓存等，不属于框架交付物）
+.zcode/
+
+# 系统杂物
+.DS_Store
+Thumbs.db
+desktop.ini

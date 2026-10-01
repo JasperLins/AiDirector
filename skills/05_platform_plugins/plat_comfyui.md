@@ -84,7 +84,7 @@ output_schema: "{工作流节点配置单(模型+锁脸+控制+采样段逐项�
 | 采样 | uni_pc，steps 20，cfg 5.0 | steps 20~30 / cfg 5~6 | cfg>6 运动过冲 |
 | 帧率/时长 | 16fps × 5s = 80 帧 | ≤5s/条 | 长镜走接力 |
 | Wan2.2-S2V | 数字人无限时长口播 | —— | 模式B口播特化 |
-| 输出 | 无声 + 闭嘴基底 | —— | 后期 LatexntSync/剪映对口型 |
+| 输出 | 无声 + 闭嘴基底 | —— | 后期 LatentSync/剪映对口型 |
 
 ### 4.3 结构化 Tag + 自然语言混合语法
 
@@ -126,7 +126,7 @@ output_schema: "{工作流节点配置单(模型+锁脸+控制+采样段逐项�
 **扣分点**：模式B写"嘴型夸张开合"——LatentSync 后期对口型与原视频大嘴型重影打架（崩坏16 一票否决）。
 
 ✅ **Good Case**：
-> Wan 无声输出 + `lips naturally closed or near-closed micro movement (clean base for post lip-sync)`；微表情链保留（eye smile→gaze lowers→lash flutter）；台词按 NARR-03 控制符串由 Fish Audio 克隆 → LatexntSync/剪映对口型 → 音画 ±2 帧微调。
+> Wan 无声输出 + `lips naturally closed or near-closed micro movement (clean base for post lip-sync)`；微表情链保留（eye smile→gaze lowers→lash flutter）；台词按 NARR-03 控制符串由 Fish Audio 克隆 → LatentSync/剪映对口型 → 音画 ±2 帧微调。
 
 ## 六、边界情况处理（Edge Cases）
 
