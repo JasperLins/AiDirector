@@ -5,3 +5,19 @@
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# ===== 剧本产出内容：各剧本地管理，不上传远端 =====
+# 剧集项目记忆（剧集圣经/资产注册表/状态快照）——整目录忽略，
+# 仅保留《示范剧集_苍穹与烟火》作为框架三件套格式示范
+memory/projects/*
+!memory/projects/示范剧集_苍穹与烟火/
+
+# 小说/剧本文本素材（放于 memory 根目录的原始文本）
+memory/*.txt
+
+# 分集视频产出——仅保留示范第01集作为产出文档格式示范
+workspace/episodes/*
+!workspace/episodes/第01集_视频生成提示词.md
+
+# 临时校验/比对产物
+check_part*.txt

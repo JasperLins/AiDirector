@@ -12,7 +12,7 @@
 |---|---|---|---|
 | NARR-01 市场钩子调研 | `01_narrative_skills/skill_market_hook_research.md` | KB_01 | 当需要分析目标市场受众、设计黄金前3秒钩子或情绪曲线时 |
 | NARR-02 世界观与人物弧光 | `01_narrative_skills/skill_world_character_arc.md` | KB_01、KB_02 | 当需要构建世界观、人物立体小传、性格缺陷与潜台词时 |
-| NARR-03 台词秒数精算 | `01_narrative_skills/skill_dialogue_second_calc.md` | KB_11 | 当台词需要按字数/语速精算镜头时长与重音节点（声画先行）时 |
+| NARR-03 台词秒数精算 | `01_narrative_skills/skill_dialogue_second_calc.md` | KB_11、KB_12 | 当台词需要按字数/语速精算镜头时长与重音节点（声画先行）时 |
 
 ## 02 导演美术场记类（visual_director）
 

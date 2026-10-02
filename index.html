@@ -3,481 +3,484 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AIGC 影视与短剧多智能体工业化创作框架 · 全景门户</title>
+<title>AiDirector · AIGC 影视与短剧多智能体工业化创作框架</title>
+<meta name="description" content="AiDirector — 9 大角色智能体 × KB 词典 × Skill 插件 × 10 分制质量门禁的 AIGC 影视工业化创作框架。沉浸式首页，完整教学文档见 doc/doc.html">
 <style>
-:root{
-  --bg:#0a0e17;--bg2:#0d1420;--panel:#111a2b;--panel2:#0f1626;
-  --line:#1e2a40;--line2:#273654;
-  --cyan:#22d3ee;--cyan-dim:#0e7490;--orange:#fb923c;--gold:#fbbf24;
-  --green:#34d399;--red:#f87171;--purple:#a78bfa;--pink:#f472b6;
-  --txt:#dbe7ff;--txt2:#8ea3c8;--txt3:#5b6f94;
-  --mono:'Cascadia Code','JetBrains Mono',Consolas,monospace;
+/* ============ 2. FONTS（本地字体缺失时回退栈仍保证版式） ============ */
+@font-face{font-family:'SF Pro';font-weight:400;font-style:normal;src:local('SF Pro Text'),local('SF Pro')}
+@font-face{font-family:'SF Pro';font-weight:700;font-style:normal;src:local('SF Pro Display Semibold'),local('SF Pro Bold')}
+@font-face{font-family:'SF Pro Thin';font-weight:100;font-style:normal;src:local('SF Pro Display Thin'),local('SF Pro Thin')}
+@font-face{font-family:'Aalto';font-weight:400;font-style:normal;src:local('Aalto')}
+
+:root{font-family:'SF Pro',Arial,sans-serif;color:#fff;background:#090807;font-synthesis:none}
+
+/* ============ 5. LAYOUT ============ */
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden}
+.experience{position:relative;width:100%;height:100%;min-height:540px;overflow:hidden;background:#0a0908}
+.backgrounds,.background,.shade,.transition-layer,.transition-layer video{position:absolute;inset:0;width:100%;height:100%}
+.background{object-fit:cover;opacity:0;transition:opacity .8s ease}
+.background.is-visible{opacity:1}
+.shade{z-index:1;background:linear-gradient(to bottom,transparent 52%,rgba(0,0,0,.88) 100%);pointer-events:none}
+.chrome{position:absolute;z-index:4;transition:opacity .45s ease,filter .45s ease}
+.experience.is-transitioning .chrome{opacity:0;filter:blur(8px);pointer-events:none}
+
+/* HEADER */
+.header{left:clamp(18px,1.95vw,28px);right:clamp(18px,1.95vw,28px);top:clamp(18px,3.1vh,28px);display:flex;justify-content:space-between;align-items:center}
+.header-actions{margin-left:auto;display:flex;align-items:center}
+.nav{display:flex;align-items:center;height:42px;padding:4px 5px;border:1px solid rgba(255,255,255,.45);background:rgba(255,255,255,.1);backdrop-filter:blur(12px);border-radius:999px}
+.nav a{color:#fff;text-decoration:none;padding:8px 19px;border-radius:999px;line-height:1}
+.nav a.active{background:#fff;color:#000}
+.menu{height:42px;padding:0 20px;border:0;border-radius:999px;background:#fff;color:#000;cursor:pointer;font:inherit}
+.menu-wrap{position:relative}
+.menu-pop{position:absolute;top:calc(100% + 12px);right:0;min-width:238px;padding:7px;border:1px solid rgba(255,255,255,.45);background:rgba(10,9,8,.92);backdrop-filter:blur(14px);border-radius:16px;opacity:0;visibility:hidden;transform:translateY(-6px);transition:opacity .22s ease,transform .22s ease,visibility .22s}
+.menu-wrap.open .menu-pop{opacity:1;visibility:visible;transform:none}
+.menu-pop a{display:block;padding:10px 14px;border-radius:10px;color:#fff;text-decoration:none;font-size:13.5px;white-space:nowrap;transition:background .15s}
+.menu-pop a:hover{background:rgba(255,255,255,.14)}
+
+/* SIDEBAR（教学文档栏目导航） */
+.planet-list{left:clamp(18px,1.95vw,28px);top:50%;transform:translateY(-43%);display:flex;flex-direction:column;gap:6px;font-size:16px}
+.planet-item{display:flex;align-items:center;min-height:20px}
+.planet-item a{color:inherit;text-decoration:none}
+.planet-item.active{font-size:18px;font-weight:700;gap:8px}
+.planet-item.active:before{content:'';width:16px;height:16px;border-radius:50%;background:#fff}
+
+/* PORTAL（左下角圆形迷你传送门，约为原尺寸 1/4） */
+.portal-wrap{left:clamp(24px,3vw,40px);bottom:clamp(24px,3vh,36px);top:auto;transform:none;display:flex;flex-direction:column;align-items:flex-start}
+.portal-heading{display:flex;gap:6px;align-items:baseline;margin-bottom:10px;font-size:12px;letter-spacing:.05em;opacity:0;white-space:nowrap}
+.portal-heading strong{font-size:13px;margin-left:0}
+.portal{position:relative;display:block;width:160px;aspect-ratio:1/1;padding:0;overflow:visible;border:0;border-radius:50%;background:transparent;cursor:pointer;box-shadow:0 0 0 1px rgba(255,255,255,.4);transition:transform .35s cubic-bezier(.22,1,.36,1),box-shadow .35s ease}
+.portal:hover{transform:scale(1.14);box-shadow:0 0 0 1px rgba(255,255,255,.95),0 0 28px rgba(255,255,255,.18)}
+.portal video,.portal img{visibility:hidden;position:absolute;width:1px;height:1px;pointer-events:none}
+.portal-canvas{position:fixed;inset:0;z-index:3;width:100%;height:100%;pointer-events:none}
+/* （真实媒体元素不可见——它们只作为画布取样的像素源） */
+
+/* CONTENT（框架介绍居中 + 悬停微交互） */
+.planet-content{left:50%;top:75%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:flex-start;gap:12px;pointer-events:none;max-width:min(600px,88vw)}
+.act-kicker{font-size:13px;letter-spacing:.35em;color:rgba(255,255,255,.72);opacity:0}
+.planet-content dl{width:100%;margin:0;font-size:16.5px;pointer-events:auto}
+.fact{display:grid;grid-template-columns:132px 1fr;gap:18px;padding:10px 14px 10px 12px;border-bottom:1px solid rgba(255,255,255,.22);border-radius:10px;opacity:0;transition:background .3s ease,transform .3s ease,border-color .3s ease}
+.fact:last-child{border-bottom:0}
+.fact:hover{background:rgba(255,255,255,.07);transform:translateX(6px);border-color:rgba(255,255,255,.55)}
+.fact dt{font-weight:700;transition:color .3s ease}
+.fact:hover dt{color:#fff}
+.fact dd{margin:0;color:rgba(255,255,255,.82);transition:color .3s ease}
+.fact:hover dd{color:#fff}
+
+/* MISC */
+.transition-layer{display:none}
+.scene-canvas{display:none}
+.loading{position:absolute;z-index:12;left:50%;bottom:30px;transform:translateX(-50%);opacity:0;font-size:12px;letter-spacing:.14em;text-transform:uppercase;transition:opacity .2s}
+.experience.is-loading .loading{opacity:.8}
+.experience.is-transitioning .header,.experience.is-transitioning .planet-list{opacity:1;filter:none;pointer-events:auto}
+.experience.is-transitioning .shade{opacity:1}
+.experience.is-committing .background{transition:none!important}
+
+/* ============ 6. PRELOADER ============ */
+.preloader{position:absolute;inset:0;z-index:20;background:#000;overflow:hidden}
+.preloader video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.preloader-shade{position:absolute;inset:auto 0 0;height:35%;background:linear-gradient(to bottom,transparent,#000)}
+.preloader.is-background{z-index:0;pointer-events:none}
+.preloader.is-background .preloader-shade{opacity:0}
+.floating-logo{position:fixed;z-index:22;left:50%;top:50%;width:59px;height:58px;transform:translate(-50%,-50%);will-change:left,top,width,height,transform;
+  transition:left 2s cubic-bezier(.16,1,.3,1),top 2s cubic-bezier(.16,1,.3,1),width 2s cubic-bezier(.16,1,.3,1),height 2s cubic-bezier(.16,1,.3,1),transform 2s cubic-bezier(.16,1,.3,1)}
+.floating-logo.is-docked{left:clamp(18px,1.95vw,28px);top:clamp(18px,3.1vh,28px);width:37px;height:36px;transform:none}
+.floating-logo.is-settled{z-index:5}
+.preloader-count{position:fixed;z-index:22;left:50%;bottom:clamp(22px,3.1vh,28px);display:flex;align-items:flex-end;gap:4px;transform:translateX(-50%);font-family:'SF Pro',Arial,sans-serif;line-height:1}
+.preloader-count>span:first-child{font-family:'SF Pro Thin','SF Pro',Arial,sans-serif;font-size:64px;font-weight:100}
+.preloader-count .percent{font-size:24px;padding-bottom:4px}
+.preloader-count.is-leaving{animation:preload-count-out .75s cubic-bezier(.22,1,.36,1) both}
+@keyframes preload-count-out{to{opacity:0;filter:blur(7px);transform:translate(-50%,-34px)}}
+body:not(.preload-complete) .custom-cursor{opacity:0!important}
+noscript{position:fixed;inset:auto 0 0 0;z-index:200;background:#000;padding:18px;text-align:center;font:14px/1.6 'SF Pro',Arial,sans-serif}
+noscript a{color:#8ab4ff}
+
+/* ============ 9. CUSTOM CURSOR ============ */
+html,body,button,a,.portal{cursor:none!important}
+.custom-cursor{display:block;position:fixed;left:0;top:0;z-index:100;width:1px;height:1px;pointer-events:none;opacity:0;transition:opacity .2s ease}
+.custom-cursor.is-visible{opacity:1}
+.cursor-dot,.cursor-orbit{position:absolute;left:0;top:0;border-radius:50%;transform:translate(-50%,-50%)}
+.cursor-dot{width:12px;height:12px;background:#fff}
+.cursor-orbit{width:36px;height:36px;border:1px solid #fff;background:rgba(255,255,255,.4);transition:transform .3s cubic-bezier(.22,1,.36,1)}
+.custom-cursor.is-enter .cursor-orbit{transform:translate(-50%,-50%) scale(1.16)}
+.cursor-label{position:absolute;top:26px;left:0;transform:translateX(-50%) translateY(-4px);font:16px/1.2 'SF Pro',Arial,sans-serif;white-space:nowrap;opacity:0;transition:opacity .2s ease,transform .3s cubic-bezier(.22,1,.36,1)}
+.custom-cursor.is-enter .cursor-label{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ============ 10. ENTRANCE / SWITCH ANIMATIONS ============ */
+body:not(.intro-ready) .header,body:not(.intro-ready) .planet-list,body:not(.intro-ready) .planet-content .act-kicker,body:not(.intro-ready) .planet-content .fact{opacity:0}
+.intro-ready .header{animation:reveal-down .9s cubic-bezier(.22,1,.36,1) .1s both}
+.intro-ready .planet-list{animation:reveal-side .9s cubic-bezier(.22,1,.36,1) .65s both}
+.content-revealing .act-kicker{animation:fact-rise .6s cubic-bezier(.22,1,.36,1) .15s both}
+.content-revealing .fact{animation:fact-rise .72s cubic-bezier(.22,1,.36,1) both}
+.fact:nth-child(1){animation-delay:.28s}
+.fact:nth-child(2){animation-delay:.42s}
+.fact:nth-child(3){animation-delay:.56s}
+.fact:nth-child(4){animation-delay:.7s}
+.mask-revealing .portal-heading{animation:portal-caption .85s cubic-bezier(.22,1,.36,1) both}
+.planet-list.is-switching .planet-item{animation:menu-row .58s cubic-bezier(.22,1,.36,1) both}
+.planet-list.is-switching .planet-item:nth-child(1){animation-delay:.02s}
+.planet-list.is-switching .planet-item:nth-child(2){animation-delay:.05s}
+.planet-list.is-switching .planet-item:nth-child(3){animation-delay:.08s}
+.planet-list.is-switching .planet-item:nth-child(4){animation-delay:.11s}
+.planet-list.is-switching .planet-item:nth-child(5){animation-delay:.14s}
+.planet-list.is-switching .planet-item:nth-child(6){animation-delay:.17s}
+.planet-list.is-switching .planet-item:nth-child(7){animation-delay:.2s}
+.planet-list.is-switching .planet-item:nth-child(8){animation-delay:.23s}
+.planet-list.is-switching .planet-item.active:before{animation:active-dot .55s cubic-bezier(.22,1,.36,1) .18s both}
+@keyframes reveal-down{from{opacity:0;filter:blur(8px);transform:translateY(-18px)}to{opacity:1;filter:blur(0);transform:translateY(0)}}
+@keyframes reveal-side{from{opacity:0;filter:blur(8px);transform:translate(-20px,-43%)}to{opacity:1;filter:blur(0);transform:translate(0,-43%)}}
+@keyframes fact-rise{from{opacity:0;filter:blur(7px);transform:translateY(18px)}to{opacity:1;filter:blur(0);transform:translateY(0)}}
+@keyframes portal-caption{from{opacity:0;filter:blur(7px);transform:translateY(22px)}to{opacity:1;filter:blur(0);transform:translateY(0)}}
+@keyframes menu-row{from{opacity:.35;transform:translateX(-8px)}to{opacity:1;transform:translateX(0)}}
+@keyframes active-dot{from{opacity:0;transform:scale(0)}to{opacity:1;transform:scale(1)}}
+
+/* ============ 11. RESPONSIVE ============ */
+@media(max-width:900px){
+  .nav{height:36px;padding:3px 4px}
+  .nav a{padding:6px 12px;font-size:12.5px}
+  .menu{height:36px;padding:0 14px;font-size:13px}
+  .portal{width:144px}
+  .planet-content{left:15vw;transform:translateY(-50%);max-width:min(540px,76vw)}
+  .fact{grid-template-columns:110px 1fr}
+  .planet-list{font-size:14px}
+  .planet-item.active{font-size:16px}
 }
-*{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--txt);font-family:'Microsoft YaHei','PingFang SC',sans-serif;line-height:1.65;
-  background-image:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(34,211,238,.08),transparent),
-  linear-gradient(rgba(30,42,64,.16) 1px,transparent 1px),linear-gradient(90deg,rgba(30,42,64,.16) 1px,transparent 1px);
-  background-size:100% 100%,42px 42px,42px 42px;}
-a{color:var(--cyan);text-decoration:none}
-.wrap{max-width:1240px;margin:0 auto;padding:0 20px}
-/* ===== header ===== */
-header{border-bottom:1px solid var(--line);padding:34px 0 26px;position:relative;overflow:hidden}
-header::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent 0 3px,rgba(0,0,0,.12) 3px 4px);pointer-events:none}
-.badge{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--cyan);border:1px solid var(--cyan-dim);padding:4px 12px;border-radius:999px;background:rgba(34,211,238,.06);letter-spacing:.12em}
-.badge::before{content:"●";font-size:8px;animation:blink 1.6s infinite}
-@keyframes blink{50%{opacity:.2}}
-h1{font-size:34px;margin:16px 0 10px;font-weight:800;letter-spacing:.02em}
-h1 .grad{background:linear-gradient(90deg,var(--cyan),var(--purple),var(--orange));-webkit-background-clip:text;background-clip:text;color:transparent}
-.sub{color:var(--txt2);font-size:14.5px;max-width:860px}
-.stats{display:flex;flex-wrap:wrap;gap:12px;margin-top:20px}
-.stat{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 18px;min-width:118px}
-.stat b{display:block;font-size:24px;font-family:var(--mono);color:var(--cyan)}
-.stat span{font-size:12px;color:var(--txt3)}
-.stat:nth-child(2) b{color:var(--orange)}.stat:nth-child(3) b{color:var(--purple)}.stat:nth-child(4) b{color:var(--green)}.stat:nth-child(5) b{color:var(--gold)}
-/* ===== nav ===== */
-nav{position:sticky;top:0;z-index:99;background:rgba(10,14,23,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
-nav .wrap{display:flex;gap:4px;overflow-x:auto;padding:0 20px}
-nav a{padding:13px 16px;font-size:13.5px;color:var(--txt2);white-space:nowrap;border-bottom:2px solid transparent;transition:.2s}
-nav a:hover,nav a.on{color:var(--cyan);border-color:var(--cyan)}
-/* ===== sections ===== */
-section{padding:52px 0 12px}
-.sec-tag{font-family:var(--mono);font-size:12px;color:var(--orange);letter-spacing:.25em;margin-bottom:6px}
-h2{font-size:26px;margin-bottom:8px;font-weight:800}
-.sec-desc{color:var(--txt2);font-size:14px;margin-bottom:26px;max-width:900px}
-/* ===== architecture flow ===== */
-.flow{display:flex;flex-direction:column;gap:0}
-.flow-row{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
-.fnode{background:var(--panel);border:1px solid var(--line2);border-radius:12px;padding:14px 18px;min-width:150px;flex:1;position:relative;transition:.25s;cursor:default}
-.fnode:hover{transform:translateY(-4px);border-color:var(--cyan);box-shadow:0 8px 30px rgba(34,211,238,.12)}
-.fnode .t{font-weight:700;font-size:14.5px;display:flex;align-items:center;gap:8px}
-.fnode .d{font-size:12px;color:var(--txt3);margin-top:5px}
-.fnode .n{font-family:var(--mono);font-size:10px;color:var(--cyan);letter-spacing:.15em}
-.dot{width:8px;height:8px;border-radius:50%;display:inline-block}
-.flow-arrow{text-align:center;color:var(--cyan-dim);font-size:20px;line-height:1;padding:6px 0;font-family:var(--mono)}
-.kinds{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-top:18px}
-.kind{border-radius:10px;padding:12px 14px;font-size:12.5px;border:1px dashed var(--line2);color:var(--txt2);background:var(--panel2)}
-.kind b{color:var(--txt);display:block;margin-bottom:3px}
-/* ===== roles ===== */
-.role-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}
-.role-card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 18px;cursor:pointer;transition:.22s;position:relative}
-.role-card:hover{border-color:var(--cyan-dim)}
-.role-card.on{border-color:var(--cyan);background:linear-gradient(180deg,rgba(34,211,238,.08),var(--panel))}
-.role-card .rid{font-family:var(--mono);font-size:10.5px;color:var(--orange);letter-spacing:.14em}
-.role-card h3{font-size:16px;margin:4px 0 6px}
-.role-card p{font-size:12.5px;color:var(--txt3)}
-.role-card .arrow{position:absolute;top:16px;right:14px;color:var(--txt3);font-family:var(--mono)}
-.role-card.on .arrow{color:var(--cyan)}
-#roleDetail{margin-top:18px;background:var(--panel2);border:1px solid var(--line2);border-radius:14px;padding:22px 26px;display:none}
-#roleDetail.show{display:block;animation:fade .3s}
-@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1}}
-#roleDetail h3{color:var(--cyan);font-size:18px;margin-bottom:8px}
-#roleDetail .kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:10px 26px;margin-top:10px}
-#roleDetail .kv div{font-size:13px}
-#roleDetail .kv b{color:var(--gold);font-size:12.5px;display:block;font-family:var(--mono)}
-.pill{display:inline-block;background:rgba(34,211,238,.1);border:1px solid var(--cyan-dim);color:var(--cyan);border-radius:6px;padding:1px 9px;font-size:11.5px;margin:2px 3px 2px 0;font-family:var(--mono)}
-.pill.o{background:rgba(251,146,60,.08);border-color:#7c3a12;color:var(--orange)}
-.pill.p{background:rgba(167,139,250,.08);border-color:#5b21b6;color:var(--purple)}
-/* ===== cards (mindset/patch) ===== */
-.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:16px}
-.mcard{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--cyan);border-radius:12px;padding:18px 20px;transition:.22s}
-.mcard:hover{transform:translateY(-3px);box-shadow:0 10px 30px rgba(0,0,0,.4)}
-.mcard .no{font-family:var(--mono);font-size:11px;color:var(--cyan);letter-spacing:.2em}
-.mcard h3{font-size:16px;margin:5px 0 8px}
-.mcard h3 em{font-style:normal;font-size:11.5px;color:var(--txt3);font-family:var(--mono);margin-left:6px}
-.mcard p{font-size:13px;color:var(--txt2)}
-.mcard.pt{border-left-color:var(--red)}
-.mcard.pt .no{color:var(--red)}
-.mcard .formula{margin-top:10px;background:#0a0f1a;border:1px solid var(--line);border-radius:8px;padding:9px 12px;font-family:var(--mono);font-size:11.5px;color:var(--green);overflow-x:auto;white-space:nowrap}
-/* ===== demo lab ===== */
-.tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
-.tab{background:var(--panel);border:1px solid var(--line2);color:var(--txt2);border-radius:8px;padding:7px 16px;font-size:13px;cursor:pointer;transition:.2s}
-.tab:hover{color:var(--txt)}
-.tab.on{background:rgba(34,211,238,.12);border-color:var(--cyan);color:var(--cyan)}
-.lab{background:var(--panel2);border:1px solid var(--line2);border-radius:14px;overflow:hidden}
-.lab-head{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:13px 18px;border-bottom:1px solid var(--line);background:var(--panel)}
-.lab-head .name{font-weight:700;font-size:14px;flex:1}
-.plat-sel{display:flex;gap:6px;flex-wrap:wrap}
-.plat-sel button{background:#0a0f1a;border:1px solid var(--line2);color:var(--txt3);font-size:11.5px;border-radius:6px;padding:4px 11px;cursor:pointer;font-family:var(--mono)}
-.plat-sel button.on{border-color:var(--orange);color:var(--orange);background:rgba(251,146,60,.08)}
-.copy-btn{background:rgba(52,211,153,.1);border:1px solid #065f46;color:var(--green);border-radius:7px;padding:5px 14px;font-size:12px;cursor:pointer;transition:.2s}
-.copy-btn:hover{background:rgba(52,211,153,.22)}
-.copy-btn.okd{border-color:var(--green);color:#052e1c;background:var(--green)}
-.lab-body{padding:18px}
-.lab-note{font-size:12.5px;color:var(--txt3);margin-bottom:12px}
-.lab-note b{color:var(--gold)}
-pre.prompt{background:#070b12;border:1px solid var(--line);border-radius:10px;padding:16px 18px;font-family:var(--mono);font-size:12.8px;line-height:1.85;color:#c9d7f0;overflow-x:auto;white-space:pre-wrap;word-break:break-word}
-pre.prompt .at{color:var(--orange);background:rgba(251,146,60,.12);border-radius:4px;padding:0 3px;font-weight:700}
-pre.prompt .sec{color:var(--purple);opacity:.85}
-pre.prompt .lock{color:var(--green);border-bottom:1px dashed #065f46}
-.score-line{display:flex;align-items:center;gap:10px;margin-top:14px;font-size:13px;color:var(--txt2);flex-wrap:wrap}
-.score-badge{font-family:var(--mono);font-weight:800;font-size:18px;color:var(--green);background:rgba(52,211,153,.1);border:1px solid #065f46;border-radius:8px;padding:2px 12px}
-/* ===== scorer ===== */
-.scorer{display:grid;grid-template-columns:1.35fr 1fr;gap:20px}
-@media(max-width:900px){.scorer{grid-template-columns:1fr}}
-.check-panel{background:var(--panel2);border:1px solid var(--line2);border-radius:14px;padding:20px}
-.check-panel h4{font-size:14px;color:var(--cyan);margin-bottom:12px;font-family:var(--mono)}
-.cgroup{margin-bottom:8px}
-.cgroup .gt{font-size:12.5px;color:var(--gold);margin:10px 0 6px;font-weight:700}
-label.ck{display:flex;gap:10px;align-items:flex-start;padding:6px 9px;border-radius:8px;cursor:pointer;font-size:13px;color:var(--txt2);transition:.15s}
-label.ck:hover{background:rgba(34,211,238,.05);color:var(--txt)}
-label.ck input{accent-color:var(--red);margin-top:4px;width:15px;height:15px;flex:none}
-label.ck .veto{color:var(--red);font-family:var(--mono);font-size:10px;border:1px solid #7f1d1d;border-radius:4px;padding:0 5px;margin-left:6px}
-.result-panel{background:var(--panel2);border:1px solid var(--line2);border-radius:14px;padding:24px;text-align:center;position:sticky;top:70px;height:fit-content}
-#bigScore{font-family:var(--mono);font-size:64px;font-weight:800;line-height:1.1}
-#verdict{font-size:15px;font-weight:700;margin:8px 0 14px}
-#deductList{font-size:12px;color:var(--txt3);text-align:left;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;min-height:64px;margin-top:6px}
-#deductList div{padding:2px 0;border-bottom:1px dashed var(--line)}
-/* ===== SOP ===== */
-.sop{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;counter-reset:sop}
-.sop-card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px;position:relative;counter-increment:sop;transition:.2s}
-.sop-card:hover{border-color:var(--orange)}
-.sop-card::before{content:counter(sop,decimal-leading-zero);font-family:var(--mono);font-size:34px;font-weight:800;color:rgba(251,146,60,.18);position:absolute;top:8px;right:14px}
-.sop-card h3{font-size:14.5px;color:var(--orange);margin-bottom:8px}
-.sop-card p{font-size:12.5px;color:var(--txt2)}
-.sop-card code{font-family:var(--mono);font-size:11px;color:var(--cyan);background:rgba(34,211,238,.07);padding:1px 6px;border-radius:4px}
-/* footer */
-footer{border-top:1px solid var(--line);margin-top:60px;padding:28px 0 40px;color:var(--txt3);font-size:12.5px;text-align:center}
-footer .mono{font-family:var(--mono);color:var(--txt2)}
-@media(max-width:720px){h1{font-size:25px}.scorer .result-panel{position:static}}
+@media(max-width:640px){
+  .experience{min-height:600px}
+  .planet-list{display:none}
+  .planet-content{left:50%;transform:translate(-50%,-50%);max-width:92vw}
+  .planet-content dl{font-size:14px}
+  .fact{grid-template-columns:92px 1fr;padding:8px 10px}
+  .portal{width:128px}
+  .portal-heading{font-size:11px}
+  .portal-heading strong{font-size:12px}
+  .menu{height:38px}
+}
+@media(prefers-reduced-motion:reduce){*{transition-duration:.01ms!important}.portal{transform:none!important}}
 </style>
 </head>
 <body>
+<noscript>本首页为沉浸式动效体验，需要启用 JavaScript。<a href="doc/doc.html">→ 直达教学文档 doc/doc.html</a></noscript>
 
-<header>
-  <div class="wrap">
-    <span class="badge">INDUSTRIAL AIGC FILM PIPELINE · ONLINE</span>
-    <h1>【AIGC 影视与短剧】<span class="grad">多智能体工业化创作框架</span></h1>
-    <p class="sub">三层双擎架构：两级记忆系统（全局 × 剧集）驱动 <b style="color:var(--cyan)">9 大角色智能体</b>，KB 专业词典（查表编译，拒绝自由造句）+ 独立插件式 Skills（按需加载，防平台语法污染）双擎产出工业级中文提示词，每条 Prompt 过 <b style="color:var(--green)">10 分制硬性质量门禁</b>（&lt;9.0 强制打回），实测复盘回流驱动框架自进化。跨平台通用：ZCode / Trae / WorkBuddy 开箱即用。</p>
-    <div class="stats">
-      <div class="stat"><b>9</b><span>专业角色智能体</span></div>
-      <div class="stat"><b>12</b><span>KB 专业词典</span></div>
-      <div class="stat"><b>21</b><span>插件式 Skill</span></div>
-      <div class="stat"><b>6</b><span>平台专属语法插件</span></div>
-      <div class="stat"><b>17</b><span>崩坏模式黑名单</span></div>
-    </div>
+<main class="experience" data-planet="create">
+  <div class="backgrounds" aria-hidden="true">
+    <!-- 性能优化：三段背景视频常驻 preloader 末帧图层之下不可见，仅保留元数据；不再全量下载 -->
+    <video id="mars-background"  class="background is-visible" src="https://d2ol7oe51mr4n9.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/3c83091e-4046-4fd6-adbb-2edb728be79a.mp4" muted playsinline preload="metadata"></video>
+    <video id="earth-background" class="background" src="https://d2ol7oe51mr4n9.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/fc3ded42-e845-41f3-a830-5cab512d79cd.mp4" muted playsinline preload="metadata"></video>
+    <video id="venus-background" class="background" src="https://d2ol7oe51mr4n9.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/b30f64d9-1637-477a-83df-d0fc6461a422.mp4" muted playsinline preload="metadata"></video>
   </div>
-</header>
-
-<nav id="nav">
-  <div class="wrap">
-    <a href="#arch" class="on">全景架构</a>
-    <a href="#roles">9 大角色</a>
-    <a href="#rules">工业思维与防崩补丁</a>
-    <a href="#lab">标准产出实验室</a>
-    <a href="#scorer">评分官模拟器</a>
-    <a href="#sop">快速上手 SOP</a>
+  <div class="preloader" id="preloader" aria-label="载入中">
+    <video id="preloader-video" src="https://d2ol7oe51mr4n9.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/5fc5651c-3b5d-4171-b507-87f7e635d1b4.mp4" muted playsinline preload="auto"></video>
+    <div class="preloader-shade"></div>
   </div>
-</nav>
-
-<!-- ============ 架构 ============ -->
-<section id="arch">
-  <div class="wrap">
-    <div class="sec-tag">01 / ARCHITECTURE</div>
-    <h2>框架全景架构交互图</h2>
-    <p class="sec-desc">完整生产闭环：两级记忆 → 9 大角色协同 → 12 KB 词典 + 21 Skill 插件双擎 → 6 大平台适配 → 10 分制质量门禁 → 复盘自进化回流。鼠标悬停任一节点查看职责。</p>
-    <div class="flow">
-      <div class="flow-row">
-        <div class="fnode"><div class="n">MEMORY · L1</div><div class="t"><span class="dot" style="background:var(--purple)"></span>全局记忆层</div><div class="d">memory/global/ · 权威工作流知识库 + 17 崩坏黑名单（跨项目共享）</div></div>
-        <div class="fnode"><div class="n">MEMORY · L2</div><div class="t"><span class="dot" style="background:var(--purple)"></span>剧集记忆层</div><div class="d">memory/projects/[剧名]/ · 剧集圣经 + @资产注册表 + 跨集状态快照</div></div>
-      </div>
-      <div class="flow-arrow">▼ 路由协议 AGENTS.md（跨平台状态机 · 任务路由表 · 交接 Schema）</div>
-      <div class="flow-row">
-        <div class="fnode" style="flex:2.4"><div class="n">ROLES · 9 AGENTS</div><div class="t"><span class="dot" style="background:var(--cyan)"></span>9 大角色智能体协同管线</div><div class="d">编剧 → 导演 + 美术 + 场记 → 生图专家 + 视频专家 → 评分官 → 剪辑调音 → 复盘引擎（结构化文档交接 Hand-off Schema）</div></div>
-      </div>
-      <div class="flow-arrow">▼ 查表编译（拒绝空洞形容词自由造句）</div>
-      <div class="flow-row">
-        <div class="fnode" style="flex:1.2"><div class="n">ENGINE · A</div><div class="t"><span class="dot" style="background:var(--orange)"></span>KB 词典编译层</div><div class="d">kb_library/ KB_01~KB_12：骨相 / 服装 / 材质色彩 / 画风锁 / 三视图 / 构图 / Prompt 编译器 / Negative 修正 / 10 分制质检 / 运镜 / TTS 剪映</div></div>
-        <div class="fnode" style="flex:1.2"><div class="n">ENGINE · B</div><div class="t"><span class="dot" style="background:var(--orange)"></span>Skill 插件层（按需加载）</div><div class="d">skills/ 21 个独立 .md（YAML Frontmatter），SKILL_INDEX.md 路由，用到才提取，防语法污染省 Token</div></div>
-      </div>
-      <div class="flow-arrow">▼ 平台适配（互斥加载 · 一次一平台）</div>
-      <div class="flow-row">
-        <div class="fnode"><div class="n">PLATFORM 01</div><div class="t">豆包 Seedream</div><div class="d">中文空间方位 · 光影术语 · 4K</div></div>
-        <div class="fnode"><div class="n">PLATFORM 02</div><div class="t">即梦 Seedance</div><div class="d">多素材参考 · 秒级时间轴 · 原生对白</div></div>
-        <div class="fnode"><div class="n">PLATFORM 03</div><div class="t">ComfyUI</div><div class="d">Flux/Wan · PuLID · ControlNet · 负向词</div></div>
-        <div class="fnode"><div class="n">PLATFORM 04</div><div class="t">MiniMax H3</div><div class="d">[运镜]指令 · 微表情 · 原生音频</div></div>
-        <div class="fnode"><div class="n">PLATFORM 05</div><div class="t">可灵 Kling</div><div class="d">首尾帧锚定 · 物理规律 · 幅度匹配</div></div>
-        <div class="fnode"><div class="n">PLATFORM 00</div><div class="t">公用默认</div><div class="d">全平台安全交集 + 智能推荐</div></div>
-      </div>
-      <div class="flow-arrow">▼ 质量门禁（每条 Prompt 独立送检）</div>
-      <div class="flow-row">
-        <div class="fnode" style="flex:1.4;border-color:#065f46"><div class="n" style="color:var(--green)">GATE</div><div class="t"><span class="dot" style="background:var(--green)"></span>10 分制评分官</div><div class="d">KB_10 双扣分表 + 17 崩坏一票否决题库 · <b style="color:var(--red)">&lt;9.0 强制打回重写</b>（≤3 轮，超限人工裁决）</div></div>
-        <div class="fnode" style="flex:1.4;border-color:#7f1d1d"><div class="n" style="color:var(--red)">EVOLVE</div><div class="t"><span class="dot" style="background:var(--red)"></span>复盘自进化引擎</div><div class="d">读取「Prompt 实际产出复盘」→ 归因 → 修订黑名单 / KB_09 / KB_10 / 平台插件 → 回流闭环</div></div>
-      </div>
-    </div>
-    <div class="kinds">
-      <div class="kind"><b>产出 1 · 重要资产图片提示词</b>零光影 Albedo 三视图 / 表情矩阵 / 音色克隆卡（workspace/重要资产图片提示词.md）</div>
-      <div class="kind"><b>产出 2 · 分集视频提示词</b>按秒切分 + @资产引用 + 评分 + 剪映指南 + 集末状态快照（workspace/episodes/）</div>
-      <div class="kind"><b>本页面</b>纯单文件 index.html · 零构建零依赖 · 双击浏览器即开（暗黑赛博工业风）</div>
-    </div>
+  <img class="floating-logo" id="floating-logo" src="https://d2ol7oe51mr4n9.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/eb7e0f53-50cd-4af5-abc4-8b9a52cdc01b.svg" alt="AiDirector">
+  <div class="preloader-count" id="preloader-count" aria-live="polite">
+    <span id="preloader-value">0</span><span class="percent">%</span>
   </div>
-</section>
+  <canvas id="scene-canvas" class="scene-canvas" aria-hidden="true"></canvas>
+  <div class="shade" aria-hidden="true"></div>
 
-<!-- ============ 角色 ============ -->
-<section id="roles">
-  <div class="wrap">
-    <div class="sec-tag">02 / AGENTS</div>
-    <h2>9 大角色智能体 · 挂载详情</h2>
-    <p class="sec-desc">点击任意角色卡片，查看其视角立场、结构化交接 Schema（输出什么文档给下游）与挂载的 Skill 插件 / KB 词典。</p>
-    <div class="role-grid" id="roleGrid"></div>
-    <div id="roleDetail"></div>
-  </div>
-</section>
-
-<!-- ============ 思维与补丁 ============ -->
-<section id="rules">
-  <div class="wrap">
-    <div class="sec-tag">03 / DOCTRINE</div>
-    <h2>6 大工业级思维 × 5 大实战防崩补丁</h2>
-    <p class="sec-desc">全角色强制内化的 11 条工程法则——已完整植入 AGENTS.md、kb_library 与 skills 对应模块。</p>
-    <div class="card-grid" id="mindGrid"></div>
-    <div style="height:26px"></div>
-    <div class="card-grid" id="patchGrid"></div>
-  </div>
-</section>
-
-<!-- ============ 实验室 ============ -->
-<section id="lab">
-  <div class="wrap">
-    <div class="sec-tag">04 / PROMPT LAB</div>
-    <h2>标准产出交互演示器</h2>
-    <p class="sec-desc">框架真实产出的两类核心提示词：<b style="color:var(--gold)">资产图（零光影三视图）</b>与<b style="color:var(--gold)">分集视频（按秒切分，含 @林烬 压场与 @李梅/@张三 例子1）</b>。橙色高亮 = @中文资产锚点，绿色下划线 = @画风锁。切换右上角平台可预览不同平台语法版本，点击「复制」一键拷贝。</p>
-
-    <div class="tabs">
-      <div class="tab on" data-lab="asset">🖼 人物资产 · @李梅 正交三视图</div>
-      <div class="tab" data-lab="ep1">🎬 分镜1 · @林烬 比武台压场（S级 5s）</div>
-      <div class="tab" data-lab="ep2">🎬 例子1 · 母子买莽莽 镜头1（A级 3s 模式A）</div>
-      <div class="tab" data-lab="ep3">🎧 例子1 · 镜头3 过肩承诺（A级 4s 口型锁）</div>
-    </div>
-
-    <div class="lab">
-      <div class="lab-head">
-        <span class="name" id="labName">—</span>
-        <div class="plat-sel" id="platSel">
-          <button class="on" data-p="std">公用标准</button>
-          <button data-p="doubao">豆包Seedream</button>
-          <button data-p="jimeng">即梦Seedance</button>
-          <button data-p="comfy">ComfyUI</button>
-          <button data-p="h3">MiniMax H3</button>
-          <button data-p="kling">可灵</button>
+  <header class="header chrome">
+    <div class="header-actions">
+      <nav class="nav" aria-label="主导航">
+        <a class="active" href="index.html">首页</a><a href="doc/doc.html">教学文档</a><a href="doc/library.html" style="color:#fff;font-weight:700">📚 源码文库</a><a href="doc/doc.html#tutorial">快速上手</a>
+      </nav>
+      <div class="menu-wrap">
+        <button class="menu" id="menuBtn" type="button" aria-haspopup="true" aria-expanded="false">菜单 ▾</button>
+        <div class="menu-pop" id="menuPop" role="menu">
+          <a role="menuitem" href="doc/doc.html">📄 教学文档</a>
+          <a role="menuitem" href="doc/library.html">📚 源码文库（Skills × KB）</a>
+          <a role="menuitem" href="doc/doc.html#tutorial">🎓 快速上手 · 10 分钟教学营</a>
+          <a role="menuitem" href="doc/doc.html#lab">🧪 Prompt 实验室</a>
+          <a role="menuitem" href="doc/doc.html#scorer">⚖️ 评分官模拟器</a>
         </div>
-        <button class="copy-btn" id="copyBtn">📋 复制 Prompt</button>
-      </div>
-      <div class="lab-body">
-        <div class="lab-note" id="labNote"></div>
-        <pre class="prompt" id="labPrompt"></pre>
-        <div class="score-line"><span class="score-badge" id="labScore">9.4 / 10</span><span id="labScoreNote"></span></div>
       </div>
     </div>
-  </div>
-</section>
+  </header>
 
-<!-- ============ 评分模拟器 ============ -->
-<section id="scorer">
-  <div class="wrap">
-    <div class="sec-tag">05 / QC SIMULATOR</div>
-    <h2>10 分制评分官扣分模拟器</h2>
-    <p class="sec-desc">以「例子1 镜头1（母子同框 · 孩童台词 · 模式A）」视频提示词为被评对象。勾选发现的问题项，实时计算得分——体验评分官如何用 KB_10 扣分表 + 崩坏题库执行 <b style="color:var(--red)">&lt;9.0 一票否决强制打回</b>。</p>
-    <div class="scorer">
-      <div class="check-panel">
-        <h4>KB_10 视频表 V1~V12 · 逐项核验（勾选 = 发现问题）</h4>
-        <div id="checkList"></div>
-      </div>
-      <div class="result-panel">
-        <div style="font-family:var(--mono);font-size:12px;color:var(--txt3);letter-spacing:.2em">FINAL SCORE</div>
-        <div id="bigScore" style="color:var(--green)">10.0</div>
-        <div id="verdict" style="color:var(--green)">✅ 放行写入产出文档</div>
-        <button class="copy-btn" style="margin:6px 0 14px" onclick="resetScorer()">↺ 重置</button>
-        <div style="font-family:var(--mono);font-size:11px;color:var(--txt3);text-align:left;margin-bottom:6px">DEDUCTIONS：</div>
-        <div id="deductList"><div style="color:var(--txt3)">（无扣分 · 逐项全部通过）</div></div>
-      </div>
+  <aside class="planet-list chrome" aria-label="教学文档栏目"></aside>   <!-- JS-filled -->
+
+  <canvas id="portal-canvas" class="portal-canvas" aria-hidden="true"></canvas>
+  <section class="portal-wrap chrome" aria-label="下一站">
+    <div class="portal-heading">
+      <span>下一站</span>
+      <span><span id="next-number">[02]</span> <strong id="next-name">Generate</strong></span>
     </div>
-  </div>
-</section>
+    <button class="portal" id="portal" type="button" aria-label="进入下一幕">
+      <video id="portal-video" src="https://d2ol7oe51mr4n9.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/fc3ded42-e845-41f3-a830-5cab512d79cd.mp4" muted playsinline preload="auto"></video>
+      <img id="portal-image" src="https://d2ol7oe51mr4n9.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/d6fb8b6b-c15e-4aaa-9cf7-45bbb5e33372.jpg" alt="教学文档">
+    </button>
+  </section>
 
-<!-- ============ SOP ============ -->
-<section id="sop">
-  <div class="wrap">
-    <div class="sec-tag">06 / QUICKSTART</div>
-    <h2>团队新成员 5 步快速上手 SOP</h2>
-    <p class="sec-desc">从零到产出第一条过审提示词的完整路径——按顺序执行，任何一步不达标都会被门禁拦下，这正是框架"工业级"的含义。</p>
-    <div class="sop">
-      <div class="sop-card"><h3>读总控 · 建记忆</h3><p>通读 <code>AGENTS.md</code> 路由协议与 <code>skills/SKILL_INDEX.md</code> 索引；新剧先在 <code>memory/projects/[剧名]/</code> 建三件套：剧集圣经（含 @画风锁）、资产注册表、跨集状态快照。</p></div>
-      <div class="sop-card"><h3>剧本 → 分镜</h3><p>编剧产出钩子与情绪曲线（前 3 秒定生死）；导演拆分镜并标注 <code>S/A/B</code> 算力分级，台词镜头先做声画先行秒数精算；场记写轴线声明与空间分区。</p></div>
-      <div class="sop-card"><h3>资产先行 · 零光影</h3><p>美术出人物/场景/道具设定卡；生图专家按 <code>KB_06</code> 铁律产出三视图 + 表情矩阵 + <b style="color:var(--orange)">面部特写/全身立绘衍生图</b>（防三人同框）；登记 <code>@纯中文</code> 资产名与音色卡。</p></div>
-      <div class="sop-card"><h3>编译提示词 · 过门禁</h3><p>生图走八层全量公式；视频走 <b style="color:var(--orange)">20% 锚点 + 80% 动态</b> 差分公式 + 秒级节点 + 口型排他锁 + 模式 A/B 声明；每条 Prompt 送评分官，<code>&lt;9.0 打回</code> 改到过审为止。</p></div>
-      <div class="sop-card"><h3>实测 → 复盘 → 进化</h3><p>到豆包/即梦/可灵等平台跑图跑片；把翻车现象填进 <code>Prompt 实际产出复盘</code>；复盘引擎自动归因 17 崩坏库并修订词典与插件——<b style="color:var(--green)">框架越用越强</b>。</p></div>
-    </div>
-  </div>
-</section>
+  <section class="planet-content chrome" aria-live="polite">
+    <div class="act-kicker" id="act-kicker">第一幕 · 创作</div>
+    <dl id="facts"></dl>                                           <!-- JS-filled -->
+  </section>
 
-<footer>
-  <div class="wrap">
-    <p class="mono">AGENTS.md · kb_library/KB_01~12 · skills/(21) · memory/(global+projects) · workspace/ · index.html</p>
-    <p style="margin-top:8px">AIGC 影视与短剧多智能体工业化创作框架 · 10分制门禁 · 复盘自进化 · ZCode / Trae / WorkBuddy 跨平台通用</p>
+  <div class="transition-layer" aria-hidden="true"><video id="transition-video" muted playsinline preload="auto"></video></div>
+  <div class="loading" aria-hidden="true">正在进入下一幕…</div>
+  <div class="custom-cursor" aria-hidden="true">
+    <span class="cursor-orbit"></span><span class="cursor-dot"></span><span class="cursor-label">进入</span>
   </div>
-</footer>
+</main>
 
 <script>
-/* ================= 数据 ================= */
-const ROLES=[
-{id:"R1",name:"高级编剧大师",color:"cyan",desc:"市场与受众视角：黄金前3秒钩子与情绪曲线",detail:"考量情节是否符合目标市场喜好，前 3 秒抓住眼球并持续拉起观众情绪（压抑、反转、爆发爽点）；构建世界观、人物立体性格、人物关系与潜台词打磨。",schema:"{集数, 标题, 受众痛点分析, 黄金前3秒钩子, 情绪曲线节点表, 场次列表[场景@资产, 人物@资产, 台词表(角色/台词/情绪/语速档)]}",skills:["NARR-01 市场钩子调研","NARR-02 世界观人物弧光","NARR-03 台词秒数精算"],kbs:["KB_01 角色设计规范","KB_02 人体与面部"]},
-{id:"R2",name:"高级导演",color:"cyan",desc:"视听统治力视角：分镜拆解与 S/A/B 算力分级",detail:"剧情分镜拆解、视觉镜头呈现方式（景别、机位、角度、构图、场面调度）、确立画幅制式（16:9/9:16）、执行 S/A/B 镜头算力分级，规划剪辑救场缓冲镜（Cutaway）。",schema:"{画幅, 分镜总表[镜号, 场次, 景别, 机位, 构图, 运镜, 时长秒, 等级S/A/B, @资产清单, 台词引用, 秒级动作节点]}",skills:["VIS-01 导演分镜拆解"],kbs:["KB_07 构图与资产板","KB_11 导演运镜词典"]},
-{id:"R3",name:"高级美术指导兼画师",color:"purple",desc:"视觉统一视角：画风锁 · 色彩脚本 · 穿搭 · 音色设定",detail:"锁定全局 @画风锁 与 60-30-10 色彩脚本；人物穿搭与外貌特征设定；角色音色特征规划（Fish Audio / Noiz / MiniMax 制作参数与 TTS 克隆情绪标签）；场景空间与核心道具设计，结构化移交生图与视频专家。",schema:"{画风锁, 色彩脚本[60/30/10], 人物视觉卡, 音色卡[@人物,平台,特征,参考音频,克隆参数,情感标签], 场景卡, 道具卡}",skills:["VIS-02 美术风格穿搭道具","AUD-01 音色克隆工作流"],kbs:["KB_02~KB_05 面部/服装/材质/画风","KB_12 TTS剪映词典"]},
-{id:"R4",name:"场记与连续性监督专家",color:"purple",desc:"防穿帮守门员：资产注册表 · 180度轴线 · 跨集快照",detail:"维护全局唯一 @纯中文资产名称注册表（严禁英文数字符号）；检查上下镜头 180 度轴线方向、人物左右站位、手持道具左右手、服装战损/污渍状态前后连贯；每集末生成 State Diff 快照同步记忆库。",schema:"{资产注册变更单, 轴线声明(场景/方向/机位半圆), 连续性核对清单[镜号→镜号/核对项/结果], State Diff 快照}",skills:["VIS-04 连续性轴线守卫"],kbs:["KB_07 构图与资产板","资产注册表","跨集状态快照"]},
-{id:"R5",name:"AI 生图高级专家",color:"orange",desc:"出图工程：技法路由 + 分镜前置资源策划",detail:"按剧情资产需求与视频前置需求，策划图生图、ControlNet（姿态/景深/线稿）、灰度图、LoRA 权重、Inpainting 局部重绘、多宫格分镜垫图的最佳出图方案；按需加载平台插件产出最适配中文提示词；未指定平台时默认公用标准 + 推荐平台模型。",schema:"{生图策略[技法, 参考图@资产, ControlNet类型强度, LoRA权重], 平台模型推荐, 中文Prompt(代码块), 负向词}",skills:["IMG-01 生图技法路由器","IMG-02 前置资源策划","PLAT-00~05 平台插件"],kbs:["KB_06 三视图一致性","KB_08 Prompt编译器","KB_09 错误修正"]},
-{id:"R6",name:"AI 视频创作提示词专家",color:"orange",desc:"以秒为单位的运动工程：差分编译 + 技法选择",detail:"将视频拆为以秒为单位的片段创作；结合 @资产参考与首帧图生视频、首尾帧控制、分镜图转视频、多图参考融合、尾帧截取接力等技法；按平台产出专属中文提示词；未指定平台时默认公用标准 + 给出该镜头最推荐的平台与模型。",schema:"{镜号, 时长秒, 秒级节点[起止秒→动作/运镜/情绪], @资产引用, 台词(TTS控制符)与口型模式, 技法与推荐平台模型, 中文Prompt(代码块)}",skills:["VID-01 秒级切片器","VID-02 技法选择器","PLAT-00~05 平台插件"],kbs:["KB_08 编译器","KB_09 修正","KB_11 运镜词典"]},
-{id:"R7",name:"AI 提示词质量评分专家",color:"green",desc:"10分制硬性质量门禁：一票否决题库执法者",detail:"对每一条提示词（资产图/前置图/视频）按 KB_10 双扣分表 + 17 崩坏黑名单严格评判；低于 9.0 分必须列出扣分明细与具体修改指令，强制打回生图或视频专家重写，直至 ≥9.0 才允许写入最终产出文档。",schema:"{被评Prompt编号, 得分(一位小数), 逐项扣分明细, 崩坏题库触发记录, 修改指令(若<9.0), 门禁结论(放行/打回)}",skills:["QC-01 十分制评分官"],kbs:["KB_10 质量检查","KB_09 错误修正","全局复盘避坑黑名单"]},
-{id:"R8",name:"剪映剪辑大师兼调音大师",color:"gold",desc:"节奏与声场：真实菜单级剪辑手法 + 混音规范",detail:"把控整集与单镜节奏；指导语速语气声调；在每段视频提示词下方及集末补充剪映手法（曲线变速预设、入出场动画、转场特效真实名称）、Foley 音效卡点、BGM 情绪铺排与环境音底噪配置。",schema:"{单镜建议[变速预设, 动画, 转场名, J/L-Cut切入点, 音效搜索词, 卡点秒], 整集建议[节奏曲线, 粗剪精剪SOP, 混音规范]}",skills:["EDT-01 剪映剪辑调音"],kbs:["KB_12 TTS音色克隆与剪映后期词典"]},
-{id:"R9",name:"复盘自进化引擎",color:"red",desc:"系统进化：实测复盘归因 → 修订词典与插件",detail:"读取用户在提示词文档最下方填写的「Prompt 实际产出复盘」，分析实际效果与翻车原因，自动制定框架优化计划，将经验反哺写入全局黑名单、KB_09、KB_10 与对应平台 Skill 插件；高频崩坏（≥3次同类）自动升级为一票否决题。",schema:"{复盘归因[崩坏编号/新类型], 触发Prompt片段, 优化动作[目标文件/修订内容], 执行状态}",skills:["EVO-01 复盘自进化"],kbs:["KB_09","KB_10","全局复盘避坑黑名单","全部 plat_* 插件"]}
+/* ============ 1. REMOTE ASSETS ============ */
+const BASE='https://d2ol7oe51mr4n9.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P';
+const MARS_BG  =BASE+'/3c83091e-4046-4fd6-adbb-2edb728be79a.mp4';
+const TO_EARTH =BASE+'/fc3ded42-e845-41f3-a830-5cab512d79cd.mp4';
+const TO_VENUS =BASE+'/b30f64d9-1637-477a-83df-d0fc6461a422.mp4';
+const TO_MARS  =BASE+'/5fc5651c-3b5d-4171-b507-87f7e635d1b4.mp4';
+const MERCURY  =BASE+'/d6fb8b6b-c15e-4aaa-9cf7-45bbb5e33372.jpg';
+
+/* ============ 4. DATA MODEL（AiDirector 三幕改编，保留 Planet 链骨架） ============ */
+/* 教学文档栏目（8 项 = doc.html 八大板块锚点；active = 当前幕） */
+const stations=[
+  {label:'教学',   href:'doc/doc.html#tutorial'},
+  {label:'数据',   href:'doc/doc.html#metrics'},
+  {label:'架构',   href:'doc/doc.html#arch'},
+  {label:'角色',   href:'doc/doc.html#roles'},
+  {label:'词典',   href:'doc/doc.html#explorer'},
+  {label:'思维',   href:'doc/doc.html#rules'},
+  {label:'实验室', href:'doc/doc.html#lab'},
+  {label:'门禁',   href:'doc/doc.html#scorer'}
 ];
 
-const MINDS=[
-{n:"思维 01",t:"生图与生视频差分编译",en:"Delta Prompting",d:"图生视频阶段首帧已锁定 90% 静态外观，视频提示词严禁重复堆砌五官穿搭。强制 20% 极简 @资产锚点 + 80% 纯物理运动变化量（推拉位移、肢体轨迹、风吹衣角发丝、光影变幻），释放视频模型动态算力。",f:"视频Prompt = 20% 锚点(@资产+2词) + 80% 动态层(运镜·动作·材质)"},
-{n:"思维 02",t:"S/A/B 镜头分级算力路由",en:"Shot Tiering",d:"S 级（黄金前3秒/奇观/高潮）走首尾帧精控+顶级模型；A 级（常规动作交互）走标准首帧图生视频；B 级（对白反应/空镜）走超高清静态图 + Lip-Sync + 剪映关键帧缓推与粒子特效，零崩坏零算力。",f:"S=首尾帧+可灵精调 | A=首帧I2V | B=静态图+对口型+剪映"},
-{n:"思维 03",t:"皮克斯声画先行",en:"Audio-First / Pre-lay",d:"凡有台词的镜头，先按字数与语速（正常 4 字/秒、急促 5.5、沉吟 2.5）加情绪停顿算出精确到 0.5 秒的音频时长与重音点，再倒推视频提示词的秒级动作节点。",f:"时长 = 字数 ÷ 语速 + Σ停顿 → [0-1.5s]冷笑抬头 [1.5-4.0s]开口"},
-{n:"思维 04",t:"剪辑救场缓冲镜",en:"Cutaway / B-Roll",d:"每 2~3 个主镜头规划一个 1~2 秒特写插入镜/反应镜（握拳、道具、倾听眼神、街边热气），配 J-Cut/L-Cut 声画错位覆盖主轨——既掩盖 AI 局部瑕疵，又拉满电影叙事张力。",f:"每 2~3 主镜 + 1 个 1.5s Cutaway → L-Cut 遮瑕"},
-{n:"思维 05",t:"跨镜头尾帧接力",en:"Tail-to-Head Relay",d:"突破单次 5 秒限制：截取上一镜生成视频的最后一帧（或尾帧设计图）→ 高清修复/局部重绘微调 → 直接作为下一镜头首帧输入，实现无缝长镜头；接力 ≤2 次防累积漂移。",f:"镜A尾帧 → 修复 → 镜B首帧 → Prompt只写增量"},
-{n:"思维 06",t:"跨集状态快照",en:"Episode State Snapshot",d:"每集文档末尾强制输出「本集结束状态快照」：人物战损/服装变更（派生 @林烬战损）、道具得失、时间天气与情绪刻度，自动同步至项目记忆库，防止下一集开篇穿帮。",f:"集末 Diff(服装/伤势/道具/时空/情绪) → 同步记忆库"}
-];
-
-const PATCHES=[
-{n:"补丁 1",t:"多主体空间分区与口型排他锁",d:"多人同框防串色防乱张嘴。生图：明确物理空间象限与体型差（左侧三分之一=成年女性@李梅，右侧三分之二=孩童@张三）；视频：仅一人说话时必须显式写「说话者张嘴 + 倾听者双唇闭合微笑倾听」。",f:"分区句式 + 说话者开合 + 倾听者闭嘴锁（一票否决项）"},
-{n:"补丁 2",t:"9:16 与 16:9 构图自适应开关",d:"单集顶部标注画幅制式。9:16 竖屏自动禁用横向大空间铺开，强制切换：前中后大纵深叠压 / 上下高低机位对角线 / 竖屏紧凑过肩正反打。",f:"竖屏 = 纵深叠压 | 高低对角 | 紧凑过肩"},
-{n:"补丁 3",t:"项目级 @画风锁 全局常量",d:"在资产文档顶部定义不可篡改的 @画风锁 字符串常量（画风流派+渲染引擎+光影色温+画质词缀），所有生图与生视频 Prompt 编译时末尾一致挂载，杜绝跨镜头画风漂移。变更须美术+编剧双签全局替换。",f:"内容 → 构图 → @画风锁(逐字) 三段式结尾"},
-{n:"补丁 4",t:"音画双管线分流",d:"模式A（原生音画同出，即梦/可灵/MiniMax H3 直出对白）：写明台词+语气+张嘴动作；模式B（无声视频+后期克隆音频对口型，ComfyUI+LatentSync/剪映）：强制写「嘴唇保持自然闭合或极轻微闭合微动（预留干净基底）」，防重影打架。",f:"A=直出对白 | B=闭嘴基底+后期Lip-Sync"},
-{n:"补丁 5",t:"标准化 prompt 代码块封装",d:"所有 ≥9.0 分过审的中文 Prompt 统一用 ```prompt 代码块包裹——编辑器与网页看板一键点击复制，并可用正则脚本批量提取，自动化跑图流水线即插即用。",f:"```prompt … ``` → 可复制 · 可正则提取 · 可批量化"}
-];
-
-/* ================= 角色面板 ================= */
-const roleGrid=document.getElementById('roleGrid'),roleDetail=document.getElementById('roleDetail');
-ROLES.forEach((r,i)=>{
-  const el=document.createElement('div');el.className='role-card';el.dataset.i=i;
-  el.innerHTML=`<div class="rid">${r.id} · ${['CYAN','CYAN','PURPLE','PURPLE','ORANGE','ORANGE','GREEN','GOLD','RED'][i]}</div><h3>${r.name}</h3><p>${r.desc}</p><span class="arrow">▸</span>`;
-  el.onclick=()=>showRole(i);roleGrid.appendChild(el);
-});
-function showRole(i){
-  document.querySelectorAll('.role-card').forEach(c=>c.classList.toggle('on',+c.dataset.i===i));
-  const r=ROLES[i];
-  roleDetail.innerHTML=`<h3>${r.id} · ${r.name}</h3><p style="font-size:13.5px;color:var(--txt2)">${r.detail}</p>
-  <div class="kv">
-    <div><b>输出交接 Schema</b><span class="pill p" style="max-width:100%;white-space:normal;line-height:1.6">${r.schema}</span></div>
-    <div><b>挂载 Skill 插件</b>${r.skills.map(s=>`<span class="pill">${s}</span>`).join('')}</div>
-    <div><b>挂载 KB 词典 / 记忆</b>${r.kbs.map(k=>`<span class="pill o">${k}</span>`).join('')}</div>
-  </div>`;
-  roleDetail.classList.add('show');
-}
-showRole(0);
-
-/* ================= 思维与补丁卡片 ================= */
-document.getElementById('mindGrid').innerHTML=MINDS.map(m=>`<div class="mcard"><div class="no">${m.n}</div><h3>${m.t}<em>${m.en}</em></h3><p>${m.d}</p><div class="formula">${m.f}</div></div>`).join('');
-document.getElementById('patchGrid').innerHTML=PATCHES.map(p=>`<div class="mcard pt"><div class="no">${p.n} · ANTI-CRASH</div><h3>${p.t}</h3><p>${p.d}</p><div class="formula">${p.f}</div></div>`).join('');
-
-/* ================= 提示词实验室 ================= */
-const LOCK='@画风锁';
-const LABS={
-asset:{name:'人物资产 · @李梅 正交三视图（零光影 Albedo）',score:'9.4 / 10',note:'<b>产出文档 1</b>（workspace/重要资产图片提示词.md）。资产图铁律：360度环形无影棚拍平光 + 漫反射固有色(Albedo) + 正交零透视 + 18%灰背景——用正面物理描述替代否定词（扩散模型对「无阴影」不敏感）。三视图仅用于锁定设定，喂视频前必须裁切独立立绘/面部特写（防三人同框）。',plats:{
- std:`角色设定三视图（Turnaround Sheet）：@李梅，圆脸尖下巴柳叶眉杏眼，栗色齐肩微卷发素色发夹，米白针织开衫+浅杏色连衣裙，帆布托特包斜挎；A-Pose双臂自然微张约30度防袖身粘连，双脚与肩同宽；正面、左侧面、背面三视角等距水平排列，同一角色三个视角比例严格一致（非三个人物，非合影），全身完整造型含背面斜挎包带走向；360度环形无影棚拍柔光，均匀漫射平光，漫反射固有色贴图质感（Flat Lit Albedo / Diffuse Pass），正交投影相机零透视畸变，中性18%灰背景，@画风锁（体积光替换为均匀漫射平光）+暖金橙主调黄昏柔焦光晕，16:9横幅，4K`,
- doubao:`角色设定三视图：@李梅全身。前景为角色本体三视角并排（非三个人物非合影），中景留白分隔，背景为中性18%灰纯色无接缝。圆脸尖下巴苹果肌饱满，柳叶眉杏眼温和，栗色齐肩微卷发素色发夹；米白色针织开衫（罗纹袖口）内搭浅杏色连衣裙A字裙摆，斜挎帆布托特包；A-Pose双臂自然微张，正面/左侧面/背面等距水平排列，同一角色三个视角比例严格一致；360度环形无影棚拍柔光，均匀漫射平光，固有色漫反射贴图质感，正交投影零透视畸变，@画风锁（体积光替换为均匀漫射平光）+暖金橙主调，16:9横幅，4K`,
- comfy:`character turnaround sheet, three view (front / side / back), orthographic projection, A-pose, full body, consistent proportions, a gentle young mother, round face with pointed chin, willow eyebrows, warm almond eyes, shoulder-length chestnut wavy hair with plain hairclip, beige knit cardigan over light apricot A-line dress, canvas tote bag, flat lighting, albedo map style, neutral grey background, model sheet layout\n-- 中文存档：@李梅三视图（圆脸柳眉杏眼栗色微卷发米白开衫浅杏裙A-Pose，平光Albedo正交18%灰背景）\n-- 节点：Flux.1-dev + IP-Adapter(@李梅立绘 0.6) + Canny线稿 0.6\n负向：三个不同人, 合影, 高光过曝, 硬阴影, 透视畸变, 手指粘连, 文字, 水印`,
- jimeng:`（资产图建议生图平台：豆包/ComfyUI；即梦侧仅作参考图源）素材位1：@李梅全身立绘。\n角色设定三视图：@李梅，圆脸尖下巴柳叶眉杏眼，栗色齐肩微卷发素色发夹，米白针织开衫+浅杏色连衣裙；A-Pose双臂自然微张约30度，正面、左侧面、背面三视角等距水平排列，同一角色三个视角比例严格一致（非三个人物非合影）；360度环形无影棚拍柔光，均匀漫射平光，漫反射固有色贴图（Flat Lit Albedo），正交投影零透视畸变，中性18%灰背景，@画风锁（体积光替换为均匀漫射平光），16:9横幅，4K`,
- h3:`（资产图建议生图平台：豆包/ComfyUI；H3 侧仅作参考）参考图：@李梅全身立绘。\n角色设定三视图：@李梅，圆脸柳眉杏眼栗色齐肩微卷发米白开衫浅杏裙，A-Pose双臂微张，正/左/背三视角等距排列同比例（非合影非三人），环形无影平光，漫反射固有色Albedo，正交零透视，18%灰背景，@画风锁（平光替换），16:9，4K`,
- kling:`（资产图建议生图平台：豆包/ComfyUI；可灵侧仅作参考源）\n角色设定三视图：@李梅，圆脸尖下巴柳叶眉杏眼，栗色齐肩微卷发素色发夹，米白针织开衫+浅杏连衣裙斜挎托特包；A-Pose双臂自然微张约30度，正面/左侧面/背面等距水平排列，同一角色三视角比例严格一致（非三个人物非合影）；360度环形无影棚拍柔光，均匀漫射平光，漫反射固有色贴图（Flat Lit Albedo），正交投影零透视畸变，中性18%灰背景，@画风锁（体积光替换为均匀漫射平光），16:9横幅，4K`}},
-ep1:{name:'分镜1 · @林烬 比武台压场（S级 · 5秒 · 首尾帧）',score:'9.3 / 10',note:'<b>产出文档 2</b>（第01集）。S 级镜头走首尾帧双锚定；差分编译：锚点仅「黑衣长发@林烬」2 词，其余全为物理运动变化量；无台词但显式写「双唇闭合」防乱张嘴。初稿曾因首帧强逆光获 8.4 分被否决打回（崩坏10）。',plats:{
- std:`黑衣长发@林烬立于@玄天宗比武台中央，[00-02s]镜头低角度缓慢推近，衣摆与额前碎发被罡风掀起轻扬，雷云天光渐暗翻涌，台下人群剪影静立；[02-05s]他缓缓抬眼扫视四周，右手取@焚天断剑自下而上划出弧线斜指前方，剑身暗红纹路亮起，气流掀动衣摆与马尾上扬定格，台下人群剪影后倾半步，雷云中一道银白光柱落台，双唇闭合无张嘴动作，@画风锁+冷青蓝主调剑气银白高光，16:9，5秒`,
- doubao:`（视频镜头建议平台：可灵/即梦；豆包 Seedream 用于首尾帧基准图生成）\n首帧基准图：黑衣长发@林烬负@焚天断剑静立于@玄天宗比武台台心，前景台面石纹虚化，中景人物中心构图，远景云海山岳凌霄殿飞檐横向铺开，台下人群剪影环绕；雷云压城冷青蓝主调天光，柔和顶光落台心（高光不过曝保留面部细节），剑气银白微光点缀符文石柱；低角度仰拍全景，@画风锁+冷青蓝主调剑气银白高光，16:9，4K`,
- jimeng:`素材位1：@林烬全身立绘；素材位2：@玄天宗比武台空镜；素材位3：@焚天断剑特写。\n黑衣长发@林烬立于@玄天宗比武台中央。[0-2秒]镜头低角度缓慢推近，衣摆与额前碎发被罡风掀起轻扬，雷云翻涌天光渐暗，台下人群剪影静立；[2-5秒]他缓缓抬眼扫视四周，右手取@焚天断剑自下而上划出弧线斜指前方，剑身暗红纹路亮起，气流掀动衣摆马尾定格，人群剪影后倾半步，银白光柱落台，双唇闭合无张嘴动作；环境音：雷鸣低沉+风声呼啸+剑鸣。人物与场景外观全程与参考素材保持一致，@画风锁+冷青蓝主调剑气银白高光，16:9，5秒`,
- comfy:`[I2V · Wan2.1 · 首帧=基准图]\nA tall young swordsman in black outfit @林烬 stands center of the stone arena, black high ponytail, low-angle slow push-in, [00-02s] robe hem and loose strands lifted by wind force, storm clouds darkening; [02-05s] he slowly raises his eyes, draws the broken black sword @焚天断剑 in an upward arc pointing forward, ember-red runes igniting, crowd silhouettes recoiling half a step, one silver light pillar falls, lips closed no mouth movement\n-- 中文存档：黑衣长发@林烬比武台压场（差分编译同公用版）\n-- 节点：Wan2.1 I2V + Depth 0.6 ｜ Motion Strength 0.8（大幅动作）｜ 无声输出（模式B：嘴唇闭合基底）\n负向：镜头切换, 全员张嘴, 身份漂移, 肢体穿模, 背景闪烁, 水印`,
- h3:`[推近]缓慢\n黑衣长发@林烬立于@玄天宗比武台中央（参考图：@林烬面部特写，保持面部与参考一致，眨眼频率自然约三秒一次轻微眨眼）。[00-02s]低角度画面缓推，衣摆与额前碎发被罡风掀起轻扬，雷云天光渐暗翻涌，台下人群剪影静立；[02-05s]他缓缓抬眼扫视四周（眼神由静水深流转为锐利如鹰的微表情递进），右手取@焚天断剑自下而上划出弧线斜指前方，剑身暗红纹路亮起，气流掀动衣摆马尾定格，人群后倾半步，银白光柱落台，双唇闭合无张嘴。声音：雷鸣低沉、风啸、剑鸣出鞘，@画风锁+冷青蓝主调剑气银白高光，16:9，5秒`,
- kling:`首帧=图1（@林烬负剑静立于@玄天宗比武台台心），尾帧=图2（@林烬持@焚天断剑斜指前方、衣袂上扬定格）。\n主体：黑衣长发@林烬；运动：镜头低角度推近的同时，他缓缓抬眼扫视，右手取@焚天断剑自下而上划出弧线，剑身暗红纹路亮起，气流自剑锋扩散掀动衣摆与马尾，台下人群剪影后倾半步，一道银白光柱落台后定格（符合气流惯性与重力）；场景：青石比武台、四角符文石柱、云海山岳、雷云压城；镜头语言：低角度推近，冷青蓝主调天光，剑气银白高光，威压氛围，双唇闭合无张嘴动作，@画风锁+冷青蓝主调剑气银白高光，16:9，5秒`}},
-ep2:{name:'例子1 · 镜头1 母子行进·稚语要莽莽（A级 · 3秒 · 模式A）',score:'9.4 / 10',note:'<b>例子1 完整拆解第 1 镜</b>。声画先行测算：8 字 ÷ 4 字/秒 + 停顿 ≈ 2.2s → 镜长 3s（铺垫 0.8s）。多人镜头双保险：空间分区（左1/3母亲 + 右2/3孩童 + 身高差 + 服装色差）与口型排他锁（张三张嘴说话 + 李梅双唇闭合倾听）。',plats:{
- std:`米白开衫母亲@李梅与天蓝卫衣孩童@张三行于@光大街边：画面左侧三分之一为成年女性@李梅（身高约一米六五），右侧三分之二为孩童@张三（身高约一米一），两人牵手间距一臂；[00-00.8s]远景镜头缓慢推近，母子缓步前行，@张三仰头拽动母亲衣角，梧桐树影斑驳、馄饨摊白雾轻晃；[00.8-03.0s]@张三抬头张嘴说话，嘴唇随台词自然开合："妈妈，我要吃莽莽"（奶声奶气，尾音拖长，渴望语气）；一旁的@李梅保持双唇闭合、嘴角含笑低头倾听，不发一言，@画风锁+暖金橙主调黄昏柔焦光晕，16:9，3秒`,
- doubao:`（视频镜头建议平台：即梦/MiniMax H3；豆包 Seedream 用于首帧基准图）\n首帧基准图：黄昏@光大街边，前景馄饨摊白雾与暖黄灯串虚化，中景画面左侧三分之一为成年女性@李梅（米白针织开衫浅杏连衣裙，栗色齐肩微卷发，身高约一米六五），右侧三分之二为孩童@张三（天蓝小熊耳连帽卫衣，身高约一米一，幼儿头身比），孩童仰头拽住母亲衣角；远景居民楼暖黄窗灯虚化；黄昏金橙色温柔和平射光（高光不过曝保留双方面部细节），三分法构图+街道纵深引导线，@画风锁+暖金橙主调黄昏柔焦光晕，16:9，4K`,
- jimeng:`素材位1：@李梅全身立绘；素材位2：@张三全身立绘；素材位3：@光大街边空镜。\n黄昏@光大街边人行道，画面左侧三分之一为成年女性@李梅（米白针织开衫，身高约一米六五），右侧三分之二为孩童@张三（天蓝小熊耳卫衣，身高约一米一，幼儿比例），两人牵手前行。[0-0.8秒]远景镜头缓慢推近，@张三仰头拽母亲衣角，树影斑驳白雾轻晃；[0.8-3秒]@张三抬头张嘴说话，嘴唇随台词自然开合："妈妈，我要吃莽莽"（奶声奶气尾音拖长，渴望语气），童声对白与脚步环境音同步生成；一旁的@李梅保持双唇闭合、嘴角含笑低头倾听不发一言。人物与场景外观全程与参考素材保持一致，@画风锁+暖金橙主调黄昏柔焦光晕，16:9`,
- comfy:`[I2V · Wan2.1 · 首帧=基准图 · 模式B]\nA mother in beige cardigan @李梅 walks with her small son in blue bear-ear hoodie @张三 on a dusk old street: mother on left third (165cm), child on right two-thirds (110cm, child proportions), holding hands; [00-00.8s] distant slow push-in, child tugs her hem looking up, tree shadows and food-stall steam drifting; [00.8-03s] child speaks with natural lip movement while mother keeps lips gently closed smiling down listening\n-- 中文存档：母子买莽莽镜头1（差分编译同公用版，模式B：双方嘴唇自然闭合或极轻微闭合微动，预留后期Lip-Sync口型合成干净基底）\n-- 节点：Wan2.1 I2V + OpenPose 0.7 双骨架 ｜ Motion 0.5（行走缓速）｜ 无声输出\n-- 台词音频：MiniMax 儿童预设 "(excited)妈妈，我要吃莽莽(mǎng-mǎng拖长)" → LatentSync/剪映对口型\n负向：全员张嘴, 双人融合, 手指粘连, 成人比例孩童, 文字, 水印`,
- h3:`[推近]缓慢\n参考图1：@李梅面部特写；参考图2：@张三面部特写（保持双方面部与参考一致，眨眼频率自然约三秒一次轻微眨眼）。画面左侧三分之一为成年女性@李梅（一米六五，米白开衫），右侧三分之二为孩童@张三（一米一，天蓝小熊耳卫衣，幼儿头身比），牵手前行于@光大街边。[00-00.8s]远景缓推，@张三仰头拽母亲衣角（微表情：眼睛瞪圆渴望、小嘴微嘟即开），树影斑驳白雾轻晃；[00.8-03s]@张三抬头张嘴说话，嘴唇随台词自然开合："妈妈，我要吃莽莽"（奶声奶气尾音拖长，渴望语气）；一旁的@李梅保持双唇闭合、嘴角含笑低头倾听。声音：童声对白、街道市井嘈杂、轻脚步，@画风锁+暖金橙主调黄昏柔焦光晕，16:9，3秒`,
- kling:`（本镜为对白 A 级镜头：首推即梦/MiniMax H3 模式A；若用可灵建议改模式B）\n首帧=图1（@李梅左三分之一@张三右三分之二牵行首帧基准图）。\n主体：米白开衫母亲@李梅（左，一米六五）与天蓝卫衣孩童@张三（右，一米一，幼儿比例）牵手行于@光大街边；运动：镜头缓慢推近，孩童仰头拽母亲衣角，随后抬头张嘴说台词"妈妈，我要吃莽莽"（嘴唇自然开合），母亲双唇闭合含笑低头倾听不发一言；场景：黄昏老街、梧桐树影、馄饨摊白雾、暖黄窗灯；镜头语言：远景缓推，暖金橙主调，黄昏柔焦光晕，@画风锁+暖金橙主调黄昏柔焦光晕，16:9，3秒`}},
-ep3:{name:'例子1 · 镜头3 过肩承诺（A级 · 4秒 · 口型排他锁）',score:'9.4 / 10',note:'<b>例子1 第 3 镜</b>（中间隔 1.5s 白雾 Cutaway 缓冲镜——B 级降本：零视频生成，剪映关键帧缓推+粒子层）。台词 15 字紧凑档 ≈3.4s + 抚头铺垫收势 = 4s；手部防崩三件套：腕部截断入画、五指并拢、收势有交代；戏眼微表情「说等爸爸时眼神先亮后垂」。',plats:{
- std:`过肩镜头：越过孩童@张三肩部拍米白开衫母亲@李梅（主体占画面左侧三分之二）；[00-00.4s]@李梅垂眸含笑，右手五指自然并拢抬出入画抚向画外孩子头顶；[00.4-03.6s]她张嘴说话，嘴唇随台词自然开合："张三，上次我们才吃了，等爸爸回来给你买"（温柔轻叹，语速轻缓），说到"等爸爸"时眼神先亮起随即轻轻垂下，睫毛轻颤一次，嘴角笑意微收；[03.6-04.0s]抚头的手轻拍一下收势；肩前@张三保持静止虚化剪影、双唇闭合倾听不张嘴，@画风锁+暖金橙主调黄昏柔焦光晕，16:9，4秒`,
- doubao:`（视频镜头建议平台：MiniMax H3/即梦；豆包 Seedream 用于过肩首帧基准图）\n过肩首帧基准图：越过孩童@张三右肩与后脑（画面右下角虚化剪影）拍摄成年女性@李梅：前景孩童肩部虚化，中景@李梅居画面左侧三分之二，米白针织开衫垂眸含笑望向画外右下方，右手抬至胸前；背景@光大街边黄昏街道虚化（树影+暖黄灯串光斑）；黄昏金橙色温柔和平射光，高光不过曝保留面部细节；近景过肩构图，@画风锁+暖金橙主调黄昏柔焦光晕，16:9，4K`,
- jimeng:`素材位1：@李梅全身立绘；素材位2：@张三全身立绘；素材位3：@光大街边空镜。\n近景过肩镜头：越过孩童@张三的肩部拍摄@李梅（主体占画面左侧三分之二）。[0-0.4秒]@李梅垂眸含笑，右手五指自然并拢抬入画抚向画外孩子头顶；[0.4-3.6秒]她张嘴说话，嘴唇随台词自然开合："张三，上次我们才吃了，等爸爸回来给你买"（温柔轻叹），说到"等爸爸"时眼神先亮起随即轻轻垂下，睫毛轻颤一次，嘴角笑意微收；[3.6-4秒]抚头的手轻拍一下收势。肩前@张三保持静止虚化剪影、双唇闭合倾听不张嘴。温软女声对白与轻微衣料摩擦声同步生成。人物与场景外观全程与参考素材保持一致，@画风锁+暖金橙主调黄昏柔焦光晕，16:9`,
- comfy:`[I2V · Wan2.1 · 首帧=过肩基准图 · 模式B]\nOver-the-shoulder shot past a small boy @张三 (blurred silhouette, lower right) onto a gentle mother @李梅 in beige cardigan (left two-thirds): [00-00.4s] she lowers her gaze smiling, right hand with fingers naturally together reaches into frame to pat off-screen child's head; [00.4-03.6s] lips keep naturally closed or near-closed micro-movement (clean base for post Lip-Sync), while saying line her eyes light up then gently lower at "等爸爸", lashes flutter once, smile slightly recedes; [03.6-04s] hand pats once and withdraws; boy's shoulder static, lips closed\n-- 中文存档：过肩承诺（差分同公用版；模式B闭嘴基底声明）\n-- 节点：Wan2.1 I2V + OpenPose 0.6 ｜ Motion 0.4（静态情绪）｜ 无声输出\n-- 台词音频：Fish Audio 克隆 "(softly)张三，上次我们才吃了，(breath)等爸爸回来给你买"（4.5字/秒，"买"降调）→ 剪映对口型\n负向：多人张嘴, 口型大开, 手指畸形, 身份漂移, 背景闪烁, 水印`,
- h3:`[固定]\n近景过肩，参考图1：@李梅面部特写（保持@李梅面部与参考一致，眨眼频率自然约三秒一次轻微眨眼），参考图2：@张三立绘（仅取肩部虚化）。[00-00.4s]@李梅垂眸含笑，右手五指并拢抬入画抚向画外孩子头顶（手部至腕部入画）；[00.4-03.6s]她开口说台词，嘴唇随台词自然开合："张三，上次我们才吃了，等爸爸回来给你买"（温柔轻叹、4.5字/秒、"等爸爸"前轻换气），说到"等爸爸"时眼神先亮起随即轻轻垂下，睫毛轻颤一次，嘴角笑意未消微微收拢；[03.6-04s]抚头的手轻拍一下收势。肩前@张三后脑与肩部保持静止虚化、双唇闭合倾听不张嘴。环境音：黄昏街道市井嘈杂低鸣；对白：温软女声与轻微衣料摩擦声同步，@画风锁+暖金橙主调黄昏柔焦光晕，16:9，4秒`,
- kling:`（本镜为微表情情感 A 级：首推 MiniMax H3；若用可灵）\n首帧=图1（过肩基准图）。\n主体：米白开衫母亲@李梅（过肩主体）；运动：镜头固定，她垂眸含笑抬右手（五指并拢）抚向画外孩子头顶，开口说台词"张三，上次我们才吃了，等爸爸回来给你买"（嘴唇自然开合，温柔轻叹），说"等爸爸"时头部微沉眼神下移，睫毛轻颤，末了手轻拍一下收势；肩前孩童@张三后脑静止虚化、双唇闭合倾听；场景：黄昏老街虚化背景、暖黄灯光斑；镜头语言：固定近景过肩，暖金橙主调，柔焦光晕，@画风锁+暖金橙主调黄昏柔焦光晕，16:9，4秒`}}
+const states={
+ create:{ name:'Create', kicker:'第一幕 · 创作', next:'Generate', number:'[02]', station:0, portal:TO_EARTH, background:'mars-background',
+   facts:[['角色系统','9 大专业智能体协同：编剧 · 导演 · 美术 · 场记 · 生图 · 视频 · 评分 · 剪辑 · 复盘'],
+          ['两级记忆','全局权威知识库 × 剧集圣经与 @纯中文资产注册表，跨集状态快照防穿帮'],
+          ['分镜工程','14 字段标准分镜表 · S/A/B 算力分级 · Cutaway 救场缓冲镜 · 180 度轴线守卫'],
+          ['声画先行','台词按 字数÷语速 精算到 0.5 秒，重音秒位倒推视频动作节点']] },
+ generate:{ name:'Generate', kicker:'第二幕 · 生成', next:'Refine', number:'[03]', station:6, portal:TO_VENUS, background:'earth-background',
+   facts:[['KB 词典','12 册高密度工业词库——查表编译，拒绝空洞形容词自由造句'],
+          ['Skill 插件','21 个独立插件按需加载，六大平台语法互斥隔离防污染'],
+          ['差分编译','视频 Prompt = 20% @资产锚点 + 80% 纯物理动态，释放模型算力'],
+          ['平台适配','豆包 Seedream · 即梦 · ComfyUI · MiniMax H3 · 可灵 · 公用默认']] },
+ refine:{ name:'Refine', kicker:'第三幕 · 精修', next:'教学文档', number:'[DOC]', station:7, image:MERCURY, background:'venus-background',
+   facts:[['十分门禁','10 分制硬性质检，低于 9.0 一票否决，强制打回重写'],
+          ['崩坏黑名单','17 种物理崩坏模式速查 + R9 复盘自进化动态档案区'],
+          ['剪映后期','真实菜单级剪辑调音指南，四轨混音 dB 规范与 J/L-Cut 遮瑕'],
+          ['自进化','实测复盘反哺词典与插件——框架越用越强，点击传送门进入教学文档']] }
 };
-let curLab='asset',curPlat='std';
-function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
-function hl(s){return esc(s)
-  .replace(/(@画风锁)/g,'<span class="lock">$1</span>')
-  .replace(/(@[\u4e00-\u9fa5]{2,8})(?=[^\u4e00-\u9fa5]|$)/g,'<span class="at">$1</span>')
-  .replace(/(\[\d{1,2}(?:\.\d)?-\d{1,2}(?:\.\d)?[秒s]\]|\[\d-\d(?:\.\d)?秒\]|\[[\u4e00-\u9fa5]{2}\]|\[0-\d(?:\.\d)?秒\])/g,'<span class="sec">$1</span>');}
-function renderLab(){
-  const L=LABS[curLab];
-  document.getElementById('labName').textContent=L.name+(curPlat!=='std'?` · ${document.querySelector('#platSel button.on').textContent}版`:' · 公用标准版');
-  document.getElementById('labNote').innerHTML=L.note;
-  document.getElementById('labPrompt').innerHTML=hl(L.plats[curPlat]||L.plats.std);
-  document.getElementById('labScore').textContent=L.score;
-  document.getElementById('labScoreNote').textContent='（通过质量门禁 · 逐项明细见产出文档 · Prompt 实际产出复盘：占位）';
-}
-document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));t.classList.add('on');curLab=t.dataset.lab;renderLab();});
-document.querySelectorAll('#platSel button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#platSel button').forEach(x=>x.classList.remove('on'));b.classList.add('on');curPlat=b.dataset.p;renderLab();});
-document.getElementById('copyBtn').onclick=function(){
-  const txt=LABS[curLab].plats[curPlat]||LABS[curLab].plats.std;
-  navigator.clipboard.writeText(txt).then(()=>{this.textContent='✓ 已复制';this.classList.add('okd');setTimeout(()=>{this.textContent='📋 复制 Prompt';this.classList.remove('okd')},1600);},()=>{alert('复制失败，请手动选择文本复制');});
-};
-renderLab();
+let current='create';   /* 链：create -> generate -> refine（终态点击传送门进入 doc.html） */
 
-/* ================= 评分模拟器 ================= */
-const VITEMS=[
-{g:"资产与编译（V1/V2）",items:[
- {k:"V1",t:"引用了未注册资产或名称含英文/数字/符号（如 @LiMei_v2）",v:1.5,veto:1},
- {k:"V2",t:"外貌描写超过 2 个骨相词 / 重复堆砌穿搭（违反 20% 锚点差分）",v:1.5,veto:1}]},
-{g:"动作与时间轴（V3/V4/V7）",items:[
- {k:"V3",t:"单镜含 ≥2 个主动作，或提示词内隐含机位切换（先全景再特写）",v:1.5,veto:1},
- {k:"V4",t:"缺秒级节点 / 节点超过 3 个 / 节点间隔不足 1 秒",v:1.0},
- {k:"V7",t:"有台词但无「字数÷语速」时长测算",v:0.5}]},
-{g:"口型双保险（V5/V6）",items:[
- {k:"V5",t:"多人 + 台词，未写倾听者「双唇闭合」口型排他锁（崩坏05）",v:1.5,veto:1},
- {k:"V6",t:"未声明口型模式 A/B；或模式B未写闭嘴基底（崩坏16）",v:1.0,veto:1}]},
-{g:"空间与运镜（V8/V9）",items:[
- {k:"V8",t:"≥2 个人物同框但无空间分区句式（左三分之一/右三分之二+体型差）",v:1.0,veto:1},
- {k:"V9",t:"运镜 ≥2 种（如推近+环绕连用）或幅度与内容矛盾",v:1.0}]},
-{g:"防崩与规范（V10/V11/V12）",items:[
- {k:"V10",t:"含黑名单触发词：十指交叉 / 360度转身 / 狂奔 / 瞬移 / 强逆光首帧等",v:1.0,veto:1},
- {k:"V11",t:"末尾未逐字挂载 @画风锁",v:1.0},
- {k:"V12",t:"缺时长秒数或画幅标注",v:0.5}]}
-];
-const cl=document.getElementById('checkList');
-VITEMS.forEach(g=>{
-  const gd=document.createElement('div');gd.className='cgroup';
-  gd.innerHTML=`<div class="gt">▍${g.g}</div>`+g.items.map((it,i)=>`<label class="ck"><input type="checkbox" data-v="${it.v}" data-veto="${it.veto||0}" data-k="${it.k}"><span><b style="font-family:var(--mono);color:${it.veto?'var(--red)':'var(--orange)'}">${it.k}</b>${it.veto?'<span class="veto">否决</span>':''}<br>${it.t}</span></label>`).join('');
-  cl.appendChild(gd);
-});
-cl.addEventListener('change',calcScore);
-function calcScore(){
-  let ded=0,items=[],veto=false;
-  cl.querySelectorAll('input:checked').forEach(c=>{
-    const v=+c.dataset.v;ded+=v;items.push({k:c.dataset.k,v:v,veto:c.dataset.veto==='1'});
-    if(c.dataset.veto==='1')veto=true;
-  });
-  let score=Math.max(0,10-ded);if(veto)score=Math.min(score,8.9);
-  score=Math.round(score*10)/10;
-  const bs=document.getElementById('bigScore'),vd=document.getElementById('verdict'),dl=document.getElementById('deductList');
-  bs.textContent=score.toFixed(1);
-  if(score>=9.0){bs.style.color='var(--green)';vd.style.color='var(--green)';vd.textContent='✅ 放行写入产出文档';}
-  else{bs.style.color='var(--red)';vd.style.color='var(--red)';vd.textContent='⛔ 打回！强制重写（'+(veto?'触发一票否决项':'累计扣分过多')+' · 修改指令随评分下发）';}
-  dl.innerHTML=items.length?items.map(i=>`<div><b style="font-family:var(--mono);color:${i.veto?'var(--red)':'var(--orange)'}">${i.k}</b> −${i.v.toFixed(1)}${i.veto?' <span style="color:var(--red)">[否决]</span>':''}</div>`).join(''):'<div style="color:var(--txt3)">（无扣分 · 逐项全部通过）</div>';
-}
-function resetScorer(){cl.querySelectorAll('input').forEach(c=>c.checked=false);calcScore();}
+/* ============ DOM refs ============ */
+const $=id=>document.getElementById(id);
+const main=document.querySelector('.experience');
+const portalBtn=$('portal'), portalVideo=$('portal-video'), portalImage=$('portal-image');
+const transitionVideo=$('transition-video');
+const portalCanvas=$('portal-canvas'), sceneCanvas=$('scene-canvas');
+const pctx=portalCanvas.getContext('2d'), sctx=sceneCanvas.getContext('2d');
 
-/* ================= nav scroll ================= */
-const links=document.querySelectorAll('nav a');
-const secs=[...document.querySelectorAll('section')];
-window.addEventListener('scroll',()=>{
-  let cur=secs[0].id;
-  secs.forEach(s=>{if(window.scrollY>=s.offsetTop-90)cur=s.id;});
-  links.forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+cur));
-},{passive:true});
+/* ============ 7. THE PORTAL — state ============ */
+let rotX=0,rotY=0,targetX=0,targetY=0;
+let expansion=0, maskScale=1, canvasOpacity=1;
+let transitionActive=false, frozenScene=false, busy=false;
+let firstRender=true;
+
+const easeInOutCubic=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
+function animateValue(setter,duration){return new Promise(res=>{const t0=performance.now();
+  (function step(now){const t=Math.min(1,(now-t0)/duration);setter(easeInOutCubic(t));
+    t<1?requestAnimationFrame(step):res();})(t0);});}
+const twoRAF=()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+function mediaReady(video,timeout){return new Promise(res=>{let done=false;const fin=()=>{if(!done){done=true;res();}};
+  video.addEventListener('canplaythrough',fin,{once:true});video.addEventListener('canplay',fin,{once:true});
+  video.addEventListener('error',fin,{once:true});setTimeout(fin,timeout);});}
+const ended=video=>new Promise(res=>{video.addEventListener('ended',res,{once:true});setTimeout(res,9000);});
+
+/* ---- canvases ---- */
+function sizeCanvas(canvas,ctx){const d=Math.min(devicePixelRatio||1,2);
+  canvas.width=innerWidth*d;canvas.height=innerHeight*d;
+  canvas.style.width=innerWidth+'px';canvas.style.height=innerHeight+'px';
+  ctx.setTransform(d,0,0,d,0,0);}
+function resizeCanvas(){sizeCanvas(portalCanvas,pctx);if(!frozenScene)sizeCanvas(sceneCanvas,sctx);}
+addEventListener('resize',resizeCanvas);
+
+/* ---- cover / contain draw + shade ---- */
+function drawCover(ctx,media){const mw=media.videoWidth||media.naturalWidth||16;
+  const mh=media.videoHeight||media.naturalHeight||9;if(!mw||!mh)return;
+  const scale=Math.max(innerWidth/mw,innerHeight/mh),w=mw*scale,h=mh*scale;
+  ctx.drawImage(media,(innerWidth-w)/2,(innerHeight-h)/2,w,h);}
+function drawContain(ctx,media){const mw=media.videoWidth||media.naturalWidth||16;
+  const mh=media.videoHeight||media.naturalHeight||9;if(!mw||!mh)return;
+  const scale=Math.min(innerWidth/mw,innerHeight/mh),w=mw*scale,h=mh*scale;
+  ctx.drawImage(media,(innerWidth-w)/2,(innerHeight-h)/2,w,h);}
+function drawShade(ctx){const g=ctx.createLinearGradient(0,innerHeight*.52,0,innerHeight);
+  g.addColorStop(0,'rgba(0,0,0,0)');g.addColorStop(1,'rgba(0,0,0,.88)');
+  ctx.fillStyle=g;ctx.fillRect(0,innerHeight*.52,innerWidth,innerHeight*.48);}
+
+/* ---- 圆角矩形 44 点采样 + 焦距 850 伪透视投影 ---- */
+function roundedPoints(w,h,r){r=Math.min(r,w/2,h/2);const pts=[];
+  const arcs=[[w/2-r,-h/2+r,-Math.PI/2,0],[w/2-r,h/2-r,0,Math.PI/2],
+              [-w/2+r,h/2-r,Math.PI/2,Math.PI],[-w/2+r,-h/2+r,Math.PI,Math.PI*1.5]];
+  for(const[cx,cy,a0,a1]of arcs)for(let i=0;i<=10;i++){const a=a0+(a1-a0)*i/10;
+    pts.push([cx+r*Math.cos(a),cy+r*Math.sin(a)]);}
+  return pts;}
+function project(x,y,cx,cy,rx,ry){const ax=rx*Math.PI/180,ay=ry*Math.PI/180;
+  const xx=x*Math.cos(ay),yy=y*Math.cos(ax),z=x*Math.sin(ay)-y*Math.sin(ax),p=850/(850+z);
+  return[cx+xx*p,cy+yy*p];}
+
+/* ---- frame loop ---- */
+let lastT=performance.now();
+function draw(now){const dt=Math.min(40,now-lastT);lastT=now;
+  rotX+=(targetX-rotX)*Math.min(1,dt*.009);
+  rotY+=(targetY-rotY)*Math.min(1,dt*.009);
+  pctx.clearRect(0,0,innerWidth,innerHeight);
+  if(frozenScene){pctx.drawImage(sceneCanvas,0,0,innerWidth,innerHeight);drawShade(pctx);}
+  const rect=portalBtn.getBoundingClientRect(),e=expansion;
+  const rcx=rect.left+rect.width/2,rcy=rect.top+rect.height/2;
+  const cx=rcx+(innerWidth/2-rcx)*e;
+  const cy=rcy+(innerHeight/2-rcy)*e;
+  const scale=e?1:maskScale;
+  const w=(rect.width+(innerWidth-rect.width)*e)*scale;
+  const h=(rect.height+(innerHeight-rect.height)*e)*scale;
+  const r=90*(1-e)*scale,rx=rotX*(1-e),ry=rotY*(1-e);
+  if(w>1&&h>1){
+    const pts=roundedPoints(w,h,r);pctx.save();pctx.globalAlpha=canvasOpacity;
+    pctx.beginPath();
+    pts.forEach((p,i)=>{const s=project(p[0],p[1],cx,cy,rx,ry);
+      i?pctx.lineTo(s[0],s[1]):pctx.moveTo(s[0],s[1]);});
+    pctx.closePath();pctx.clip();
+    pctx.fillStyle='#030303';pctx.fillRect(0,0,innerWidth,innerHeight);
+    /* 静态图片用 contain 完整居中展示；视频保持 cover 铺满 */
+    if(transitionActive)drawCover(pctx,transitionVideo);
+    else if(states[current].image)drawContain(pctx,portalImage);
+    else drawCover(pctx,portalVideo);
+    if(transitionActive)drawShade(pctx);
+    pctx.restore();}
+  requestAnimationFrame(draw);}
+
+/* ---- pointer tilt ---- */
+addEventListener('pointermove',e=>{if(busy)return;
+  targetY=(e.clientX/innerWidth-.5)*37.4;targetX=(e.clientY/innerHeight-.5)*-33;});
+document.addEventListener('mouseleave',()=>{targetX=0;targetY=0;});
+
+/* ============ render() ============ */
+function render(){const s=states[current];
+  main.dataset.planet=current;
+  $('act-kicker').textContent=s.kicker;
+  $('next-name').textContent=s.next;$('next-number').textContent=s.number;
+  portalBtn.setAttribute('aria-label',current==='refine'?'打开教学文档':'进入下一幕');
+  const facts=$('facts');facts.innerHTML='';
+  s.facts.forEach(([k,v])=>{const d=document.createElement('div');d.className='fact';
+    d.innerHTML=`<dt>${k}</dt><dd>${v}</dd>`;facts.appendChild(d);});
+  const list=document.querySelector('.planet-list');list.innerHTML='';
+  stations.forEach((st,i)=>{const sp=document.createElement('span');
+    sp.className='planet-item'+(i===s.station?' active':'');
+    sp.innerHTML=`<a href="${st.href}">${st.label}</a>`;list.appendChild(sp);});
+  if(!firstRender){list.classList.remove('is-switching');void list.offsetWidth;list.classList.add('is-switching');}
+  firstRender=false;
+  document.querySelectorAll('.background').forEach(v=>v.classList.toggle('is-visible',v.id===s.background));
+  if(s.image){portalImage.src=s.image;portalImage.style.display='';portalVideo.style.display='none';}
+  else{portalVideo.style.display='';portalImage.style.display='none';
+    if(portalVideo.src!==s.portal)portalVideo.src=s.portal;}
+}
+
+/* ============ 8. TRAVEL ============ */
+function revealMask(){main.classList.remove('mask-revealing');void main.offsetWidth;
+  main.classList.add('mask-revealing');maskScale=0;
+  return animateValue(v=>maskScale=v,1050);}
+function revealPlanetContent(){main.classList.remove('content-revealing');void main.offsetWidth;
+  main.classList.add('content-revealing');}
+
+async function travel(){
+  if(busy)return;
+  if(current==='refine'){                       /* 终态：传送门 = 教学文档入口 */
+    document.querySelector('.loading').textContent='正在打开教学文档…';
+    main.classList.add('is-loading');
+    setTimeout(()=>location.href='doc/doc.html',350);return;}
+  busy=true;targetX=0;targetY=0;
+  const next=current==='create'?'generate':'refine';
+  try{
+    transitionVideo.src=states[current].portal;transitionVideo.load();
+    main.classList.add('is-loading');
+    await mediaReady(transitionVideo,1600);
+    main.classList.remove('is-loading','content-revealing','mask-revealing');
+    main.classList.add('is-transitioning');
+    transitionVideo.currentTime=0;transitionVideo.playbackRate=1.3;
+    canvasOpacity=1;transitionActive=true;
+    try{await transitionVideo.play();}catch(e){}
+    await animateValue(v=>expansion=v,1100);    /* 窗口吞没屏幕 */
+    await ended(transitionVideo);
+    /* 冻结末帧进 #scene-canvas */
+    sctx.fillStyle='#000';sctx.fillRect(0,0,innerWidth,innerHeight);
+    drawCover(sctx,transitionVideo);frozenScene=true;
+    current=next;main.classList.add('is-committing');render();await twoRAF();
+    transitionActive=false;expansion=0;maskScale=0;canvasOpacity=1;
+    main.classList.remove('is-transitioning','is-committing');
+    const mr=revealMask();setTimeout(revealPlanetContent,100);await mr;
+    setTimeout(()=>{transitionVideo.removeAttribute('src');transitionVideo.load();},450);
+    busy=false;
+  }catch(err){
+    transitionActive=false;expansion=0;maskScale=1;canvasOpacity=1;
+    main.classList.remove('is-transitioning','is-committing','is-loading');
+    busy=false;}
+}
+portalBtn.addEventListener('click',travel);
+addEventListener('wheel',()=>{                     /* 滚轮上下滑动 = 等效点击传送门跳转 */
+  if(busy||!document.body.classList.contains('preload-complete'))return;
+  travel();},{passive:true});
+
+/* ============ 6. PRELOADER ============ */
+function runPreloader(){const pv=$('preloader-video'),value=$('preloader-value'),
+    count=$('preloader-count'),logo=$('floating-logo'),box=$('preloader');
+  let finished=false;
+  const finish=()=>{if(finished)return;finished=true;
+    value.textContent='100';count.classList.add('is-leaving');
+    logo.classList.add('is-docked');
+    box.classList.add('is-background');
+    document.body.classList.add('preload-complete');
+    startExperience();
+    setTimeout(()=>count.remove(),750);
+    setTimeout(()=>logo.classList.add('is-settled'),2000);};
+  pv.addEventListener('loadedmetadata',()=>{pv.playbackRate=Math.max(.25,pv.duration/3);
+    pv.play().catch(finish);});
+  pv.addEventListener('ended',finish);pv.addEventListener('error',finish);
+  setTimeout(finish,8000);                       /* 离线/加载失败兜底：8s 后照常进入 */
+  (function tick(){if(finished)return;
+    value.textContent=Math.round(pv.currentTime/(pv.duration||1)*100);
+    requestAnimationFrame(tick);})();}
+
+async function startExperience(){
+  await mediaReady(states[current].image?portalImage:portalVideo,3000);
+  await revealMask();
+  document.body.classList.add('intro-ready');
+  setTimeout(revealPlanetContent,850);}
+
+/* ============ 9. CUSTOM CURSOR ============ */
+const cursor=document.querySelector('.custom-cursor');
+const cursorDot=document.querySelector('.cursor-dot'),cursorOrbit=document.querySelector('.cursor-orbit');
+let cx2=innerWidth/2,cy2=innerHeight/2,px2=cx2,py2=cy2,cursorSeen=false;
+addEventListener('pointermove',e=>{px2=e.clientX;py2=e.clientY;
+  cursorSeen=true;cursor.classList.add('is-visible');});
+document.documentElement.addEventListener('mouseleave',()=>cursor.classList.remove('is-visible'));
+document.documentElement.addEventListener('mouseenter',()=>cursor.classList.add('is-visible'));
+addEventListener('wheel',e=>{                       /* 滚轮=指针在场：点亮光标并吸收事件自带坐标 */
+  if(e.clientX||e.clientY){px2=e.clientX||px2;py2=e.clientY||py2;}
+  cursor.classList.add('is-visible');},{passive:true});
+portalBtn.addEventListener('pointerenter',()=>cursor.classList.add('is-enter'));
+portalBtn.addEventListener('pointerleave',()=>cursor.classList.remove('is-enter'));
+function cursorLoop(){cx2+=(px2-cx2)*.2;cy2+=(py2-cy2)*.2;
+  cursorDot.style.left=px2+'px';cursorDot.style.top=py2+'px';
+  cursorOrbit.style.left=cx2+'px';cursorOrbit.style.top=cy2+'px';
+  requestAnimationFrame(cursorLoop);}
+
+/* ============ 13. 右上角菜单（下拉 + 外点关闭） ============ */
+const menuWrap=document.querySelector('.menu-wrap'),menuBtn=document.getElementById('menuBtn');
+function closeMenu(){menuWrap.classList.remove('open');menuBtn.setAttribute('aria-expanded','false');}
+menuBtn.addEventListener('click',e=>{e.stopPropagation();
+  const open=menuWrap.classList.toggle('open');
+  menuBtn.setAttribute('aria-expanded',String(open));});
+document.addEventListener('click',e=>{if(!menuWrap.contains(e.target))closeMenu();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMenu();});
+menuWrap.querySelectorAll('.menu-pop a').forEach(a=>a.addEventListener('click',closeMenu));
+
+/* ============ 12. BOOT ORDER ============ */
+document.querySelectorAll('.background').forEach(v=>{try{v.pause();v.currentTime=0;}catch(e){}});
+resizeCanvas();render();
+requestAnimationFrame(draw);requestAnimationFrame(cursorLoop);
+runPreloader();
 </script>
 </body>
 </html>

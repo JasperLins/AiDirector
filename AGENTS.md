@@ -23,7 +23,8 @@
 ```text
 ai-video-framework/（本项目根 D:\AiDirector）
 ├── AGENTS.md                 # 本文件：总控路由（状态机/角色/门禁/自进化）
-├── index.html                # 可视化展示门户（浏览器双击打开）
+├── index.html                # 沉浸式影院首页（浏览器双击打开）
+├── doc/                      # 文档目录：doc.html 教学门户 · library.html 源码文库 · build_library.py 生成器
 ├── memory/global/            # 全局记忆层：权威知识库 + 复盘避坑黑名单
 ├── memory/projects/[剧名]/   # 剧集记忆层：剧集圣经 / 资产注册表 / 跨集状态快照
 ├── kb_library/KB_01~KB_12    # 12 个专业词典与编译器规范（查表编译，拒绝自由造句）
@@ -51,7 +52,7 @@ ai-video-framework/（本项目根 D:\AiDirector）
 | "出视频提示词/按秒拆镜头" | 阶段Ⅲ 提示词 | AI 视频创作提示词专家 | skill_vid_second_slicer、skill_vid_method_selector + 指定平台 plat_* | KB_08、KB_09、KB_11 |
 | "配音/克隆音色/TTS" | 阶段Ⅲ 音频 | 美术指导（音色）+ 剪辑调音大师 | skill_tts_voice_clone_workflow | KB_12 |
 | "剪辑/卡点/转场/音效" | 阶段Ⅲ 后期 | 剪映剪辑大师兼调音大师 | skill_jianying_edit_sound_master | KB_12 |
-| "评分/质检" | 质量门禁（每条 Prompt 必过） | AI 提示词质量评分专家 | skill_qc_prompt_scorer_10pt | KB_10 + 黑名单 |
+| "评分/质检" | 质量门禁（每条 Prompt 必过） | AI 提示词质量评分专家 | skill_qc_prompt_scorer_10pt | KB_10、KB_09（黑名单按需） |
 | "复盘/翻车了/优化框架" | 复盘自进化 | 复盘自进化引擎 | skill_retrospective_optimizer | KB_09、KB_10、黑名单 |
 | "新建一部剧" | 初始化 | 总控 | 在 memory/projects/ 建三件套 | 全部 |
 

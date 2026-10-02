@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AiDirector · 教学文档（全景门户与实战教学）</title>
+<style>
+:root{
+  --bg:#0E0E0D;--bg2:#121110;--panel:rgba(255,255,255,0.045);--panel-solid:#171716;--panel2:#121211;
+  --line:rgba(255,255,255,0.12);--line2:rgba(255,255,255,0.28);
+  --cyan:#F2FF59;--cyan-dim:rgba(242,255,89,0.42);--orange:#C0A16B;--gold:#F2FF59;
+  --green:#8fd6a8;--red:#e08a8a;--purple:#8F93AD;--pink:#b8a8a8;
+  --txt:#A0A0A2;--txt2:#8B8B8D;--txt3:#67676A;--title:#E0E0E2;
+  --accent-bg:#F2FF59;--accent-fg:#0E0E0D;--code-bg:#161614;--code-txt:#C4C4C6;
+  --glass-bg:rgba(255,255,255,0.08);--glass-bd:rgba(255,255,255,0.4);
+  --nav-bg:rgba(14,14,13,0.88);--bar-fg:#0E0E0D;--well:#080d18;
+  --mono:'SF Pro',Menlo,Consolas,monospace;
+  --sans:'SF Pro','PingFang SC','HarmonyOS Sans SC','Microsoft YaHei',system-ui,sans-serif;
+}
+html[data-theme="light"]{
+  --bg:#ffffff;--bg2:#fafaf9;--panel:rgba(255,255,255,0.92);--panel-solid:#ffffff;--panel2:#f7f6f4;
+  --line:rgba(83,67,66,0.14);--line2:rgba(83,67,66,0.30);
+  --cyan:#49378B;--cyan-dim:rgba(73,55,139,0.45);--orange:#6f5a33;--gold:#49378B;
+  --green:#2e7d4f;--red:#b04a4a;--purple:#6E62A8;--pink:#8a6a6a;
+  --txt:#534342;--txt2:#7d6b68;--txt3:#a19490;--title:#49378B;
+  --accent-bg:#49378B;--accent-fg:#ffffff;--code-bg:#2b2735;--code-txt:#e6e4ea;
+  --glass-bg:rgba(73,55,139,0.06);--glass-bd:rgba(73,55,139,0.28);
+  --nav-bg:rgba(255,255,255,0.92);--bar-fg:#ffffff;--well:#f1eff7;
+}
+html[data-theme="light"] body{background-image:radial-gradient(circle at 50% -12%, rgba(73,55,139,0.045), transparent 46%)}
+html[data-theme="light"] .pill,html[data-theme="light"] .pill.o,html[data-theme="light"] .pill.p{background:rgba(73,55,139,0.06);border-color:rgba(73,55,139,0.32);color:#49378B}
+html[data-theme="light"] .plat-sel button{color:#49378B}
+html[data-theme="light"] h1 .grad{background:linear-gradient(90deg,#49378B 0%,#5E4BA6 60%,#8A7BC4 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+html[data-theme="light"] .stat,html[data-theme="light"] .kb-item,html[data-theme="light"] .role-card,
+html[data-theme="light"] .dcard,html[data-theme="light"] .check-panel,html[data-theme="light"] .result-panel{box-shadow:0 1px 3px rgba(83,67,66,0.08)}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background-color:var(--bg);color:var(--txt);font-family:var(--sans);line-height:1.65;
+  background-image:radial-gradient(circle at 50% -12%, rgba(255,255,255,0.07), transparent 46%);
+}
+a{color:var(--cyan);text-decoration:none}
+.wrap{max-width:1280px;margin:0 auto;padding:0 24px}
+
+/* ===== HERO HEADER ===== */
+header{border-bottom:1px solid var(--line);padding:44px 0 34px;position:relative;overflow:hidden}
+.top-bar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+.badge{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--txt);border:1px solid var(--glass-bd);padding:5px 14px;border-radius:999px;background:var(--glass-bg);backdrop-filter:blur(12px);letter-spacing:.08em}
+.badge::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--accent-bg);box-shadow:0 0 8px var(--cyan-dim);animation:pulse 1.8s infinite}
+@keyframes pulse{50%{opacity:.3;transform:scale(0.85)}}
+.compat-tags{display:flex;gap:8px;flex-wrap:wrap}
+.compat-tags span{font-family:var(--mono);font-size:11.5px;padding:4px 10px;border-radius:6px;background:rgba(255,255,255,0.04);border:1px solid var(--line2);color:var(--txt2)}
+h1{font-size:38px;margin:18px 0 12px;font-weight:900;letter-spacing:.01em;line-height:1.2;font-family:'Aalto','Arial Narrow',var(--sans)}
+h1 .grad{background:linear-gradient(90deg,#E0E0E2 0%,#B8B8BA 60%,#8C8C8E 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{color:var(--txt2);font-size:15px;max-width:960px;line-height:1.75}
+.hero-actions{display:flex;gap:12px;margin-top:22px;flex-wrap:wrap}
+.btn-primary{background:var(--accent-bg);color:var(--accent-fg);font-weight:800;padding:10px 22px;border-radius:999px;font-size:14px;display:inline-flex;align-items:center;gap:8px;transition:.2s}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(0,0,0,0.25)}
+.btn-sec{background:var(--glass-bg);border:1px solid var(--glass-bd);color:var(--txt);font-weight:600;padding:10px 20px;border-radius:999px;font-size:14px;display:inline-flex;align-items:center;gap:8px;backdrop-filter:blur(12px);transition:.2s}
+.btn-sec:hover{background:var(--line);color:var(--txt)}
+
+/* ===== KPI STATS ===== */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:14px;margin-top:28px}
+.stat{background:var(--panel);backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:12px;padding:14px 18px;position:relative;overflow:hidden;transition:.2s}
+.stat:hover{border-color:var(--line2);transform:translateY(-2px)}
+.stat::after{content:"";position:absolute;top:0;left:0;width:3px;height:100%;background:var(--accent-bg);opacity:.5}
+.stat:hover::after{opacity:1}
+.stat .num{display:flex;align-items:baseline;gap:6px;font-size:28px;font-weight:800;font-family:var(--mono);color:var(--txt)}
+.stat .num small{font-size:12px;font-weight:500;color:var(--txt3)}
+.stat .lbl{font-size:13px;font-weight:700;color:var(--txt2);margin-top:2px}
+.stat .desc{font-size:11.5px;color:var(--txt3);margin-top:2px}
+
+/* ===== STICKY NAV ===== */
+nav{position:sticky;top:0;z-index:99;background:var(--nav-bg);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;gap:4px;overflow-x:auto;padding:10px 24px;align-items:center}
+nav a{padding:8px 16px;font-size:13.5px;font-weight:600;color:var(--txt2);white-space:nowrap;border:1px solid transparent;border-radius:999px;transition:.2s;display:flex;align-items:center;gap:6px}
+nav a:hover{color:var(--txt);background:var(--line)}
+nav a.on{color:var(--accent-fg);background:var(--accent-bg)}
+nav a.hl-nav{color:var(--gold)}
+nav a.hl-nav.on{color:var(--accent-fg);background:var(--gold)}
+.theme-toggle{flex:none;width:34px;height:34px;padding:0;border-radius:50%;border:1px solid var(--glass-bd);background:var(--glass-bg);color:var(--accent-bg);font-size:16px;line-height:1;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;backdrop-filter:blur(12px);transition:transform .25s,background .2s,color .25s}
+.theme-toggle:hover{background:var(--line);transform:rotate(24deg)}
+
+/* ===== SECTION COMMON ===== */
+section{padding:56px 0 16px}
+.sec-head{margin-bottom:26px}
+.sec-tag{font-family:var(--mono);font-size:12px;color:var(--orange);letter-spacing:.22em;margin-bottom:6px;text-transform:uppercase}
+h2{font-size:28px;margin-bottom:8px;font-weight:800;display:flex;align-items:center;gap:10px;color:var(--title)}
+.sec-desc{color:var(--txt2);font-size:14.5px;max-width:940px}
+
+/* ===== DATA VISUALIZATION DASHBOARD ===== */
+.data-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:16px;margin-bottom:28px}
+.dcard{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 20px}
+.dcard h4{font-size:14px;color:var(--title);margin-bottom:6px;display:flex;flex-direction:column;align-items:flex-start;gap:3px}
+.dcard h4 span{font-family:var(--mono);font-size:11px;color:var(--cyan);white-space:nowrap;opacity:.85}
+.dcard .sub-t{font-size:12px;color:var(--txt3);margin-bottom:14px}
+.bar-stack{height:24px;border-radius:8px;overflow:hidden;display:flex;font-family:var(--mono);font-size:10px;font-weight:700;line-height:24px;text-align:center;margin-bottom:10px}
+.bar-legend{display:flex;flex-wrap:wrap;gap:8px 14px;font-size:12px;color:var(--txt2)}
+.bar-legend span{display:inline-flex;align-items:center;gap:5px}
+.bar-legend b{white-space:nowrap}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+.cmp-row{margin-bottom:10px}
+.cmp-row .lbl{display:flex;justify-content:space-between;align-items:baseline;gap:12px;font-size:12px;margin-bottom:4px;color:var(--txt2)}
+.cmp-row .lbl span{flex:1;min-width:0}
+.cmp-row .lbl b{white-space:nowrap;text-align:right}
+.cmp-track{height:10px;background:var(--well);border-radius:99px;overflow:hidden;border:1px solid var(--line)}
+.cmp-fill{height:100%;border-radius:99px}
+
+/* ===== ARCHITECTURE FLOW ===== */
+.flow{display:flex;flex-direction:column;gap:0;background:var(--panel2);border:1px solid var(--line);border-radius:16px;padding:24px}
+.flow-row{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
+.fnode{background:var(--panel-solid);border:1px solid var(--line2);border-radius:12px;padding:14px 18px;min-width:160px;flex:1;position:relative;transition:.22s}
+.fnode:hover{transform:translateY(-3px);border-color:rgba(255,255,255,0.55);box-shadow:0 8px 26px rgba(255,255,255,0.08)}
+.fnode .n{font-family:var(--mono);font-size:10.5px;color:var(--cyan);letter-spacing:.12em;margin-bottom:3px}
+.fnode .t{font-weight:700;font-size:14.5px;display:flex;align-items:center;gap:8px;color:var(--title)}
+.fnode .d{font-size:12px;color:var(--txt2);margin-top:6px;line-height:1.5}
+.flow-arrow{text-align:center;color:var(--cyan);font-size:12.5px;padding:10px 0;font-family:var(--mono);opacity:.85}
+
+/* ===== TEACHING & BOOTCAMP MODULE (NEW!) ===== */
+.bootcamp{display:grid;grid-template-columns:290px 1fr;gap:20px;background:var(--panel2);border:1px solid var(--line2);border-radius:16px;padding:22px}
+@media(max-width:920px){.bootcamp{grid-template-columns:1fr}}
+.step-nav{display:flex;flex-direction:column;gap:10px}
+.sbtn{background:var(--panel-solid);border:1px solid var(--line);border-radius:12px;padding:14px 16px;text-align:left;cursor:pointer;transition:.2s;position:relative}
+.sbtn:hover{border-color:var(--gold)}
+.sbtn.on{border-color:rgba(255,255,255,0.55);background:rgba(255,255,255,0.08)}
+.sbtn .sno{font-family:var(--mono);font-size:11px;color:var(--gold);letter-spacing:.1em;display:block}
+.sbtn .stitle{font-size:15px;font-weight:700;color:var(--title);margin:2px 0}
+.sbtn .ssub{font-size:12px;color:var(--txt3)}
+.step-stage{background:var(--panel-solid);border:1px solid var(--line);border-radius:14px;padding:24px;display:flex;flex-direction:column;gap:18px}
+.stage-head{border-bottom:1px solid var(--line);padding-bottom:14px}
+.stage-head .tag{font-family:var(--mono);font-size:12px;color:var(--gold)}
+.stage-head h3{font-size:21px;margin:4px 0 6px;color:var(--title)}
+.stage-head p{font-size:13.5px;color:var(--txt2)}
+.cmd-box{background:var(--code-bg);border:1px solid var(--line2);border-radius:12px;overflow:hidden}
+.cmd-bar{background:var(--line);padding:9px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line)}
+.cmd-bar span{font-size:12.5px;font-weight:700;color:var(--gold);font-family:var(--mono)}
+.cmd-body{padding:16px;font-family:var(--mono);font-size:13px;color:var(--code-txt);white-space:pre-wrap;line-height:1.75}
+.stage-cols{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:720px){.stage-cols{grid-template-columns:1fr}}
+.info-box{background:rgba(255,255,255,0.02);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.info-box h5{font-size:13px;color:var(--cyan);margin-bottom:8px;font-family:var(--mono)}
+.info-box.warn h5{color:var(--red)}
+.info-box ul{padding-left:18px;font-size:12.8px;color:var(--txt2)}
+.info-box li{margin-bottom:5px}
+
+/* ===== CHEAT SHEET CARDS ===== */
+.cheat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:14px;margin-top:22px}
+.ccard{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 18px;display:flex;flex-direction:column;justify-content:space-between;gap:12px}
+.ccard-top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.ccard-top b{font-size:14.5px;color:var(--gold)}
+.ccard pre{background:var(--code-bg);border:1px solid var(--line);border-radius:8px;padding:12px;font-family:var(--mono);font-size:12px;color:var(--code-txt);white-space:pre-wrap;line-height:1.6}
+
+/* ===== ROLES ===== */
+.role-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.role-card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 18px;cursor:pointer;transition:.2s;position:relative}
+.role-card:hover{border-color:var(--cyan-dim);transform:translateY(-2px)}
+.role-card.on{border-color:rgba(255,255,255,0.6);background:rgba(255,255,255,0.07)}
+.role-card .rid{font-family:var(--mono);font-size:11px;color:var(--orange);letter-spacing:.12em}
+.role-card h3{font-size:16px;margin:4px 0 6px;color:var(--title)}
+.role-card p{font-size:12.5px;color:var(--txt2)}
+.role-card .arrow{position:absolute;top:16px;right:16px;color:var(--txt3);font-family:var(--mono)}
+.role-card.on .arrow{color:var(--cyan)}
+#roleDetail{margin-top:18px;background:var(--panel2);border:1px solid rgba(255,255,255,0.3);border-radius:14px;padding:22px 26px;display:none}
+#roleDetail.show{display:block;animation:fade .25s}
+@keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1}}
+#roleDetail h3{color:var(--cyan);font-size:19px;margin-bottom:8px}
+#roleDetail .kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:14px 24px;margin-top:14px}
+#roleDetail .kv b{color:var(--gold);font-size:12.5px;display:block;font-family:var(--mono);margin-bottom:4px}
+#roleDetail .kv i{font-style:normal;font-family:var(--mono);font-size:10.5px;color:var(--txt3);margin-left:4px}
+.pill{display:inline-block;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.3);color:var(--txt);border-radius:6px;padding:2px 10px;font-size:12px;margin:3px 4px 3px 0;font-family:var(--mono)}
+.pill.o{background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.28);color:var(--txt2)}
+.pill.p{background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.26);color:var(--txt2)}
+
+/* ===== KB & SKILLS EXPLORER ===== */
+.filter-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.fbtn{background:var(--panel);border:1px solid var(--line2);color:var(--txt2);border-radius:8px;padding:6px 14px;font-size:12.5px;cursor:pointer;font-family:var(--mono)}
+.fbtn.on{background:var(--accent-bg);border-color:var(--accent-bg);color:var(--accent-fg);font-weight:700}
+.kb-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px}
+.kb-item{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px;font-size:12.5px;backdrop-filter:blur(8px)}
+.kb-item .k-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.kb-item .k-id{font-family:var(--mono);font-weight:700;color:var(--txt3);font-size:11px}
+.kb-item .k-cat{font-family:var(--mono);font-size:10.5px;padding:1px 8px;border-radius:4px;background:var(--line);color:var(--txt2)}
+.kb-item h5{font-size:15px;color:var(--title);margin-bottom:2px;line-height:1.4}
+.kb-item .k-file{font-family:var(--mono);font-size:10.5px;color:var(--txt3);margin:0 0 6px;word-break:break-all;line-height:1.5}
+.kb-item p{color:var(--txt2);font-size:12.5px;line-height:1.65}
+.legend{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:10px;padding:12px 16px;font-size:13px;color:var(--txt2);line-height:1.7;margin-bottom:16px;backdrop-filter:blur(8px)}
+.legend b{color:var(--txt)}
+
+/* ===== DOCTRINE CARDS ===== */
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:16px}
+.mcard{background:var(--panel);border:1px solid var(--line);border-left:3px solid rgba(255,255,255,0.55);border-radius:12px;padding:18px 20px;transition:.2s}
+.mcard:hover{transform:translateY(-3px)}
+.mcard .no{font-family:var(--mono);font-size:11px;color:var(--cyan);letter-spacing:.18em}
+.mcard h3{font-size:16px;margin:4px 0 8px;color:var(--title)}
+.mcard h3 em{font-style:normal;font-size:11.5px;color:var(--txt3);font-family:var(--mono);margin-left:6px}
+.mcard p{font-size:13px;color:var(--txt2)}
+.mcard.pt{border-left-color:var(--red)}
+.mcard.pt .no{color:var(--red)}
+.mcard .formula{margin-top:12px;background:var(--code-bg);border:1px solid var(--line);border-radius:8px;padding:8px 12px;font-family:var(--mono);font-size:11.5px;color:var(--green);overflow-x:auto;white-space:nowrap}
+
+/* ===== PROMPT LAB ===== */
+.tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.tab{background:var(--panel);border:1px solid var(--line2);color:var(--txt2);border-radius:8px;padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer;transition:.2s}
+.tab:hover{color:var(--txt)}
+.tab.on{background:var(--accent-bg);border-color:var(--accent-bg);color:var(--accent-fg)}
+.lab{background:var(--panel2);border:1px solid var(--line2);border-radius:14px;overflow:hidden}
+.lab-head{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:14px 18px;border-bottom:1px solid var(--line);background:var(--panel-solid)}
+.lab-head .name{font-weight:700;font-size:14.5px;flex:1}
+.plat-sel{display:flex;gap:6px;flex-wrap:wrap}
+.plat-sel button{background:var(--well);border:1px solid var(--line2);color:var(--txt2);font-size:11.5px;border-radius:6px;padding:5px 11px;cursor:pointer;font-family:var(--mono)}
+.plat-sel button.on{border-color:var(--accent-bg);color:var(--accent-fg);background:var(--accent-bg);font-weight:700}
+.copy-btn{background:var(--accent-bg);border:1px solid var(--accent-bg);color:var(--accent-fg);border-radius:999px;padding:5px 14px;font-size:12px;font-weight:700;cursor:pointer;transition:.2s;font-family:var(--mono)}
+.copy-btn:hover{opacity:.85}
+.copy-btn.okd{background:var(--green);border-color:var(--green);color:#08130c}
+.lab-body{padding:20px}
+.lab-note{font-size:13px;color:var(--txt2);margin-bottom:14px;background:rgba(255,255,255,0.02);padding:10px 14px;border-radius:8px;border-left:3px solid var(--gold)}
+.lab-note b{color:var(--gold)}
+pre.prompt{background:var(--code-bg);border:1px solid var(--line);border-radius:10px;padding:16px 18px;font-family:var(--mono);font-size:13px;line-height:1.85;color:var(--code-txt);overflow-x:auto;white-space:pre-wrap;word-break:break-word}
+pre.prompt .at{color:var(--accent-fg);background:var(--accent-bg);border-radius:4px;padding:1px 5px;font-weight:700}
+pre.prompt .sec{color:#B0B0B2;font-weight:700}
+pre.prompt .lock{color:var(--green);border-bottom:1px dashed var(--green)}
+.score-line{display:flex;align-items:center;gap:12px;margin-top:14px;font-size:13px;color:var(--txt2);flex-wrap:wrap}
+.score-badge{font-family:var(--mono);font-weight:800;font-size:17px;color:var(--green);background:rgba(143,214,168,0.1);border:1px solid rgba(143,214,168,0.45);border-radius:8px;padding:3px 12px}
+
+/* ===== SCORER SIMULATOR ===== */
+.scorer{display:grid;grid-template-columns:1.35fr 1fr;gap:20px}
+@media(max-width:900px){.scorer{grid-template-columns:1fr}}
+.check-panel{background:var(--panel2);border:1px solid var(--line2);border-radius:14px;padding:20px}
+.check-panel h4{font-size:14px;color:var(--cyan);margin-bottom:12px;font-family:var(--mono)}
+.cgroup{margin-bottom:10px}
+.cgroup .gt{font-size:12.5px;color:var(--gold);margin:10px 0 6px;font-weight:700}
+label.ck{display:flex;gap:10px;align-items:flex-start;padding:7px 10px;border-radius:8px;cursor:pointer;font-size:13px;color:var(--txt2);transition:.15s}
+label.ck:hover{background:rgba(255,255,255,0.06);color:var(--txt)}
+label.ck input{accent-color:var(--red);margin-top:4px;width:15px;height:15px;flex:none}
+label.ck .veto{color:var(--red);font-family:var(--mono);font-size:10px;border:1px solid rgba(224,138,138,0.5);background:rgba(224,138,138,0.1);border-radius:4px;padding:0 6px;margin-left:6px}
+.result-panel{background:var(--panel2);border:1px solid var(--line2);border-radius:14px;padding:24px;text-align:center;position:sticky;top:72px;height:fit-content}
+#bigScore{font-family:var(--mono);font-size:64px;font-weight:900;line-height:1.1}
+#verdict{font-size:15px;font-weight:700;margin:8px 0 14px}
+#deductList{font-size:12.5px;color:var(--txt2);text-align:left;background:var(--panel-solid);border:1px solid var(--line);border-radius:10px;padding:12px 14px;min-height:68px;margin-top:6px}
+#deductList div{padding:3px 0;border-bottom:1px dashed var(--line)}
+
+footer{border-top:1px solid var(--line);margin-top:64px;padding:30px 0 44px;color:var(--txt3);font-size:12.5px;text-align:center}
+footer .mono{font-family:var(--mono);color:var(--txt2)}
+*{scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.22) transparent}
+html[data-theme="light"] *{scrollbar-color:rgba(83,67,66,.3) transparent}
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.22);border-radius:99px}
+::-webkit-scrollbar-track{background:transparent}
+html[data-theme="light"] ::-webkit-scrollbar-thumb{background:rgba(83,67,66,.3)}
+</style>
+<script>document.documentElement.dataset.theme=localStorage.getItem('aidoc-theme')||'dark'</script>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="top-bar">
+      <span class="badge">AIDIRECTOR 教学文档 · DOCUMENTATION</span>
+      <div class="compat-tags">
+        <a href="../index.html" style="font-family:var(--mono);font-size:11.5px;padding:4px 12px;border-radius:999px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.45);color:var(--cyan)">🚀 返回沉浸式首页</a>
+        <span>⚡ ZCode 原生支持</span>
+        <span>⚡ Trae Work 兼容</span>
+        <span>⚡ WorkBuddy 兼容</span>
+        <span>📂 AGENTS.md 自动路由</span>
+        <button class="theme-toggle" id="themeToggle" type="button" title="切换白天/黑夜模式" aria-label="切换白天/黑夜模式">☀️</button>
+      </div>
+    </div>
+    <h1>【AIGC 影视与短剧】<span class="grad">多智能体工业化创作框架</span></h1>
+    <p class="sub">
+      告别“抽卡式自由造句”，将短剧/漫剧生产升级为<b>标准化提示词编译工程</b>：由<b>两级记忆系统（全局×剧集）</b>驱动 <b>9 大专业角色智能体</b>，通过 <b>12 个 KB 高密度专业词典</b>（查表编译）与 <b>21 个插件式 Skills</b>（按需提取加载，防平台语法污染）协同产出中文提示词；每条 Prompt 必须通过 <b>10 分制硬性质量门禁（&lt;9.0 强制打回重写）</b>，配合实测复盘驱动框架自我进化。
+    </p>
+    <div class="hero-actions">
+      <a href="../index.html" class="btn-sec">🚀 返回沉浸式首页</a>
+      <a href="#tutorial" class="btn-primary">🎓 进入 10 分钟实战教学营（新手必看）</a>
+      <a href="#cheatsheet" class="btn-sec">📋 复制日常对话偷懒口令卡</a>
+      <a href="#lab" class="btn-sec">🧪 体验多平台 Prompt 实验室</a>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><div class="num">9<small>Agents</small></div><div class="lbl">专业角色智能体</div><div class="desc">编剧/导演/美术/场记/生图/视频/质检/剪辑/进化</div></div>
+      <div class="stat"><div class="num">12<small>KBs</small></div><div class="lbl">高密度专业词典</div><div class="desc">骨相/穿搭/Albedo三视图/差分编译/运镜/剪映</div></div>
+      <div class="stat"><div class="num">21<small>Skills</small></div><div class="lbl">插件式独立技能</div><div class="desc">YAML 触发路由 · 用到才加载省 Token</div></div>
+      <div class="stat"><div class="num">6<small>Plugins</small></div><div class="lbl">平台专属语法插件</div><div class="desc">豆包 / 即梦 / ComfyUI / 海螺H3 / 可灵 / 公用</div></div>
+      <div class="stat"><div class="num">≥9.0<small>/10分</small></div><div class="lbl">硬性质量门禁关卡</div><div class="desc">G1~G12 & V1~V12 双扣分表 · 低于9分强制重写</div></div>
+      <div class="stat"><div class="num">17+<small>Modes</small></div><div class="lbl">视频崩坏避坑题库</div><div class="desc">一票否决防崩 + 用户复盘自动归因进化</div></div>
+    </div>
+  </div>
+</header>
+
+<nav id="nav">
+  <div class="wrap">
+    <a href="../index.html" style="color:var(--gold);font-weight:700;white-space:nowrap">🚀 首页</a>
+    <a href="#tutorial" class="hl-nav on">🎓 实战教学与口令</a>
+    <a href="#metrics">📊 核心数据看板</a>
+    <a href="#arch">🏛️ 全景架构</a>
+    <a href="#roles">🎭 9 大角色</a>
+    <a href="#explorer">📚 词典与技能速查</a>
+    <a href="#rules">🛡️ 6 思维 × 5 补丁</a>
+    <a href="#lab">🧪 标准产出实验室</a>
+    <a href="#scorer">⚖️ 评分官模拟器</a>
+    <a href="library.html" class="hl-nav">📚 源码文库</a>
+  </div>
+</nav>
+
+<!-- ============ 01 实战教学中心（NEW!） ============ -->
+<section id="tutorial">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-tag">01 / INTERACTIVE BOOTCAMP & ONBOARDING</div>
+      <h2>🎓 零基础实战教学中心：如何用这套框架做一部剧？</h2>
+      <p class="sec-desc">无需背诵复杂的目录结构！在 ZCode / Trae / WorkBuddy 中打开本项目后，AI 会自动读取根目录的 <code>AGENTS.md</code>。你只需要按照以下 <b>5 个标准步骤</b>复制口令发给 AI，就能走完从小说到分镜视频的全流程。</p>
+    </div>
+
+    <div class="bootcamp">
+      <div class="step-nav" id="bootNav"></div>
+      <div class="step-stage" id="bootStage"></div>
+    </div>
+
+    <!-- 偷懒口令速查表 -->
+    <div id="cheatsheet" style="padding-top:36px">
+      <h3 style="font-size:20px;margin-bottom:6px;color:var(--gold)">⚡ 日常高频“偷懒口令卡”（一键复制即用）</h3>
+      <p style="font-size:13.5px;color:var(--txt2);margin-bottom:14px">平时在编辑器里干活时，直接点击下方卡片的「复制口令」，替换方括号 <code>【 】</code> 里的内容即可直接发送给 AI：</p>
+      <div class="cheat-grid" id="cheatGrid"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 02 核心工程数据可视化 ============ -->
+<section id="metrics">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-tag">02 / ENGINEERING METRICS AT A GLANCE</div>
+      <h2>📊 框架核心工程数据可视化（一眼读懂核心法则）</h2>
+      <p class="sec-desc">把抽象的影视工业规则转化为可量化、可执行的工程配比——这也是评分官 R7 进行 10 分制硬性审核的底层标尺。</p>
+    </div>
+
+    <div class="data-grid">
+      <!-- 图1：20/80 差分编译 -->
+      <div class="dcard">
+        <h4>视频差分编译黄金配比 <span>KB_08 · V2否决项</span></h4>
+        <div class="sub-t">图生视频（I2V）首帧已锁定 90% 静态外观，视频 Prompt 严禁堆砌五官穿搭</div>
+        <div class="bar-stack">
+          <div style="width:20%;background:var(--orange);color:var(--bar-fg)">20% 锚点</div>
+          <div style="width:80%;background:var(--cyan);color:var(--bar-fg)">80% 纯物理动态变化量</div>
+        </div>
+        <div class="bar-legend">
+          <span><i class="dot" style="background:var(--orange)"></i><b>20% 极简锚点</b>：@资产名 + ≤2个骨相词</span>
+          <span><i class="dot" style="background:var(--cyan)"></i><b>80% 物理动态</b>：1种运镜 + 1主动作 + 材质光影变化</span>
+        </div>
+      </div>
+
+      <!-- 图2：S/A/B 算力分级 -->
+      <div class="dcard">
+        <h4>S / A / B 镜头算力分级路由 <span>VIS-01 · 省40%算力</span></h4>
+        <div class="sub-t">按戏剧权重分配模型算力，拒绝全集盲目抽卡烧积分</div>
+        <div class="bar-stack">
+          <div style="width:15%;background:var(--red);color:#fff">S ≤15%</div>
+          <div style="width:55%;background:var(--purple);color:var(--bar-fg)">A级 55% 常规I2V</div>
+          <div style="width:30%;background:var(--green);color:var(--bar-fg)">B级 30% 静态降本</div>
+        </div>
+        <div class="bar-legend">
+          <span><i class="dot" style="background:var(--red)"></i><b>S级(≤15%)</b>：前3秒/高潮，首尾帧+可灵精调</span>
+          <span><i class="dot" style="background:var(--purple)"></i><b>A级(~55%)</b>：首帧I2V</span>
+          <span><i class="dot" style="background:var(--green)"></i><b>B级(≥20%)</b>：高清静态图+对口型+剪映缓推(零崩坏)</span>
+        </div>
+      </div>
+
+      <!-- 图3：上下文 Token 预算控制 -->
+      <div class="dcard">
+        <h4>单剧本运行上下文负载对比 <span>Progressive Disclosure</span></h4>
+        <div class="sub-t">依托按需加载与冷热记忆隔离，连载 80 集也不会爆 Token 或失忆</div>
+        <div class="cmp-row">
+          <div class="lbl"><span>❌ 传统全量塞入（40文件全读）</span><b style="color:var(--red)">~48,000 Tokens (易失忆)</b></div>
+          <div class="cmp-track"><div class="cmp-fill" style="width:96%;background:var(--red)"></div></div>
+        </div>
+        <div class="cmp-row" style="margin-bottom:0">
+          <div class="lbl"><span>✅ 本框架单阶段按需挂载（1平台+2KB+3Skill）</span><b style="color:var(--green)">~13,500 Tokens (黄金清醒区)</b></div>
+          <div class="cmp-track"><div class="cmp-fill" style="width:28%;background:var(--green)"></div></div>
+        </div>
+      </div>
+
+      <!-- 图4：剪映四轨混音电平 -->
+      <div class="dcard">
+        <h4>剪映专业版 · 四轨混音标准电平 <span>KB_12 · EDT-01</span></h4>
+        <div class="sub-t">人声永远主导，BGM 在对白段自动压低 30%，Foley 音效精准卡重音秒位</div>
+        <div class="cmp-row">
+          <div class="lbl"><span>🎙️ T1 人声轨（TTS克隆/原生对白）</span><b style="color:var(--cyan)">-6 dB (主导)</b></div>
+          <div class="cmp-track"><div class="cmp-fill" style="width:88%;background:var(--cyan)"></div></div>
+        </div>
+        <div class="cmp-row">
+          <div class="lbl"><span>⚔️ T2 Foley 动作音效轨（卡点）</span><b style="color:var(--orange)">-12 dB</b></div>
+          <div class="cmp-track"><div class="cmp-fill" style="width:68%;background:var(--orange)"></div></div>
+        </div>
+        <div class="cmp-row" style="margin-bottom:0">
+          <div class="lbl"><span>🎵 T3 BGM (-18dB) / 🌧️ T4 环境底噪 (-24dB)</span><b style="color:var(--purple)">-18 ~ -24 dB</b></div>
+          <div class="cmp-track"><div class="cmp-fill" style="width:42%;background:var(--purple)"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 03 全景架构 ============ -->
+<section id="arch">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-tag">03 / SYSTEM ARCHITECTURE</div>
+      <h2>🏛️ 框架全景架构交互拓扑图</h2>
+      <p class="sec-desc">完整生产闭环：两级记忆层（冷热分离） → 9 大角色智能体结构化交接 → 12 KB 词典 + 21 Skill 插件双擎 → 6 大平台互斥适配 → 10 分制硬性质量门禁 → 实测复盘自进化回流。</p>
+    </div>
+
+    <div class="flow">
+      <div class="flow-row">
+        <div class="fnode"><div class="n">MEMORY · L1 (GLOBAL)</div><div class="t"><span class="dot" style="background:var(--purple)"></span>全局记忆层</div><div class="d"><code>memory/global/</code> · 权威工作流与影视知识库 + 全局复盘避坑黑名单（跨项目共享）</div></div>
+        <div class="fnode"><div class="n">MEMORY · L2 (PROJECT HOT MEMORY)</div><div class="t"><span class="dot" style="background:var(--purple)"></span>剧集热记忆三件套</div><div class="d"><code>memory/projects/[剧名]/</code> · 剧集圣经(@画风锁) + <b>@资产注册表(50字摘要常驻)</b> + 跨集状态快照(StateDiff)</div></div>
+      </div>
+      <div class="flow-arrow">▼ 总控路由协议 AGENTS.md（任务关键词匹配 · 三幕上下文门禁 · 结构化交接 Schema）</div>
+      <div class="flow-row">
+        <div class="fnode" style="border-color:var(--cyan-dim)">
+          <div class="n">STAGE I · 叙事与时长</div>
+          <div class="t"><span class="dot" style="background:var(--cyan)"></span>R1 高级编剧大师</div>
+          <div class="d">开场 3 秒抓人钩子 · 整集情绪起伏表 · <b>台词先掐秒再配画面</b></div>
+        </div>
+        <div class="fnode" style="border-color:var(--cyan-dim)">
+          <div class="n">STAGE II · 视觉与防穿帮</div>
+          <div class="t"><span class="dot" style="background:var(--cyan)"></span>R2 导演 + R3 美术 + R4 场记</div>
+          <div class="d">14字段分镜表 · S/A/B算力分级 · Cutaway缓冲镜 · 60-30-10色彩 · 180度轴线守卫</div>
+        </div>
+        <div class="fnode" style="border-color:var(--orange)">
+          <div class="n">STAGE III · 资产与秒级视频编译</div>
+          <div class="t"><span class="dot" style="background:var(--orange)"></span>R5 生图专家 + R6 视频专家</div>
+          <div class="d">角色『标准照』五件套 · 首尾帧图准备 · 『两成外貌+八成动作』视频提示词 · 说话闭嘴锁定</div>
+        </div>
+      </div>
+      <div class="flow-arrow">▼ 双擎驱动：KB 存纯词表（拒绝自由造句） × Skill 存纯逻辑（按需提取）</div>
+      <div class="flow-row">
+        <div class="fnode"><div class="n">ENGINE A · DICTIONARIES</div><div class="t"><span class="dot" style="background:var(--cyan)"></span>12 本 KB 工具书</div><div class="d"><code>kb_library/KB_01~KB_12</code>：150+ 长相词 / 38 套穿搭 / 22 组『错误→正确』写法对照 / 图片八层组装公式 / 17 种翻车急救表</div></div>
+        <div class="fnode"><div class="n">ENGINE B · ATOMIC SKILLS</div><div class="t"><span class="dot" style="background:var(--cyan)"></span>21 个操作技能</div><div class="d"><code>skills/SKILL_INDEX.md</code> 目录：分 6 类归档，每个技能自带执行步骤、输入输出格式和正反例</div></div>
+      </div>
+      <div class="flow-arrow">▼ 平台语法插件层（单选排他加载 · 绝不同时混载污染语法）</div>
+      <div class="flow-row">
+        <div class="fnode"><div class="n">PLAT-01</div><div class="t">豆包 Seedream 4.0</div><div class="d">三层空间分句 · 中文光影直响应 · 4K</div></div>
+        <div class="fnode"><div class="n">PLAT-02</div><div class="t">即梦 Seedance</div><div class="d">素材位≤4绑定 · 秒级时间轴 · 模式A对白</div></div>
+        <div class="fnode"><div class="n">PLAT-03</div><div class="t">ComfyUI Flux/Wan</div><div class="d">中英双轨 · PuLID/ControlNet · 模式B闭嘴</div></div>
+        <div class="fnode"><div class="n">PLAT-04</div><div class="t">MiniMax 海螺 H3</div><div class="d">[方括号运镜] · 四相微表情链 · 32kHz声</div></div>
+        <div class="fnode"><div class="n">PLAT-05</div><div class="t">可灵 Kling</div><div class="d">首尾帧双锚过渡 · 幅度匹配 · 物理解算</div></div>
+        <div class="fnode"><div class="n">PLAT-00</div><div class="t">公用默认兜底</div><div class="d">全平台安全交集 + 选型推荐矩阵</div></div>
+      </div>
+      <div class="flow-arrow">▼ 硬性质量关卡 & 后期交付闭环</div>
+      <div class="flow-row">
+        <div class="fnode" style="border-color:#059669"><div class="n" style="color:var(--green)">QUALITY GATE · R7</div><div class="t"><span class="dot" style="background:var(--green)"></span>10 分制质检评委</div><div class="d">图片 12 项、视频 12 项硬性扣分表 · <b style="color:var(--red)">&lt;9.0 一票否决打回重写</b>（附修改意见单）</div></div>
+        <div class="fnode" style="border-color:#b45309"><div class="n" style="color:var(--gold)">POST-PROD · R8</div><div class="t"><span class="dot" style="background:var(--gold)"></span>剪映剪辑与 TTS 调音大师</div><div class="d">剪映真实菜单名（曲线变速/转场）· J/L-Cut遮瑕 · FishAudio/MiniMax克隆 · 四轨混音</div></div>
+        <div class="fnode" style="border-color:#991b1b"><div class="n" style="color:var(--red)">SELF-EVOLVE · R9</div><div class="t"><span class="dot" style="background:var(--red)"></span>复盘自进化引擎</div><div class="d">解析产出文档底部「实际产出复盘」→ 定位缺陷 → 自动打补丁落盘更新 KB 与 Skill</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 04 9大角色 ============ -->
+<section id="roles">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-tag">04 / NINE SPECIALIZED AGENTS</div>
+      <h2>🎭 9 位幕后工作人员 · 分工与交接</h2>
+      <p class="sec-desc">把框架想象成一个 9 人剧组：点击任意成员卡片，看它负责什么、干完活交给下游什么标准文件，以及它随身带哪几本工具书和技能。</p>
+    </div>
+    <div class="role-grid" id="roleGrid"></div>
+    <div id="roleDetail"></div>
+  </div>
+</section>
+
+<!-- ============ 05 词典与技能全景速查器（NEW!） ============ -->
+<section id="explorer">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-tag">05 / KB DICTIONARIES & SKILL PLUGINS EXPLORER</div>
+      <h2>📚 12 本工具书 × 21 个操作技能 · 全景速查（小白友好版）</h2>
+      <p class="sec-desc">每张卡片都用大白话解释它是干嘛的；灰色小字是它在仓库里的文件名，想深挖时再按名查找。</p>
+    </div>
+    <div class="legend">📖 <b>新手一分钟看懂编号：</b>「KB_01~12」= 12 本<b>工具书</b>（写提示词时查词用，就像查字典）；「VIS / IMG / VID / NARR」等 = <b>操作技能</b>（教 AI 按步骤干活的说明书）；「plat_*」= 各家 AI 模型平台的<b>专属写法</b>。你不需要记它们——对话里说人话，框架会自动调用。</div>
+    <div class="filter-bar" id="expFilter">
+      <button class="fbtn on" data-f="all">全部 (33)</button>
+      <button class="fbtn" data-f="kb">📖 工具书 (12)</button>
+      <button class="fbtn" data-f="s1">✍️ 编剧技能 (3)</button>
+      <button class="fbtn" data-f="s2">🎬 导演·美术·场记技能 (4)</button>
+      <button class="fbtn" data-f="s3">🖼️ 出图出片技能 (4)</button>
+      <button class="fbtn" data-f="s5">🔌 平台专属写法 (6)</button>
+      <button class="fbtn" data-f="s6">⚖️ 质检·配音·剪辑·进化 (4)</button>
+    </div>
+    <div class="kb-grid" id="expGrid"></div>
+  </div>
+</section>
+
+<!-- ============ 06 思维与补丁 ============ -->
+<section id="rules">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-tag">06 / INDUSTRIAL DOCTRINE & ANTI-CRASH PATCHES</div>
+      <h2>🛡️ 6 大工业级生产思维 × 5 大实战防崩补丁</h2>
+      <p class="sec-desc">全角色强制内化的 11 条工程铁律——直接决定跑出来的片子是“工业成片”还是“抽卡废片”。</p>
+    </div>
+    <div class="card-grid" id="mindGrid"></div>
+    <div style="height:24px"></div>
+    <div class="card-grid" id="patchGrid"></div>
+  </div>
+</section>
+
+<!-- ============ 07 实验室 ============ -->
+<section id="lab">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-tag">07 / INTERACTIVE PROMPT LAB</div>
+      <h2>🧪 标准产出交互演示器（支持 6 大平台语法实时切换）</h2>
+      <p class="sec-desc">展示框架真实产出的两类核心中文提示词文档：<b>《重要资产图片提示词.md》</b>与<b>《集数视频生成提示词.md》</b>（含 <code>@林烬</code> 玄幻压场与 <code>@李梅/@张三</code> 买莽莽例子1拆解）。切换右上角平台按钮可对比不同模型的专属语法差异。</p>
+    </div>
+
+    <div class="tabs">
+      <div class="tab on" data-lab="asset">🖼 人物资产 · @李梅 零光影正交三视图</div>
+      <div class="tab" data-lab="ep1">🎬 分镜1 · @林烬 比武台压场（S级 5s 首尾帧）</div>
+      <div class="tab" data-lab="ep2">🎬 例子1 · 母子买莽莽 镜头1（A级 3s 空间分区+排他锁）</div>
+      <div class="tab" data-lab="ep3">🎧 例子1 · 镜头3 过肩承诺（A级 4s 微表情链）</div>
+    </div>
+
+    <div class="lab">
+      <div class="lab-head">
+        <span class="name" id="labName">—</span>
+        <div class="plat-sel" id="platSel">
+          <button class="on" data-p="std">公用标准</button>
+          <button data-p="doubao">豆包Seedream</button>
+          <button data-p="jimeng">即梦Seedance</button>
+          <button data-p="comfy">ComfyUI</button>
+          <button data-p="h3">MiniMax H3</button>
+          <button data-p="kling">可灵Kling</button>
+        </div>
+        <button class="copy-btn" id="copyBtn">📋 复制 Prompt</button>
+      </div>
+      <div class="lab-body">
+        <div class="lab-note" id="labNote"></div>
+        <pre class="prompt" id="labPrompt"></pre>
+        <div class="score-line"><span class="score-badge" id="labScore">9.4 / 10</span><span id="labScoreNote"></span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 08 评分模拟器 ============ -->
+<section id="scorer">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-tag">08 / 10-POINT QUALITY GATE SIMULATOR</div>
+      <h2>⚖️ 10 分制评分官扣分模拟器（KB_10 权威标准）</h2>
+      <p class="sec-desc">勾选下方任意违规项，实时体验【AI 提示词质量评分专家 R7】如何依据 <code>KB_10</code> 的 V1~V12 扣分表执行审查——任何带 <span style="color:var(--red);font-family:var(--mono)">[否决]</span> 标记的红线项一旦触发，得分强制封顶 8.9 分并立即打回重写！</p>
+    </div>
+    <div class="scorer">
+      <div class="check-panel">
+        <h4>KB_10 视频表 V1~V12 · 逐项核验（勾选 = 模拟提示词出现该问题）</h4>
+        <div id="checkList"></div>
+      </div>
+      <div class="result-panel">
+        <div style="font-family:var(--mono);font-size:12px;color:var(--txt3);letter-spacing:.2em">QUALITY GATE SCORE</div>
+        <div id="bigScore" style="color:var(--green)">10.0</div>
+        <div id="verdict" style="color:var(--green)">✅ 放行写入产出文档</div>
+        <button class="copy-btn" style="margin:6px 0 14px" onclick="resetScorer()">↺ 重置全部勾选</button>
+        <div style="font-family:var(--mono);font-size:11px;color:var(--txt3);text-align:left;margin-bottom:6px">DEDUCTION DETAILS：</div>
+        <div id="deductList"><div style="color:var(--txt3)">（无扣分 · V1~V12 逐项全部通过）</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p class="mono">AiDirector · AGENTS.md · kb_library/(KB_01~12) · skills/(21 Plugins) · memory/(global+projects) · workspace/</p>
+    <p style="margin-top:8px">AIGC 影视与短剧多智能体工业化创作框架 · 零光影Albedo资产 · 秒级差分编译 · 10分制硬性门禁 · 复盘自进化闭环</p>
+    <p style="margin-top:6px"><a href="../index.html">🚀 返回沉浸式首页 index.html</a></p>
+  </div>
+</footer>
+
+<script>
+/* ================= 主题切换（黑夜/白天，本地记忆） ================= */
+const themeToggle=document.getElementById('themeToggle');
+function applyTheme(t){document.documentElement.dataset.theme=t;
+  themeToggle.textContent=t==='light'?'🌙':'☀️';
+  try{localStorage.setItem('aidoc-theme',t);}catch(e){}}
+themeToggle.addEventListener('click',()=>applyTheme(document.documentElement.dataset.theme==='light'?'dark':'light'));
+applyTheme(document.documentElement.dataset.theme||'dark');
+
+/* ================= 编号 → 人话对照（供胶囊渲染） ================= */
+const ID_PLAIN={
+ "KB_01":"角色设定","KB_02":"长相表情","KB_03":"穿搭道具","KB_04":"材质配色","KB_05":"画风锁","KB_06":"三视图",
+ "KB_07":"构图","KB_08":"组装公式","KB_09":"翻车急救","KB_10":"评分标准","KB_11":"镜头运镜","KB_12":"配音剪辑",
+ "NARR-01":"前3秒钩子设计","NARR-02":"人设与小传","NARR-03":"台词掐秒表",
+ "VIS-01":"分镜拆解","VIS-02":"定画风与穿搭","VIS-03":"角色设定图","VIS-04":"防穿帮检查",
+ "IMG-01":"选修图方法","IMG-02":"备首帧尾帧图","VID-01":"写视频提示词","VID-02":"选生成方式",
+ "PLAT-00":"平台选择顾问","PLAT-01":"豆包写法","PLAT-02":"即梦写法","PLAT-03":"ComfyUI写法","PLAT-04":"海螺H3写法","PLAT-05":"可灵写法",
+ "QC-01":"质检评委","AUD-01":"配音克隆","EDT-01":"剪映剪辑指导","EVO-01":"复盘进化"};
+
+/* ================= 01 实战教学 5 步数据 ================= */
+const BOOT_STEPS=[
+  {
+    no:"STEP 01",title:"新建剧集 · 初始化剧本记忆",sub:"建立剧集圣经、@画风锁与资产注册表",
+    desc:"拿到新小说或新剧本点子时，第一步永远是建立该剧专属的「热记忆三件套」，锁死全剧统一的 @画风锁 与人物骨相基线。",
+    cmd:`请先读取 AGENTS.md。现在我要【新建一部剧】，剧名叫《苍穹与烟火》，题材是【东方玄幻/都市温情】，画幅采用【9:16 竖屏】（或 16:9 横屏）。\n以下是故事梗概与主要人物设定：【粘贴你的小说梗概或人物简介】。\n请帮我在 memory/projects/ 下初始化本剧的记忆三件套（剧集圣经、资产注册表、跨集状态快照）。`,
+    auto:["总控读取 AGENTS.md，识别你要「新建一部剧」","自动请出编剧、美术、场记三位助手","查阅角色模板、长相词库、画风工具书把人物定稿","在 memory/projects/[剧名]/ 下生成 3 个核心记忆文件"],
+    tips:["所有角色、场景、道具名字必须登记为 @纯中文名称（2~6个汉字，严禁英文数字下划线，如 @林烬、@光大街边）","@画风锁 一经定稿全剧末尾逐字挂载，中途不准随便换同义词！"]
+  },
+  {
+    no:"STEP 02",title:"打磨单集剧本 · 声画先行测算",sub:"设计前3秒生死钩子、情绪波形与台词秒数",
+    desc:"针对具体某一集进行剧情讨论和修改。让编剧设计主备双钩子与情绪过山车波形，并在写分镜前先算出每句台词占几秒（以音定画）。",
+    cmd:`现在进入《苍穹与烟火》第01集的【写剧本】阶段。\n本集剧情内容如下：【粘贴第01集小说原文或大纲】。\n请调用高级编剧大师：\n1. 分析受众痛点，按五大公式设计【黄金前3秒钩子】（主钩+备钩）；\n2. 排出本集【情绪过山车波形表】（标注1-10分刻度与爆点秒位）；\n3. 输出分场剧本，并对所有台词执行 NARR-03【声画先行秒数精算】（算出台词秒数、气口停顿与重音触发动作秒位）。`,
+    auto:["自动启用编剧三件套：钩子设计、人设小传、台词掐秒表","按语速（正常 4 字/秒、慢说 2.5 字/秒、童声 3.5 字/秒）算出每句话占几秒","标出重音字出现在第几秒，方便导演和剪辑卡点"],
+    tips:["单镜台词严禁超过 20 字（约 5 秒）！如果台词有 40 字，编剧会自动帮你拆成两镜并在中间插入反应镜头","你可以随时跟 AI 讨论修改某句台词或某个反转，满意后再进入下一步"]
+  },
+  {
+    no:"STEP 03",title:"资产先行 · 产出零光影三视图与音色卡",sub:"生成《重要资产图片提示词.md》并锁死五件套",
+    desc:"在拍分镜视频前，先把本集登场的人物、场景、道具变成零高光阴影的基准图片资产，并制定 Fish Audio / MiniMax 音色克隆方案。",
+    cmd:`第01集剧本已确认。现在请【做资产】：\n请调用高级美术指导、AI生图高级专家与音色克隆工作流，为本集登场的人物、场景、道具产出完整的《重要资产图片提示词.md》（生图平台我用：【豆包Seedream / ComfyUI / 或不填走默认推荐】）。\n要求：人物必须包含五件套（主图/正交三视图/3x3表情矩阵/独立面部特写/独立全身立绘）与音色克隆卡；严格执行 KB_06 零光影 Albedo 正面物理描述铁律，每条提示词必须经 R7 评分官质检 ≥9.0 分！`,
+    auto:["自动启用美术、出图、配音三组助手","按三视图工具书的 7 套现成模板造句（无影棚平光、固有色、双臂微张防粘连）","质检评委逐条打分，达标后写入 workspace/重要资产图片提示词.md"],
+    tips:["⚠️ 极度重要防呆铁律：跑出来的「正侧背三视图」和「九宫格表情图」只用于存档鎖设定，绝对不能整张直接喂给图生视频模型（会被识别成三个人同框变成多头怪）！","喂给视频模型做参考或首帧时，必须使用资产库里的第④项「独立面部特写」和第⑤项「独立全身立绘」！"]
+  },
+  {
+    no:"STEP 04",title:"分镜拆解 · 产出秒级视频提示词与剪映指南",sub:"生成《第XX集_视频生成提示词.md》核心交付物",
+    desc:"将剧本拆解为 14 字段标准分镜表（含 S/A/B 算力分级与 Cutaway 救场镜），逐镜产出前置首尾帧生图 Prompt、20/80 差分秒级视频 Prompt、10分制评分与剪映操作指南。",
+    cmd:`现在请为第01集【拆分镜】并【出视频提示词】。\n参数设定：画幅【16:9横屏 / 9:16竖屏】；视频平台我用【即梦Seedance / 可灵 / 海螺H3 / 不填走默认公用版】；对白口型走【模式A原生音画同出 / 模式B无声视频+后期对口型】。\n请严格按标准折叠模板输出到 workspace/episodes/第01集_视频生成提示词.md（为保证颗粒度拉满，请先输出前 5 个分镜，我确认后再继续输出后续分镜）。`,
+    auto:["导演和场记把剧本拆成一张 14 列分镜表（谁站哪、值多少钱生成都标好）","出图助手先为每个镜头准备『起始画面』的生成提示词并过质检","视频助手按『两成外貌+八成动作』写秒级提示词，自动带防串脸站位和闭嘴锁","剪辑助手在每镜下写好剪映操作（变速、转场、音效搜索词与音量），并留集末状态快照"],
+    tips:["如果一集有 20 个镜头，强烈建议在指令里让它「每次输出 4~5 个分镜」，这样上下文最清醒、每个镜头的细节最丰富！","B 级镜头（约占 30%）不需要花钱跑视频模型，直接拿前置高清静态图去剪映加关键帧缓推+对口型即可"]
+  },
+  {
+    no:"STEP 05",title:"抽卡实测 · 填写复盘触发框架自进化",sub:"把翻车经验喂给 R9 引擎，让系统越用越强",
+    desc:"复制文档里的 ```prompt 代码块去平台生成视频。如果遇到任何崩坏或效果不满意，填进文档底部的复盘栏，一句话唤醒自进化引擎。",
+    cmd:`我在 workspace/episodes/第01集_视频生成提示词.md 的分镜【X】下方填写了「Prompt 实际产出复盘」（实测翻车现象：【例如：即梦跑出来妈妈的嘴也在跟着动，而且第4秒手部糊了】）。\n请立即激活 R9 复盘自进化引擎（EVO-01）：归因崩坏编号、自动修订黑名单与对应平台插件落盘，并给我输出该镜头修正后的重跑 Prompt！`,
+    auto:["启动复盘引擎，把你的口语描述对应到 17 种已知翻车类型","找出是哪条规则漏了（比如没写『五指并拢』导致手崩）","自动修改规则库与对应平台写法文件（同类翻车满 3 次升为红线）","给出只改问题部分的修正版提示词，直接复测"],
+    tips:["复盘引擎只修改框架词典与规则，不会破坏你已写好的剧本","跑完 2~3 部剧后，你的本地黑名单与平台插件就会沉淀为你团队独有的护城河知识库！"]
+  }
+];
+
+const CHEAT_CARDS=[
+  {t:"1. 新建剧集初始化",c:`请读取 AGENTS.md，我要【新建一部剧】《剧名》，题材【男频玄幻/女频都市】，画幅【9:16竖屏】，梗概如下：【粘贴梗概】。请建立 memory/projects/ 下的记忆三件套。`},
+  {t:"2. 写单集剧本 + 前3秒钩子 + 台词测算",c:`请调用高级编剧大师，为《剧名》第【01】集【写剧本】：设计黄金前3秒主备双钩子、排出情绪过山车波形表，并对所有台词执行【声画先行台词秒数精算】。剧情如下：【粘贴剧情】`},
+  {t:"3. 产出零光影重要资产图 + 音色克隆卡",c:`请为《剧名》新登场的人物/场景/道具【做资产】，平台指定【豆包Seedream】，产出包含五件套与Fish Audio/MiniMax音色卡的《重要资产图片提示词.md》，全部过10分制评分门禁。`},
+  {t:"4. 分批产出分镜与秒级视频提示词",c:`请为《剧名》第【01】集【拆分镜】并【出视频提示词】（先输出第1~5镜），视频平台指定【即梦Seedance】，口型走【模式A原生对白】，包含前置首尾帧Prompt、10分制评分与剪映手法建议。`},
+  {t:"5. 单镜头跨平台语法一键转换",c:`请把刚刚第【2】镜的视频提示词，分别挂载对应平台插件，转换为【可灵首尾帧版】、【MiniMax海螺H3方括号运镜版】和【ComfyUI Wan中英双轨模式B版】三个独立代码块。`},
+  {t:"6. 抽卡翻车复盘求救 + 框架自进化",c:`我在第【01】集分镜【2】填写了【复盘】：实测跑出来【描述翻车现象，如多人同时乱张嘴/转身脸部变形】。请激活复盘自进化引擎更新规则库，并给我修正后的重跑提示词与降级预案。`}
+];
+
+const bNav=document.getElementById('bootNav'),bStage=document.getElementById('bootStage');
+BOOT_STEPS.forEach((s,i)=>{
+  const btn=document.createElement('button');btn.className='sbtn'+(i===0?' on':'');
+  btn.innerHTML=`<span class="sno">${s.no}</span><div class="stitle">${s.title}</div><div class="ssub">${s.sub}</div>`;
+  btn.onclick=()=>renderBoot(i);
+  bNav.appendChild(btn);
+});
+function renderBoot(i){
+  document.querySelectorAll('.sbtn').forEach((b,idx)=>b.classList.toggle('on',idx===i));
+  const s=BOOT_STEPS[i];
+  bStage.innerHTML=`
+    <div class="stage-head">
+      <div class="tag">${s.no} · STANDARD WORKFLOW</div>
+      <h3>${s.title}</h3>
+      <p>${s.desc}</p>
+    </div>
+    <div class="cmd-box">
+      <div class="cmd-bar">
+        <span>💬 在 ZCode / Trae / WorkBuddy 对话框中直接发送以下指令：</span>
+        <button class="copy-btn" onclick="copyText(this, BOOT_STEPS[${i}].cmd)">📋 一键复制指令</button>
+      </div>
+      <div class="cmd-body">${s.cmd}</div>
+    </div>
+    <div class="stage-cols">
+      <div class="info-box">
+        <h5>🤖 框架在后台自动为你干了什么？</h5>
+        <ul>${s.auto.map(a=>`<li>${a}</li>`).join('')}</ul>
+      </div>
+      <div class="info-box warn">
+        <h5>⚠️ 实操要点与新手避坑指南</h5>
+        <ul>${s.tips.map(t=>`<li>${t}</li>`).join('')}</ul>
+      </div>
+    </div>`;
+}
+renderBoot(0);
+
+document.getElementById('cheatGrid').innerHTML=CHEAT_CARDS.map((c,i)=>`
+  <div class="ccard">
+    <div class="ccard-top"><b>${c.t}</b><button class="copy-btn" onclick="copyText(this, CHEAT_CARDS[${i}].c)">📋 复制口令</button></div>
+    <pre>${c.c}</pre>
+  </div>`).join('');
+
+function copyText(btn,txt){
+  navigator.clipboard.writeText(txt).then(()=>{
+    const old=btn.textContent;btn.textContent='✓ 已复制';btn.classList.add('okd');
+    setTimeout(()=>{btn.textContent=old;btn.classList.remove('okd')},1500);
+  });
+}
+
+/* ================= 04 角色数据与渲染 ================= */
+const ROLES=[
+{id:"R1",name:"高级编剧大师",desc:"市场与受众视角：黄金前3秒钩子与情绪曲线",detail:"考量情节是否符合目标市场喜好，前 3 秒抓住眼球并持续拉起观众情绪（压抑、反转、爆发爽点）；构建世界观、人物立体性格、人物关系与潜台词三层外化打磨，执行声画先行台词秒数精算。",schema:"{集数, 标题, 受众痛点分析, 黄金前3秒钩子(主+备), 情绪曲线节点表, 场次列表[场景@资产, 人物@资产, 台词精算表(字数/语速档/重音秒位)]}",skills:["NARR-01 市场钩子调研","NARR-02 世界观人物弧光","NARR-03 台词秒数精算"],kbs:["KB_01 角色设计规范","KB_02 人体与面部","KB_12 语速基准"]},
+{id:"R2",name:"高级导演",desc:"视听统治力视角：14字段分镜与 S/A/B 算力分级",detail:"剧情分镜拆解、视觉镜头呈现方式（景别、机位、角度、构图、场面调度）、确立画幅制式（16:9/9:16转换）、执行 S/A/B 镜头算力分级，规划每 2~3 主镜 1 个的剪辑救场缓冲镜（Cutaway）。",schema:"{画幅声明, 轴线声明表, 14字段分镜总表[镜号/场次/景别/机位/构图/运镜/时长/等级S-A-B/@资产/台词模式/秒级节点/Cutaway/轴线/备注]}",skills:["VIS-01 导演分镜拆解"],kbs:["KB_07 构图与资产板","KB_11 导演运镜词典"]},
+{id:"R3",name:"高级美术指导兼画师",desc:"视觉统一视角：@画风锁 · 色彩脚本 · 穿搭 · 音色卡",detail:"锁定全局不可篡改 @画风锁 与 60-30-10 色彩脚本；人物穿搭四件套与三层次拆解；角色音色特征规划（Fish Audio / Noiz / MiniMax / CosyVoice 克隆参数与情感标签）；场景空间与核心道具三级拆解。",schema:"{@画风锁(常量+分线追加缀), 色彩脚本[60/30/10编译句式], 人物穿搭卡, 音色克隆卡[@人物/平台/样本要求/参数/标签], 场景卡, 道具卡}",skills:["VIS-02 美术风格穿搭道具","AUD-01 音色克隆工作流"],kbs:["KB_02~KB_05 面部/服装/材质/画风","KB_12 TTS剪映词典"]},
+{id:"R4",name:"场记与连续性监督专家",desc:"防穿帮守门员：@纯中文注册表 · 180度轴线 · 跨集快照",detail:"维护全局唯一 @纯中文资产名称注册表（正则 ^@[\\u4e00-\\u9fa5]{2,6}$）；核查上下镜头 180 度轴线半圆、左右站位、手持道具左右手、服装战损单向累积；每集末生成 State Diff 快照同步记忆库。",schema:"{资产注册变更单, 轴线校验表, 四项连续性核对清单[站位/视线/手别/战损], 本集结束状态快照 StateDiff, 开拍放行判定}",skills:["VIS-04 连续性轴线守卫"],kbs:["KB_07 构图与轴线规则","资产注册表","跨集状态快照"]},
+{id:"R5",name:"AI 生图高级专家",desc:"出图工程：五问技法路由 + 分镜前置首尾帧策划",detail:"按重要资产需求与分镜前置需求，路由图生图（重绘0.3~0.45）、ControlNet（OpenPose/Depth/Canny）、灰度图、LoRA/PuLID/IP-Adapter 锁脸、Inpainting 局部重绘、2x2多宫格分镜垫图；按需加载平台插件产出中文提示词。",schema:"{生图路由结论[技法组合+参数区间表+参考图挂载清单], 平台模型推荐, 八层全量中文Prompt(```prompt代码块), 负向词包}",skills:["IMG-01 生图技法路由器","IMG-02 前置资源策划","PLAT-00~05 平台插件"],kbs:["KB_06 三视图一致性","KB_08 Prompt编译器","KB_09 错误修正"]},
+{id:"R6",name:"AI 视频创作提示词专家",desc:"秒级运动工程：20/80差分编译 + 口型排他锁 + 技法选型",detail:"将视频拆为以秒为单位（0.5s网格）的片段；执行 20% 极简锚点 + 80% 物理动态差分编译；挂多人空间分区与口型排他锁、双管线分流（模式A直出/模式B闭嘴基底）；选型首帧I2V、首尾帧、多图融合或尾帧接力（≤2段）。",schema:"{镜号, 秒级节点串, 20/80差分Prompt(```prompt), 口型模式声明与排他锁句, 视频技法与推荐平台模型, 交R8卡点备注}",skills:["VID-01 秒级切片器","VID-02 技法选择器","PLAT-00~05 平台插件"],kbs:["KB_08 编译器","KB_09 修正","KB_11 运镜词典"]},
+{id:"R7",name:"AI 提示词质量评分专家",desc:"10分制硬性质量门禁：G1~G12 与 V1~V12 一票否决执法官",detail:"对每一条提示词（资产图/前置图/视频）按 KB_10 双扣分表（各12项）独立核验并附原文证据；低于 9.0 分或触发否决项（◆）必须出具《打回重写指令单》强制 R5/R6 重写（上限3轮），直至 ≥9.0 方可入档。",schema:"{得分(一位小数), G1~G12或V1~V12逐项核验明细(✓/✗+原文证据), 否决项记录, 门禁结论(放行/打回), 打回重写指令单, 实操参数建议}",skills:["QC-01 十分制评分官"],kbs:["KB_10 资产与视频质量检查","KB_09 17种崩坏对照大表"]},
+{id:"R8",name:"剪映剪辑大师兼调音大师",desc:"节奏与声场：剪映专业版真实菜单 + 四轨混音 SOP",detail:"严禁编造假特效名！在每镜下方及集末输出剪映真实菜单指令（6种曲线变速预设、真实转场名、出入场动画）、Cutaway 的 J-Cut/L-Cut 声画错位秒位、36个 Foley 音效直搜词，以及 T1~T4 四轨混音 dB 电平标准。",schema:"{单镜建议[曲线变速预设@秒位, 动画转场名, J/L-Cut秒位, Foley搜索词@卡点秒, 四轨dB], 整集剪辑与模式B对口型SOP}",skills:["EDT-01 剪映剪辑调音"],kbs:["KB_12 TTS音色克隆与剪映后期词典"]},
+{id:"R9",name:"复盘自进化引擎",desc:"系统自进化：实测复盘症状提取 → 定位缺陷 → 自动落盘补丁",detail:"扫描产出文档底部非空的「Prompt 实际产出复盘」，将用户口语症状映射为 01~17 崩坏编号（或立新号 18+），通过三问定位树找出漏网文件与章节，自动写入黑名单实战区、KB_09/KB_10 与平台插件，并下发复测指令。",schema:"{崩坏关键词映射, 归因编号, 缺陷定位[文件+章节], 落盘补丁清单, 复测指令(镜号×次数×盯片指标)}",skills:["EVO-01 复盘自进化"],kbs:["KB_09","KB_10","全局复盘避坑黑名单","全部 plat_* 插件"]}
+];
+
+const roleGrid=document.getElementById('roleGrid'),roleDetail=document.getElementById('roleDetail');
+ROLES.forEach((r,i)=>{
+  const el=document.createElement('div');el.className='role-card';el.dataset.i=i;
+  el.innerHTML=`<div class="rid">${r.id} · AGENT ROLE</div><h3>${r.name}</h3><p>${r.desc}</p><span class="arrow">▸</span>`;
+  el.onclick=()=>showRole(i);roleGrid.appendChild(el);
+});
+function showRole(i){
+  document.querySelectorAll('.role-card').forEach(c=>c.classList.toggle('on',+c.dataset.i===i));
+  const r=ROLES[i];
+  roleDetail.innerHTML=`<h3>${r.id} · ${r.name}</h3><p style="font-size:14px;color:var(--txt2)">${r.detail}</p>
+  <div class="kv">
+    <div><b>交给下游的标准产出</b><span class="pill p" style="white-space:normal;line-height:1.6">${r.schema}</span></div>
+    <div><b>随身技能（人话 + 编号）</b>${r.skills.map(s=>{const c=s.split(' ')[0];const p=ID_PLAIN[c];return p?`<span class="pill">${p}<i>${c}</i></span>`:`<span class="pill">${s}</span>`;}).join('')}</div>
+    <div><b>随身工具书 / 记忆文件</b>${r.kbs.map(k=>{const c=k.split(' ')[0].replace(/[^A-Za-z0-9_]/g,'');const p=ID_PLAIN[c];return p?`<span class="pill o">${p}<i>${c}</i></span>`:`<span class="pill o">${k}</span>`;}).join('')}</div>
+  </div>`;
+  roleDetail.classList.add('show');
+}
+showRole(0);
+
+/* ================= 05 KB 与 Skill 全景速查数据 ================= */
+const EXP_ITEMS=[
+  {id:"KB_01",cat:"kb",tag:"工具书",name:"角色设定工具书",desc:"拿到人物点子先查它：20 种人设模板、怎么把性格变成观众看得见的动作、6 个年龄段的长相禁区、32 个让人过目不忘的小细节（疤痕、旧怀表、口头禅）。"},
+  {id:"KB_02",cat:"kb",tag:"工具书",name:"长相与表情工具书",desc:"写脸就看它：脸型、眉眼、鼻唇、发型的分类词库 150+，还有喜怒哀惧怎么一步步写在脸上的『表情分解动作』。"},
+  {id:"KB_03",cat:"kb",tag:"工具书",name:"穿搭与道具工具书",desc:"38 套现成服装模板（古风/都市/科幻…）连面料配色绣花都配好；剑、怀表等道具拆成三段式描述，保证每个镜头长得一样。"},
+  {id:"KB_04",cat:"kb",tag:"工具书",name:"材质与配色工具书",desc:"布料金属玉石怎么写才真实；26 种打光术语（豆包一听就懂）；12 种情绪各自对应的配色方案。"},
+  {id:"KB_05",cat:"kb",tag:"工具书",name:"画风工具书",desc:"20 种画风流派 + 现成可复制的『画风锁』——一句话锁死全剧画风，防止每张图画风乱跳。"},
+  {id:"KB_06",cat:"kb",tag:"工具书",name:"三视图工具书",desc:"角色的正/侧/背标准照怎么生成才干净无光影干扰：22 组『错误写法→正确写法』对照 + 7 套直接复制的模板。防『三个人同框』必读。"},
+  {id:"KB_07",cat:"kb",tag:"工具书",name:"构图工具书",desc:"横屏竖屏怎么摆人物：12 种构图 + 多人同框防串脸的站位句式（谁站左边三分之一、谁站右边三分之二）。"},
+  {id:"KB_08",cat:"kb",tag:"工具书",name:"提示词组装手册（核心）",desc:"全框架的『造句公式』：图片提示词八层结构、视频提示词『两成外貌+八成动作』黄金配比、说话人/闭嘴人锁定句式。"},
+  {id:"KB_09",cat:"kb",tag:"工具书",name:"翻车急救手册",desc:"17 种 AI 视频常见崩坏（六指、串脸、全员张嘴…）对照大表：什么原因、提示词怎么改、救不回来用什么方案顶替。"},
+  {id:"KB_10",cat:"kb",tag:"工具书",name:"评分标准书",desc:"质检评委的打分表：图片 12 项、视频 12 项硬性扣分点，任何一条红线踩中或低于 9 分就打回重写。"},
+  {id:"KB_11",cat:"kb",tag:"工具书",name:"镜头运动工具书",desc:"推拉摇移等 10 种运镜怎么写成提示词，含海螺 H3 的 [方括号] 写法对照与『什么场面配什么镜头』速查矩阵。"},
+  {id:"KB_12",cat:"kb",tag:"工具书",name:"配音与剪辑工具书",desc:"音色克隆平台真实参数、40 个情绪标签（叹气/笑/换气）；剪映真实菜单名大全与 36 个音效搜索词。"},
+  {id:"NARR-01",cat:"s1",tag:"编剧技能",file:"skill_market_hook_research.md",name:"前 3 秒钩子设计",desc:"短剧观众 3 秒就划走——这个技能负责设计开场钩子（5 种现成公式）和整集情绪起伏节奏表。"},
+  {id:"NARR-02",cat:"s1",tag:"编剧技能",file:"skill_world_character_arc.md",name:"人设与小传",desc:"把『一个很复杂的人』翻译成 AI 能画出来的具体长相、动作习惯和记忆点，并给每句台词配上看得见的动作。"},
+  {id:"NARR-03",cat:"s1",tag:"编剧技能",file:"skill_dialogue_second_calc.md",name:"台词掐秒表",desc:"一句话要说几秒先算清楚（正常语速 4 字/秒），再倒推画面在第几秒做什么——防止嘴型和台词对不上。"},
+  {id:"VIS-01",cat:"s2",tag:"导演组技能",file:"skill_director_storyboard.md",name:"分镜拆解",desc:"把剧本切成一个个 5 秒镜头：谁站哪个位置、什么景别、值不值得花大钱生成（S 级贵/A 级常规/B 级省钱）。"},
+  {id:"VIS-02",cat:"s2",tag:"导演组技能",file:"skill_art_style_costume_prop.md",name:"定画风与穿搭",desc:"开机前定死全剧画风和每位角色的服装配饰，防止越画越走样；还能顺手给角色定嗓音风格。"},
+  {id:"VIS-03",cat:"s2",tag:"导演组技能",file:"skill_asset_pure_chinese_no_light.md",name:"角色设定图生成",desc:"给每个角色产一套『标准照』（正侧背+表情包+特写），全程无光影干扰——这是角色整部剧不换脸的地基。"},
+  {id:"VIS-04",cat:"s2",tag:"导演组技能",file:"skill_continuity_axis_guard.md",name:"防穿帮检查员",desc:"上一个镜头剑在右手、下一个镜头跑到左手？它逐镜核对站位、视线、道具左右手和服装破损是否连贯。"},
+  {id:"IMG-01",cat:"s3",tag:"出图出片技能",file:"skill_img_tech_router.md",name:"选修图方法",desc:"该用图生图还是骨架控制？一张决策树帮你选对工具和参数，少走弯路少废片。"},
+  {id:"IMG-02",cat:"s3",tag:"出图出片技能",file:"skill_img_pre_resource_planner.md",name:"备首帧尾帧图",desc:"视频是『从一张图开始动』的——这个技能负责规划每个镜头的起始图和结束图，动作大的镜头双图锁定。"},
+  {id:"VID-01",cat:"s3",tag:"出图出片技能",file:"skill_vid_second_slicer.md",name:"写视频提示词",desc:"核心技能：把 5 秒镜头拆成『第0-2秒干嘛、第2-5秒干嘛』；外貌只写两成、动作写八成，多人时自动加站位和闭嘴锁。"},
+  {id:"VID-02",cat:"s3",tag:"出图出片技能",file:"skill_vid_method_selector.md",name:"选生成方式",desc:"用首帧生成？首尾双图锚定？还是接力拼长镜头？按镜头类型帮你选最稳最省的方案。"},
+  {id:"PLAT-00",cat:"s5",tag:"平台写法",file:"plat_00_universal_default.md",name:"平台选择顾问",desc:"不知道用哪家模型？一张五平台优劣对比表直接告诉你这个镜头交给谁最合适。"},
+  {id:"PLAT-01",cat:"s5",tag:"平台写法",file:"plat_doubao_seedream.md",name:"豆包·生图写法",desc:"生图首选之一：特别懂中文，『画面左边三分之一站谁』这类空间描述它执行得最准，还认识各种打光术语。"},
+  {id:"PLAT-02",cat:"s5",tag:"平台写法",file:"plat_jimeng.md",name:"即梦·生视频写法",desc:"能参考多张角色图+场景图合成视频，还能直接生成说话的声音（台词嘴型同步）。"},
+  {id:"PLAT-03",cat:"s5",tag:"平台写法",file:"plat_comfyui.md",name:"ComfyUI·工作流写法",desc:"本地部署的自由度之王：节点式流水线，锁脸最稳，适合批量出图和不依赖网络的生产。"},
+  {id:"PLAT-04",cat:"s5",tag:"平台写法",file:"plat_minimax_h3.md",name:"海螺 H3·生视频写法",desc:"最会『演』的：细微表情（眼神暗下去、睫毛颤一下）执行最好，自带声音，用 [方括号] 下运镜指令。"},
+  {id:"PLAT-05",cat:"s5",tag:"平台写法",file:"plat_kling.md",name:"可灵·生视频写法",desc:"大动作之王：打斗、飞跃这类物理场面最稳；支持首尾两张图锁定起止画面。"},
+  {id:"QC-01",cat:"s6",tag:"质检后期技能",file:"skill_qc_prompt_scorer_10pt.md",name:"质检评委",desc:"每条提示词交给它按 12 项标准打分，低于 9 分打回重写并附具体修改意见（文内有 7.5 分被打回的完整案例）。"},
+  {id:"AUD-01",cat:"s6",tag:"质检后期技能",file:"skill_tts_voice_clone_workflow.md",name:"配音克隆",desc:"给角色配声音：怎么选平台、怎么录干净样本、怎么标注『叹口气再说』『笑着说』这类语气。"},
+  {id:"EDT-01",cat:"s6",tag:"质检后期技能",file:"skill_jianying_edit_sound_master.md",name:"剪映剪辑指导",desc:"为每个镜头写好剪辑方案：哪里慢放、用什么转场、音效在剪映里搜什么词、四条音轨各开多大声。"},
+  {id:"EVO-01",cat:"s6",tag:"质检后期技能",file:"skill_retrospective_optimizer.md",name:"复盘进化",desc:"你把翻车现象写进文档，它自动归因、修改规则库和平台插件——同一种车不会翻第二次。"}
+];
+
+const expGrid=document.getElementById('expGrid');
+function renderExp(filter){
+  const list=filter==='all'?EXP_ITEMS:EXP_ITEMS.filter(x=>x.cat===filter);
+  expGrid.innerHTML=list.map(x=>`
+    <div class="kb-item">
+      <div class="k-top"><span class="k-cat">${x.tag}</span><span class="k-id">${x.id}</span></div>
+      <h5>${x.name}</h5>
+      ${x.file?`<p class="k-file">${x.file}</p>`:''}
+      <p>${x.desc}</p>
+    </div>`).join('');
+}
+document.querySelectorAll('#expFilter .fbtn').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('#expFilter .fbtn').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on');renderExp(b.dataset.f);
+});
+renderExp('all');
+
+/* ================= 06 思维与补丁卡片 ================= */
+const MINDS=[
+{n:"思维 01",t:"生图与生视频差分编译",en:"Delta Prompting",d:"图生视频阶段首帧已锁定 90% 静态外观，视频提示词严禁重复堆砌五官穿搭。强制 20% 极简 @资产锚点（≤2个骨相词）+ 80% 纯物理运动变化量，释放视频模型动态算力。",f:"视频Prompt = 20% 锚点(@资产+≤2词) + 80% 动态层(运镜·动作·材质)"},
+{n:"思维 02",t:"S/A/B 镜头分级算力路由",en:"Shot Tiering",d:"S 级（前3秒/奇观/高潮，≤15%）走首尾帧精控+顶级模型；A 级（常规交互）走标准首帧I2V；B 级（对白反应/空镜，≥20%）走高清静态图+对口型+剪映关键帧缓推，零崩坏省40%算力。",f:"S=首尾帧+可灵精调 | A=首帧I2V | B=静态图+LipSync+剪映缓推"},
+{n:"思维 03",t:"皮克斯声画先行",en:"Audio-First / Pre-lay",d:"凡有台词的镜头，先按字数与语速（正常4字/秒、急促5.5、沉吟2.5）加标点气口算出精确到 0.5 秒的音频时长与重音秒位，再倒推视频提示词的秒级动作节点。",f:"镜长 = 铺垫 + (字数÷语速+Σ气口) + 余韵 → 0.5s网格对齐"},
+{n:"思维 04",t:"剪辑救场缓冲镜",en:"Cutaway / B-Roll",d:"每 2~3 个主镜头强制规划一个 1~2 秒特写插入镜/反应镜（握拳、道具、倾听眼神、街边白雾），配 J-Cut/L-Cut 声画错位覆盖主轨——既掩盖 AI 局部瑕疵，又拉满叙事张力。",f:"每 2~3 主镜 + 1 个 1.5s Cutaway(B级) → L-Cut 声延画外遮瑕"},
+{n:"思维 05",t:"跨镜头尾帧接力",en:"Tail-to-Head Relay",d:"突破单次 5 秒限制：截取上一镜生成视频的最后一帧 → 高清修复/Inpainting微调 → 直接作为下一镜首帧输入，Prompt 锚点压至 1 词只写增量；接力链 ≤2 段防累积漂移。",f:"镜A尾帧F1 → 修复微调 → 镜B首帧(锚点1词+纯增量) · 链≤2段"},
+{n:"思维 06",t:"跨集状态快照",en:"Episode State Snapshot",d:"每集文档末尾强制输出「本集结束状态快照 StateDiff」：记录人物战损/服装变更（派生 @林烬战损）、道具流向、时间天气与情绪刻度，同步至项目记忆库防跨集穿帮。",f:"集末 StateDiff(服装/伤势/持物/时空/情绪) → 下一集开拍前必核"}
+];
+
+const PATCHES=[
+{n:"补丁 1",t:"多主体空间分区与口型排他锁",d:"多人同框防串色防乱张嘴。生图：明确量化象限+身高差+服装色差（左侧1/3成年女性@李梅一米六五，右侧2/3孩童@张三一米一）；视频：必须写「说话者张嘴 + 倾听者双唇闭合」。",f:"量化象限+身高差 + 说话者自然开合 + 倾听者双唇闭合锁（V5/V8◆否决项）"},
+{n:"补丁 2",t:"9:16 竖屏与 16:9 横屏构图自适应",d:"单集顶部标注画幅制式。9:16 竖屏自动禁用横向铺开构图，强制切换：前中后大纵深叠压 / 上下高低机位对角线 / 竖屏紧凑过肩（面部占高≥1/3，底部留15%字幕安全区）。",f:"9:16竖屏 = 三层纵深叠压 | 上下高低对角线 | 紧凑过肩"},
+{n:"补丁 3",t:"项目级 @画风锁 全局常量",d:"在资产文档顶部定义不可篡改的 @画风锁 字符串（流派质感+颗粒度+光影+色温+画质），所有 Prompt 末尾逐字挂载（资产图按例外条款将体积光替换为均匀漫射平光）。",f:"内容层 → 镜头构图层 → @画风锁+[分线追加缀] 逐字挂载"},
+{n:"补丁 4",t:"音画双管线分流（Mode A / Mode B）",d:"模式A（即梦/海螺H3/可灵原生对白）：写明台词+语气+张嘴动作；模式B（ComfyUI Wan无声视频+后期克隆音频对口型）：强制写「嘴唇自然闭合或极轻微闭合微动（预留干净基底）」。",f:"模式A=原生音画直出 | 模式B=闭嘴干净基底+LatentSync/剪映对口型"},
+{n:"补丁 5",t:"标准化 ```prompt 代码块封装",d:"所有通过 ≥9.0 分质检的最终版中文 Prompt 统一使用 ```prompt 代码块包裹——支持在编辑器与网页看板中一键点击复制，并方便正则脚本批量提取自动化跑图。",f:"```prompt 满分中文提示词 ``` → 一键复制 · 正则批量提取"}
+];
+
+document.getElementById('mindGrid').innerHTML=MINDS.map(m=>`<div class="mcard"><div class="no">${m.n}</div><h3>${m.t}<em>${m.en}</em></h3><p>${m.d}</p><div class="formula">${m.f}</div></div>`).join('');
+document.getElementById('patchGrid').innerHTML=PATCHES.map(p=>`<div class="mcard pt"><div class="no">${p.n} · ANTI-CRASH PATCH</div><h3>${p.t}</h3><p>${p.d}</p><div class="formula">${p.f}</div></div>`).join('');
+
+/* ================= 07 提示词实验室 ================= */
+const LABS={
+asset:{name:'人物资产 · @李梅 正交三视图（零光影 Albedo）',score:'9.4 / 10',note:'<b>产出文档 1</b>（<code>workspace/重要资产图片提示词.md</code>）。严格执行 <code>KB_06</code> 零光影铁律：用「360度环形无影棚拍柔光 + 漫反射固有色贴图(Flat Lit Albedo) + 正交投影零透视 + A-Pose双臂微张30度」正面物理描述替代失效的否定词。<b>防呆红线</b>：三视图仅用于锁设定，喂视频前必须裁切出④独立面部特写与⑤独立全身立绘！',plats:{
+ std:`角色设定三视图（Turnaround Sheet）：@李梅，圆脸尖下巴柳叶眉杏眼，栗色齐肩微卷发素色发夹，米白针织开衫+浅杏色连衣裙，帆布托特包斜挎；A-Pose双臂自然微张约30度防袖身粘连，双脚与肩同宽；正面、左侧面、背面三视角等距水平排列，同一角色三个视角比例严格一致（非三个人物，非合影），全身完整造型含背面斜挎包带走向；360度环形无影棚拍柔光，均匀漫射平光，漫反射固有色贴图质感（Flat Lit Albedo / Diffuse Pass），正交投影相机零透视畸变，中性18%灰背景，@画风锁（体积光替换为均匀漫射平光）+暖金橙主调黄昏柔焦光晕，16:9横幅，4K`,
+ doubao:`角色设定三视图：@李梅全身。前景为角色本体三视角并排（非三个人物非合影），中景留白分隔，背景为中性18%灰纯色无接缝。圆脸尖下巴苹果肌饱满，柳叶眉杏眼温和，栗色齐肩微卷发素色发夹；米白色针织开衫（罗纹袖口）内搭浅杏色连衣裙A字裙摆，斜挎帆布托特包；A-Pose双臂自然微张，正面/左侧面/背面等距水平排列，同一角色三个视角比例严格一致；360度环形无影棚拍柔光，均匀漫射平光，固有色漫反射贴图质感，正交投影零透视畸变，@画风锁（体积光替换为均匀漫射平光）+暖金橙主调，16:9横幅，4K`,
+ comfy:`character turnaround sheet, three view (front / side / back), orthographic projection, A-pose, full body, consistent proportions, a gentle young mother, round face with pointed chin, willow eyebrows, warm almond eyes, shoulder-length chestnut wavy hair with plain hairclip, beige knit cardigan over light apricot A-line dress, canvas tote bag, flat lighting, albedo map style, neutral grey background, model sheet layout\n-- 中文存档：@李梅三视图（圆脸柳眉杏眼栗色微卷发米白开衫浅杏裙A-Pose，平光Albedo正交18%灰背景）\n-- 节点配置单：Flux.1-dev + IP-Adapter(@李梅立绘 0.6) + Canny线稿 0.6 ｜ euler+simple, steps 24, guidance 3.5\n负向：三个不同人, 合影, 高光过曝, 硬阴影, 透视畸变, 手指粘连, 文字, 水印`,
+ jimeng:`（资产图建议使用豆包Seedream 4.0或ComfyUI生成；即梦侧以切分后的单人立绘作素材位输入）\n素材位1：@李梅独立全身立绘。\n角色设定三视图：@李梅，圆脸尖下巴柳叶眉杏眼，栗色齐肩微卷发素色发夹，米白针织开衫+浅杏色连衣裙；A-Pose双臂自然微张约30度，正面、左侧面、背面三视角等距水平排列，同一角色三个视角比例严格一致（非三个人物非合影）；360度环形无影棚拍柔光，均匀漫射平光，漫反射固有色贴图（Flat Lit Albedo），正交投影零透视畸变，中性18%灰背景，@画风锁（体积光替换为均匀漫射平光），16:9横幅，4K`,
+ h3:`（资产图建议使用豆包/ComfyUI生成；海螺H3侧挂载切分后的 @李梅独立面部特写 作参考图）\n角色设定三视图：@李梅，圆脸柳眉杏眼栗色齐肩微卷发米白开衫浅杏裙，A-Pose双臂微张，正/左/背三视角等距排列同比例（非合影非三人），360度环形无影平光，漫反射固有色Albedo，正交零透视，18%灰背景，@画风锁（平光替换），16:9，4K`,
+ kling:`（资产图建议使用豆包/ComfyUI生成；可灵侧挂载切分后的单人基准图作首尾帧输入）\n角色设定三视图：@李梅，圆脸尖下巴柳叶眉杏眼，栗色齐肩微卷发素色发夹，米白针织开衫+浅杏连衣裙斜挎托特包；A-Pose双臂自然微张约30度，正面/左侧面/背面等距水平排列，同一角色三视角比例严格一致（非三个人物非合影）；360度环形无影棚拍柔光，均匀漫射平光，漫反射固有色贴图（Flat Lit Albedo），正交投影零透视畸变，中性18%灰背景，@画风锁（体积光替换为均匀漫射平光），16:9横幅，4K`}},
+ep1:{name:'分镜1 · @林烬 比武台压场（S级 · 5秒 · 首尾帧控制）',score:'9.3 / 10',note:'<b>产出文档 2</b>（<code>workspace/episodes/第01集_视频生成提示词.md</code>）。S 级镜头走首尾帧双锚定；20/80 差分编译：锚点仅「黑衣长发@林烬」2 词，80% 全为物理运动变化量；静默镜显式声明「双唇闭合无张嘴动作」防乱张嘴。剪映建议：取剑顶点帧 3.5s 挂曲线变速「英雄时刻」，音效搜「剑鸣 出鞘」-12dB。',plats:{
+ std:`黑衣长发@林烬立于@玄天宗比武台中央，[00-02s]镜头低角度缓慢推近，衣摆与额前碎发被罡风掀起轻扬，雷云天光渐暗翻涌，台下人群剪影静立；[02-05s]他缓缓抬眼扫视四周，右手取@焚天断剑自下而上划出弧线斜指前方，剑身暗红纹路亮起，气流掀动衣摆与马尾上扬定格，台下人群剪影后倾半步，雷云中一道银白光柱落台，双唇闭合无张嘴动作，@画风锁+冷青蓝主调剑气银白高光，16:9，5秒`,
+ doubao:`（豆包 Seedream 4.0 负责生成本镜头的「首帧基准图」与「尾帧设计图」）\n首帧基准图：远景低角度仰拍@玄天宗比武台：前景为青石台面与符文石柱局部（微虚化），中景为立于台心的黑衣长发@林烬（九头身，玄黑劲装银线云纹，右手负@焚天断剑于身后），远景为云海浮空山岳与凌霄殿玄铁飞檐横向铺开（虚化）；台下环形人群剪影围绕；雷云压城冷青蓝主调天光，柔和顶光落台心（高光不过曝保留面部细节），中心构图，@画风锁+冷青蓝主调剑气银白高光，16:9，4K`,
+ jimeng:`素材位1：@林烬全身立绘；素材位2：@玄天宗比武台空镜；素材位3：@焚天断剑特写。\n黑衣长发@林烬立于@玄天宗比武台中央。[0-2秒]镜头低角度缓慢推近，衣摆与额前碎发被罡风掀起轻扬，雷云翻涌天光渐暗，台下人群剪影静立；[2-5秒]他缓缓抬眼扫视四周，右手取@焚天断剑自下而上划出弧线斜指前方，剑身暗红纹路亮起，气流掀动衣摆马尾定格，人群剪影后倾半步，银白光柱落台，双唇闭合无张嘴动作；环境音：雷鸣低沉+风声呼啸+剑鸣。人物与场景外观全程与参考素材保持一致，@画风锁+冷青蓝主调剑气银白高光，16:9，5秒`,
+ comfy:`[I2V · Wan2.1-14B · 首帧=基准图 · 模式B无声]\nA tall young swordsman in black outfit @林烬 stands center of the stone arena, black high ponytail, low-angle slow push-in, [00-02s] robe hem and loose strands lifted by wind force, storm clouds darkening; [02-05s] he slowly raises his eyes, draws the broken black sword @焚天断剑 in an upward arc pointing forward, ember-red runes igniting, crowd silhouettes recoiling half a step, one silver light pillar falls, lips closed no mouth movement\n-- 中文存档：黑衣长发@林烬比武台压场（差分编译同公用版）\n-- 节点配置单：Wan2.1 I2V + Depth 0.6 ｜ Motion Strength 0.8（大幅动作）｜ uni_pc, steps 20, cfg 5.0\n负向：镜头切换, 全员张嘴, 身份漂移, 肢体穿模, 背景闪烁, 水印`,
+ h3:`[推近]缓慢\n黑衣长发@林烬立于@玄天宗比武台中央（参考图1：@林烬面部特写，保持面部与参考一致，眨眼频率自然约三秒一次轻微眨眼）。[00-02s]低角度画面缓推，衣摆与额前碎发被罡风掀起轻扬，雷云天光渐暗翻涌，台下人群剪影静立；[02-05s]他缓缓抬眼扫视四周（微表情四相链：平静基准→眉骨微压→眼神转为锐利如鹰→下颌绷紧定格），右手取@焚天断剑自下而上划出弧线斜指前方，剑身暗红纹路亮起，气流掀动衣摆马尾定格，人群后倾半步，银白光柱落台，双唇闭合无张嘴。环境音：雷鸣低沉、风声呼啸；音效：剑鸣出鞘卡2.8s，@画风锁+冷青蓝主调剑气银白高光，16:9，5秒`,
+ kling:`首帧=图1（@林烬负剑静立于@玄天宗比武台台心），尾帧=图2（@林烬持@焚天断剑斜指前方、衣袂上扬定格）。\n主体：黑衣长发@林烬；运动：镜头低角度推近的同时，他缓缓抬眼扫视，右手取@焚天断剑自下而上划出弧线，剑身暗红纹路亮起，气流自剑锋扩散掀动衣摆与马尾，台下人群剪影后倾半步，一道银白光柱落台后定格（符合气流惯性与重力）；场景：青石比武台、四角符文石柱、云海山岳、雷云压城；镜头语言：低角度推近，冷青蓝主调天光，剑气银白高光，威压氛围，双唇闭合无张嘴动作，@画风锁+冷青蓝主调剑气银白高光，16:9，5秒`}},
+ep2:{name:'例子1 · 镜头1 母子行进·稚语要莽莽（A级 · 3秒 · 模式A）',score:'9.5 / 10',note:'<b>例子1 工业级拆解第 1 镜</b>。声画先行精算：台词 7 字 ÷ 童声 4 字/秒 + 气口 = 2.2s，加 0.8s 拽衣角铺垫 = 3.0 秒。多人同框双保险：<b>空间分区句式</b>（左1/3成年女性一米六五 + 右2/3孩童一米一）+ <b>口型排他锁</b>（@张三张嘴说话 + @李梅保持双唇闭合倾听）。尾音「莽莽~」做 0.5s L-Cut 延入下一镜白雾 Cutaway。',plats:{
+ std:`米白开衫母亲@李梅与天蓝卫衣孩童@张三行于@光大街边：画面左侧三分之一为成年女性@李梅（身高约一米六五），右侧三分之二为孩童@张三（身高约一米一），两人牵手间距一臂；[00-00.8s]远景镜头缓慢推近，母子缓步前行，@张三仰头拽动母亲衣角，梧桐树影斑驳、馄饨摊白雾轻晃；[00.8-03.0s]@张三抬头张嘴说话，嘴唇随台词自然开合："妈妈，我要吃莽莽"（奶声奶气，尾音拖长，渴望语气）；一旁的@李梅保持双唇闭合、嘴角含笑低头倾听，不发一言，@画风锁+暖金橙主调黄昏柔焦光晕，16:9，3秒`,
+ doubao:`（豆包 Seedream 4.0 负责生成本镜头的「首帧基准图」）\n首帧基准图：黄昏@光大街边，前景为馄饨摊蒸腾白雾与暖黄灯串（微虚化），中景画面左侧三分之一为成年女性@李梅（米白针织开衫配浅杏连衣裙，栗色齐肩微卷发，身高约一米六五），右侧三分之二为孩童@张三（天蓝小熊耳连帽卫衣，身高约一米一，1:4.5幼儿头身比），孩童仰头拽住母亲衣角；远景为居民楼暖黄窗灯（大光圈虚化）；黄昏金橙色温柔和平射光（高光不过曝保留双方面部细节），三分法构图+街道纵深引导线，@画风锁+暖金橙主调黄昏柔焦光晕，16:9，4K`,
+ jimeng:`素材位1：@李梅全身立绘；素材位2：@张三全身立绘；素材位3：@光大街边空镜。\n黄昏@光大街边人行道，画面左侧三分之一为成年女性@李梅（米白针织开衫，身高约一米六五），右侧三分之二为孩童@张三（天蓝小熊耳卫衣，身高约一米一，幼儿比例），两人牵手前行。[0-0.8秒]远景镜头缓慢推近，@张三仰头拽母亲衣角，树影斑驳白雾轻晃；[0.8-3秒]@张三抬头张嘴说话，嘴唇随台词自然开合："妈妈，我要吃莽莽"（奶声奶气尾音拖长，渴望语气），童声对白与脚步环境音同步生成；一旁的@李梅保持双唇闭合、嘴角含笑低头倾听不发一言。人物与场景外观全程与参考素材保持一致，@画风锁+暖金橙主调黄昏柔焦光晕，16:9`,
+ comfy:`[I2V · Wan2.1-14B · 首帧=基准图 · 模式B后期对口型]\nA mother in beige cardigan @李梅 walks with her small son in blue bear-ear hoodie @张三 on a dusk old street: mother on left third (165cm), child on right two-thirds (110cm, child proportions), holding hands; [00-00.8s] distant slow push-in, child tugs her hem looking up, tree shadows and food-stall steam drifting; [00.8-03s] child looks up with eager expression while both keep lips naturally closed or near-closed micro-movement (clean base for post Lip-Sync)\n-- 中文存档：母子买莽莽镜头1（模式B闭嘴干净基底声明）\n-- 节点配置单：Wan2.1 I2V + OpenPose 0.7 双骨架 ｜ Motion 0.5 ｜ 无声输出\n-- 台词音频：MiniMax 儿童声 "(excited)妈妈，我要吃莽莽~" → LatentSync/剪映对口型对齐重音"吃"@2.2s\n负向：全员张嘴, 双人融合, 手指粘连, 成人比例孩童, 文字, 水印`,
+ h3:`[推近]缓慢\n参考图1：@李梅面部特写；参考图2：@张三面部特写（保持双方面部与参考一致，眨眼频率自然约三秒一次轻微眨眼）。画面左侧三分之一为成年女性@李梅（一米六五，米白开衫），右侧三分之二为孩童@张三（一米一，天蓝小熊耳卫衣，幼儿头身比），牵手前行于@光大街边。[00-00.8s]远景缓推，@张三仰头拽母亲衣角（微表情：眼睛瞪圆渴望、小嘴微嘟即开），树影斑驳白雾轻晃；[00.8-03s]@张三抬头张嘴说话，嘴唇随台词自然开合："妈妈，我要吃莽莽"（奶声奶气尾音拖长，渴望语气）；一旁的@李梅保持双唇闭合、嘴角含笑低头倾听。环境音：街道市井嘈杂、轻脚步；对白：奶萌童声同步，@画风锁+暖金橙主调黄昏柔焦光晕，16:9，3秒`,
+ kling:`首帧=图1（@李梅左三分之一@张三右三分之二牵行首帧基准图）。\n主体：米白开衫母亲@李梅（左，一米六五）与天蓝卫衣孩童@张三（右，一米一，幼儿比例）牵手行于@光大街边；运动：镜头缓慢推近，孩童仰头拽母亲衣角，随后抬头张嘴说台词"妈妈，我要吃莽莽"（嘴唇自然开合），母亲双唇闭合含笑低头倾听不发一言；场景：黄昏老街、梧桐树影、馄饨摊白雾、暖黄窗灯；镜头语言：远景缓推，暖金橙主调，黄昏柔焦光晕，@画风锁+暖金橙主调黄昏柔焦光晕，16:9，3秒`}},
+ep3:{name:'例子1 · 镜头3 过肩承诺（A级 · 4秒 · 微表情链+口型锁）',score:'9.4 / 10',note:'<b>例子1 工业级拆解第 3 镜</b>（第 2 镜为 1.5s 馄饨摊白雾 B 级 Cutaway 缓冲镜）。台词 15 字紧凑档精算 = 3.2s + 铺垫 0.4s + 轻拍收势 0.4s = 4.0 秒。潜台词外化：「说到等爸爸时眼神先亮起随即轻轻垂下，睫毛轻颤一次」。前景 @张三 后脑虚化且强制闭嘴锁。',plats:{
+ std:`过肩镜头：越过孩童@张三肩部拍米白开衫母亲@李梅（主体占画面左侧三分之二）；[00-00.4s]@李梅垂眸含笑，右手五指自然并拢抬出入画抚向画外孩子头顶；[00.4-03.6s]她张嘴说话，嘴唇随台词自然开合："张三，上次我们才吃了，等爸爸回来给你买"（温柔轻叹，语速轻缓），说到"等爸爸"时眼神先亮起随即轻轻垂下，睫毛轻颤一次，嘴角笑意微收；[03.6-04.0s]抚头的手轻拍一下收势；肩前@张三保持静止虚化剪影、双唇闭合倾听不张嘴，@画风锁+暖金橙主调黄昏柔焦光晕，16:9，4秒`,
+ doubao:`（豆包 Seedream 4.0 负责与镜头1同批次成对生成本镜头的「过肩首帧基准图」，防正反打色温跳变）\n过肩首帧基准图：越过孩童@张三右肩与后脑（前景右下角虚化剪影，天蓝小熊耳卫衣帽沿可见）拍摄成年女性@李梅：中景@李梅居画面左侧三分之二，米白针织开衫垂眸含笑望向画外右下方，右手五指自然并拢刚抬至胸前；远景@光大街边黄昏树影与暖黄灯串大光圈虚化；黄昏金橙色温柔和平射光，高光不过曝保留面部细节；近景过肩构图，@画风锁+暖金橙主调黄昏柔焦光晕，16:9，4K`,
+ jimeng:`素材位1：@李梅全身立绘；素材位2：@张三全身立绘；素材位3：@光大街边空镜。\n近景过肩镜头：越过孩童@张三的肩部拍摄@李梅（主体占画面左侧三分之二）。[0-0.4秒]@李梅垂眸含笑，右手五指自然并拢抬入画抚向画外孩子头顶；[0.4-3.6秒]她张嘴说话，嘴唇随台词自然开合："张三，上次我们才吃了，等爸爸回来给你买"（温柔轻叹），说到"等爸爸"时眼神先亮起随即轻轻垂下，睫毛轻颤一次，嘴角笑意微收；[3.6-4秒]抚头的手轻拍一下收势。肩前@张三保持静止虚化剪影、双唇闭合倾听不张嘴。温软女声对白与轻微衣料摩擦声同步生成。人物与场景外观全程与参考素材保持一致，@画风锁+暖金橙主调黄昏柔焦光晕，16:9`,
+ comfy:`[I2V · Wan2.1-14B · 首帧=过肩基准图 · 模式B后期对口型]\nOver-the-shoulder shot past a small boy @张三 (blurred silhouette, lower right) onto a gentle mother @李梅 in beige cardigan (left two-thirds): [00-00.4s] she lowers her gaze smiling, right hand with fingers naturally together reaches into frame to pat off-screen child's head; [00.4-03.6s] lips keep naturally closed or near-closed micro-movement (clean base for post Lip-Sync), while eyes light up then gently lower at 2.2s, lashes flutter once, smile slightly recedes; [03.6-04s] hand pats once and withdraws; boy's shoulder static, lips closed\n-- 中文存档：过肩承诺（模式B闭嘴基底声明）\n-- 节点配置单：Wan2.1 I2V + OpenPose 0.6 ｜ Motion 0.4（微表情戏）｜ 无声输出\n-- 台词音频：Fish Audio 克隆 "(softly)张三，上次我们才吃了，(breath)等爸爸回来给你买" → LatentSync/剪映对口型\n负向：多人张嘴, 口型大开, 手指畸形, 身份漂移, 背景闪烁, 水印`,
+ h3:`[固定]\n近景过肩，参考图1：@李梅面部特写（保持@李梅面部与参考一致，眨眼频率自然约三秒一次轻微眨眼），参考图2：@张三立绘（仅取肩部虚化）。[00-00.4s]@李梅垂眸含笑，右手五指并拢抬入画抚向画外孩子头顶（手部至腕部入画）；[00.4-03.6s]她开口说台词，嘴唇随台词自然开合："张三，上次我们才吃了，等爸爸回来给你买"（温柔轻叹、4.5字/秒、"等爸爸"前轻换气），说到"等爸爸"时眼神先亮起随即轻轻垂下，睫毛轻颤一次，嘴角笑意未消微微收拢；[03.6-04s]抚头的手轻拍一下收势。肩前@张三后脑与肩部保持静止虚化、双唇闭合倾听不张嘴。环境音：黄昏街道市井嘈杂低鸣；对白：温软女声与轻微衣料摩擦声同步，@画风锁+暖金橙主调黄昏柔焦光晕，16:9，4秒`,
+ kling:`首帧=图1（过肩基准图）。\n主体：米白开衫母亲@李梅（过肩主体）；运动：镜头固定，她垂眸含笑抬右手（五指自然并拢）抚向画外孩子头顶，开口说台词"张三，上次我们才吃了，等爸爸回来给你买"（嘴唇自然开合，温柔轻叹），说"等爸爸"时眼神先亮后垂，睫毛轻颤，末了手轻拍一下收势；肩前孩童@张三后脑静止虚化、双唇闭合倾听；场景：黄昏老街虚化背景、暖黄灯光斑；镜头语言：固定近景过肩，暖金橙主调，柔焦光晕，@画风锁+暖金橙主调黄昏柔焦光晕，16:9，4秒`}}
+};
+let curLab='asset',curPlat='std';
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function hl(s){return esc(s)
+  .replace(/(@画风锁)/g,'<span class="lock">$1</span>')
+  .replace(/(@[\u4e00-\u9fa5]{2,8})(?=[^\u4e00-\u9fa5]|$)/g,'<span class="at">$1</span>')
+  .replace(/(\[\d{1,2}(?:\.\d)?-\d{1,2}(?:\.\d)?[秒s]\]|\[\d-\d(?:\.\d)?秒\]|\[[\u4e00-\u9fa5]{2}\]|\[0-\d(?:\.\d)?秒\])/g,'<span class="sec">$1</span>');}
+function renderLab(){
+  const L=LABS[curLab];
+  document.getElementById('labName').textContent=L.name+(curPlat!=='std'?` · ${document.querySelector('#platSel button.on').textContent}版`:' · 公用标准版');
+  document.getElementById('labNote').innerHTML=L.note;
+  document.getElementById('labPrompt').innerHTML=hl(L.plats[curPlat]||L.plats.std);
+  document.getElementById('labScore').textContent=L.score;
+  document.getElementById('labScoreNote').textContent='（已通过 R7 质量门禁 · 逐项核验明细见 workspace/ 产出文档 · Prompt 实际产出复盘：占位）';
+}
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));t.classList.add('on');curLab=t.dataset.lab;renderLab();});
+document.querySelectorAll('#platSel button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#platSel button').forEach(x=>x.classList.remove('on'));b.classList.add('on');curPlat=b.dataset.p;renderLab();});
+document.getElementById('copyBtn').onclick=function(){
+  const txt=LABS[curLab].plats[curPlat]||LABS[curLab].plats.std;
+  copyText(this,txt);
+};
+renderLab();
+
+/* ================= 08 评分模拟器 ================= */
+const VITEMS=[
+{g:"资产与差分编译（V1 / V2）",items:[
+ {k:"V1",t:"引用了未注册资产或名称含英文/数字/符号（如 @LiMei_v2）",v:1.5,veto:1},
+ {k:"V2",t:"外貌描写超过 2 个骨相词 / 重复堆砌穿搭（违反 20/80 差分编译）",v:1.5,veto:1}]},
+{g:"动作与时间轴（V3 / V4 / V7）",items:[
+ {k:"V3",t:"单镜含 ≥2 个主动作，或提示词内隐含机位切换（先全景再特写，崩坏04）",v:1.5,veto:1},
+ {k:"V4",t:"缺秒级节点 / 节点超过 3 个 / 节点间隔不足 1 秒",v:1.0},
+ {k:"V7",t:"有台词但无 NARR-03「字数÷语速+气口」时长精算",v:0.5}]},
+{g:"口型双保险（V5 / V6）",items:[
+ {k:"V5",t:"多人 + 台词，未写倾听者「双唇闭合」口型排他锁（崩坏05 全员乱张嘴）",v:1.5,veto:1},
+ {k:"V6",t:"未声明口型模式 A/B；或模式B未写闭嘴干净基底（崩坏16 口型打架重影）",v:1.0,veto:1}]},
+{g:"空间分区与运镜（V8 / V9）",items:[
+ {k:"V8",t:"≥2 个人物同框但无空间分区句式（左三分之一/右三分之二+身高差，崩坏06）",v:1.0,veto:1},
+ {k:"V9",t:"单镜运镜 ≥2 种（如推近+环绕连用）或运镜幅度与内容矛盾",v:1.0}]},
+{g:"防崩红线与画风规格（V10 / V11 / V12）",items:[
+ {k:"V10",t:"含黑名单触发词：十指交叉(02) / 360度转身(03) / 狂奔(07) / 瞬移(13) / 强逆光首帧(10)",v:1.0,veto:1},
+ {k:"V11",t:"末尾未逐字挂载 @画风锁（含分线追加缀）",v:1.0},
+ {k:"V12",t:"缺时长秒数或画幅比例标注",v:0.5}]}
+];
+const cl=document.getElementById('checkList');
+VITEMS.forEach(g=>{
+  const gd=document.createElement('div');gd.className='cgroup';
+  gd.innerHTML=`<div class="gt">▍${g.g}</div>`+g.items.map(it=>`<label class="ck"><input type="checkbox" data-v="${it.v}" data-veto="${it.veto||0}" data-k="${it.k}"><span><b style="font-family:var(--mono);color:${it.veto?'var(--red)':'var(--orange)'}">${it.k}</b>${it.veto?'<span class="veto">◆一票否决</span>':''}<br>${it.t}</span></label>`).join('');
+  cl.appendChild(gd);
+});
+cl.addEventListener('change',calcScore);
+function calcScore(){
+  let ded=0,items=[],veto=false;
+  cl.querySelectorAll('input:checked').forEach(c=>{
+    const v=+c.dataset.v;ded+=v;items.push({k:c.dataset.k,v:v,veto:c.dataset.veto==='1'});
+    if(c.dataset.veto==='1')veto=true;
+  });
+  let score=Math.max(0,10-ded);if(veto)score=Math.min(score,8.9);
+  score=Math.round(score*10)/10;
+  const bs=document.getElementById('bigScore'),vd=document.getElementById('verdict'),dl=document.getElementById('deductList');
+  bs.textContent=score.toFixed(1);
+  if(score>=9.0){bs.style.color='var(--green)';vd.style.color='var(--green)';vd.textContent='✅ 放行写入产出文档';}
+  else{bs.style.color='var(--red)';vd.style.color='var(--red)';vd.textContent='⛔ 打回！强制 R5/R6 重写（'+(veto?'触发◆一票否决项':'累计扣分过多')+' · 下发《打回重写指令单》）';}
+  dl.innerHTML=items.length?items.map(i=>`<div><b style="font-family:var(--mono);color:${i.veto?'var(--red)':'var(--orange)'}">${i.k}</b> −${i.v.toFixed(1)}分${i.veto?' <span style="color:var(--red)">[◆一票否决]</span>':''}</div>`).join(''):'<div style="color:var(--txt3)">（无扣分 · V1~V12 逐项全部通过）</div>';
+}
+function resetScorer(){cl.querySelectorAll('input').forEach(c=>c.checked=false);calcScore();}
+
+/* ================= 导航高亮 ================= */
+const links=document.querySelectorAll('nav a');
+const secs=[...document.querySelectorAll('section')];
+window.addEventListener('scroll',()=>{
+  let cur=secs[0].id;
+  secs.forEach(s=>{if(window.scrollY>=s.offsetTop-110)cur=s.id;});
+  links.forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+cur));
+},{passive:true});
+</script>
+</body>
+</html>
