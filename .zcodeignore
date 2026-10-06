@@ -1,6 +1,9 @@
 # ZCode 会话工件（计划缓存等，不属于框架交付物）
 .zcode/
 
+# IDE 配置（PyCharm/IDEA 等，不属于框架交付物）
+.idea/
+
 # 系统杂物
 .DS_Store
 Thumbs.db
@@ -15,9 +18,18 @@ memory/projects/*
 # 小说/剧本文本素材（放于 memory 根目录的原始文本）
 memory/*.txt
 
-# 分集视频产出——仅保留示范第01集作为产出文档格式示范
-workspace/episodes/*
-!workspace/episodes/第01集_视频生成提示词.md
+# workspace 按剧隔离（R9-20261005-2）：各剧产出本地管理，不上传远端；
+# 仅入库《示范剧集_苍穹与烟火》（旧版格式示范，配套 memory 三件套）；
+# 两界食单 / 两界食单_豆包测试版 整目录本地管理（含 AGENTS.md 所引"新格式示范"文档）
+workspace/*
+!workspace/示范剧集_苍穹与烟火/
+
+# reference/ 外部参考资料：三份资料知识已全量吸收进 KB（登记见 reference/README.md 档案卡）；
+# 资料本体体量过大（运镜50 47张PNG ~99MB / 图鉴合集PDF ~12MB / 分镜表格模板.xlsx ~8.4MB），本地保留不上传
+reference/运镜50/
+reference/运镜50_图鉴合集.pdf
+reference/分镜表格模板.xlsx
+reference/分镜提示词.txt
 
 # 临时校验/比对产物
 check_part*.txt
@@ -28,7 +40,7 @@ check_part*.txt
 .svn/
 node_modules/
 bower_components/
-jspm_packages/
+jpm_packages/
 __pycache__/
 site-packages/
 venv/
@@ -53,11 +65,4 @@ pip-wheel-metadata/
 wheels/
 # ----- ↑ 以上为 ZCode 默认排除规则（自定义规则请写在本行下方，不会被同步/恢复改动）-----
 # 自定义规则写在下方（本行提示可删除）
-
-# 剧本工作区按剧隔离（R9-20261005-2 目录迁移后）——除示例外整目录本地管理
-workspace/两界食单/
-workspace/两界食单_豆包测试版/
-workspace/_audit.py
-
-# IDE 配置
-.idea/
+# （原底部自定义规则——workspace 按剧隔离/.idea——已随 2026-10-07 .gitignore 同步并入上方段落）
