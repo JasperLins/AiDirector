@@ -1,9 +1,9 @@
 ---
 name: plat_comfyui
-description: "WHAT：ComfyUI 专属插件——Flux 生图与 Wan2.1/2.2 生视频的工作流节点配置建议（PuLID/Redux 锁脸、ControlNet 预处理器与权重、LoRA 区间、采样器/步数/CFG）、结构化 Tag+自然语言混合语法与专属 Negative Prompt 模板。WHEN：用户指定 ComfyUI（Flux/Wan/SD系）生图或生视频，或需要本地可控管线、锁脸批量出图、模式B无声视频+后期对口型降本时触发。"
+description: "WHAT：ComfyUI 专属插件——Flux 生图与 Wan2.1/2.2 生视频的工作流节点配置建议（PuLID/Redux 锁脸、ControlNet 预处理器与权重、LoRA 区间、采样器/步数/CFG）、结构化 Tag+自然语言混合语法与专属 Negative Prompt 模板。WHEN：用户指定 ComfyUI（Flux/Wan/SD系）生图或生视频，或需要本地可控管线、锁脸批量出图、无声视频输出降本时触发。"
 required_kbs: [KB_06_三视图与角色一致性, KB_09_错误修正与Negative_Prompt, KB_08_Prompt编译器]
-input_schema: "输入：{VID-01/KB_08编译稿, 任务类型(生图/生视频I2V), 锁脸需求(单人多道具), ControlNet需求(姿态/景深/线稿), 显存预算, 口型模式(A禁用→B)}"
-output_schema: "{工作流节点配置单(模型+锁脸+控制+采样段逐项参数), 正向EN(```prompt), 正向中文存档行, 负向模板(```prompt), 视频附加段(Motion/首帧/模式B闭嘴), 交付格式(双轨+参数随行)}"
+input_schema: "输入：{VID-01/KB_08编译稿, 任务类型(生图/生视频I2V), 锁脸需求(单人多道具), ControlNet需求(姿态/景深/线稿), 显存预算, 口型声明(开合/闭唇)}"
+output_schema: "{工作流节点配置单(模型+锁脸+控制+采样段逐项参数), 正向EN(```prompt), 正向中文存档行, 负向模板(```prompt), 视频附加段(Motion/首帧/口型声明), 交付格式(双轨+参数随行)}"
 ---
 
 # ComfyUI 平台插件（PLAT-03）· 工业级完整版
@@ -13,7 +13,7 @@ output_schema: "{工作流节点配置单(模型+锁脸+控制+采样段逐项�
 1. **中英双轨铁律**：Flux/SD/Wan 系英文语义强——交付必须双轨：`正向EN（喂模型）+ 中文存档行（人读与注册表对照）`；中文稿直接喂英文模型=语义损耗过半。
 2. **节点参数随行铁律**：ComfyUI 是工作流引擎，Prompt 必须与节点配置单**同单交付**（锁脸节点+权重、ControlNet 预处理器+强度、LoRA 权重、采样器/步数/CFG、视频 Motion）——无参数的 Prompt 无法复现，等于没交付。
 3. **负向独立铁律**：ComfyUI 保留独立负向输入端——负向模板必挂（4.4）；把负向内容写进正向自然语言（"不要六指"）反而注入概念激活。
-4. **模式B闭嘴铁律**：Wan 生成对白镜一律无声输出+`嘴唇自然闭合或极轻微闭合微动（预留后期 Lip-Sync 干净基底）`；大嘴型+LatentSync=重影（崩坏16）。
+4. **音频可替换铁律（R9-20261005-2，废止"闭嘴基底"）**：Wan 无声输出照常写口型动作（"嘴唇随台词自然开合"），**不再强制闭嘴基底**；成片台词由后期"静音原轨→TTS 导入→剪辑手动对齐（±2 帧）"完成，AI 对口型（LatentSync）为可选加速工具。
 5. **锁脸优先铁律**：已注册人物入画必挂锁脸件——角色 LoRA（0.6~0.85）> PuLID（0.6~0.8）> IP-Adapter（0.5~0.7，挂单人立绘/面部特写）；三视图整图禁止入参考位（多头怪）。
 6. **显存预算铁律**：交付前核对显存档位（4.5 节降级链）；24G 满配、12G 降采样两段式、8G 以下建议转在线平台并在选型备注声明。
 
@@ -25,9 +25,9 @@ output_schema: "{工作流节点配置单(模型+锁脸+控制+采样段逐项�
 
 **Step 3 · 双轨编译**：正向 EN（Tag 前置+自然语言主体段，权重语法 `(tag:1.2)`）+ 中文存档行（@资产名保留原样——注册表对照用）。
 
-**Step 4 · 挂负向**：按 4.4 模板裁剪（生图全量/视频全量+模式B条目）。
+**Step 4 · 挂负向**：按 4.4 模板裁剪（生图全量/视频全量+口型声明条目）。
 
-**Step 5 · 视频附加段**：首帧声明、Motion Strength 定档（情绪 0.4~0.6/常规 0.5~0.7/动作 0.7~0.9）、模式B闭嘴句、Wan2.2-S2V 特例（无限时长数字人）。
+**Step 5 · 视频附加段**：首帧声明、Motion Strength 定档（情绪 0.4~0.6/常规 0.5~0.7/动作 0.7~0.9）、口型声明（台词镜写"嘴唇随台词自然开合"）、Wan2.2-S2V 特例（无限时长数字人）。
 
 **Step 6 · 送检交付**：R7 评分（平台附加项：负向齐/双轨齐/参数齐）≥9.0 → 单据化交付。
 
@@ -38,7 +38,7 @@ output_schema: "{工作流节点配置单(模型+锁脸+控制+采样段逐项�
 | 字段 | 类型 | 必填 | 示例 |
 |---|---|---|---|
 | 编译稿 | text | 是 | KB_08/VID-01 |
-| 任务类型 | enum | 是 | 生视频 I2V（模式B） |
+| 任务类型 | enum | 是 | 生视频 I2V（无声输出） |
 | 锁脸/控制需求 | list | 是 | 双人锁脸+Depth |
 | 显存预算 | enum | 是 | 24G |
 
@@ -47,9 +47,9 @@ output_schema: "{工作流节点配置单(模型+锁脸+控制+采样段逐项�
 ```yaml
 工作流节点配置单:
   生图段: {底模: "Flux.1-dev", 锁脸: "PuLID(flux) 0.7", 控制: "ControlNet-Depth 0.6(预处理器:MidasDepth)", LoRA: "角色LoRA×0(已有PuLID不双挂)", 采样: "euler + simple｜steps 24｜guidance 3.5", 分辨率: "1344×768(16:9)"}
-  视频段: {模型: "Wan2.1-I2V-14B", 首帧: "前置基准图", Motion: "0.5(情绪戏)", 采样: "uni_pc｜steps 20｜cfg 5.0", 输出: "无声(模式B)"}
-正向EN: "```prompt masterpiece, (1girl:1.2), beige knit cardigan …lips naturally closed …```"
-中文存档: "-- 米白开衫@李梅过肩镜头…嘴唇自然闭合(模式B基底)…@画风锁"
+  视频段: {模型: "Wan2.1-I2V-14B", 首帧: "前置基准图", Motion: "0.5(情绪戏)", 采样: "uni_pc｜steps 20｜cfg 5.0", 输出: "无声(口型照常写，音频后期TTS轨替换)"}
+正向EN: "```prompt masterpiece, (1girl:1.2), beige knit cardigan …lips moving naturally with the dialogue …```"
+中文存档: "-- 米白开衫@李梅过肩镜头…嘴唇随台词自然开合…@画风锁"
 负向模板: "```prompt …4.4裁剪版…```"
 交付格式: "双轨+节点单同页；文件名含镜号与版本"
 ```
@@ -83,8 +83,8 @@ output_schema: "{工作流节点配置单(模型+锁脸+控制+采样段逐项�
 | Motion Strength | 动作 0.8 | 0.7~0.9 | 打斗（配合首尾帧思路） |
 | 采样 | uni_pc，steps 20，cfg 5.0 | steps 20~30 / cfg 5~6 | cfg>6 运动过冲 |
 | 帧率/时长 | 16fps × 5s = 80 帧 | ≤5s/条 | 长镜走接力 |
-| Wan2.2-S2V | 数字人无限时长口播 | —— | 模式B口播特化 |
-| 输出 | 无声 + 闭嘴基底 | —— | 后期 LatentSync/剪映对口型 |
+| Wan2.2-S2V | 数字人无限时长口播 | —— | 口播特化（音频后期TTS轨替换） |
+| 输出 | 无声（口型照常写） | —— | 后期 TTS 导入+手动对齐（AI 对口型可选） |
 
 ### 4.3 结构化 Tag + 自然语言混合语法
 
@@ -101,7 +101,7 @@ output_schema: "{工作流节点配置单(模型+锁脸+控制+采样段逐项�
 ```prompt
 多余手指, 六指, 手指粘连, 面部扭曲, 五官移位, 高光过曝, 硬阴影, 透视畸变, 双人融合, 三个相同人物, 复制人, 文字, 乱码, 水印, 签名, 低分辨率, 模糊, 噪点, 肢体比例错误, 畸形, 过饱和, 卡通辱画风
 ```
-**生视频母版（+模式B条目）**：
+**生视频母版（+口型声明条目）**：
 ```prompt
 镜头切换, 机位跳切, 人物瞬移, 全员张嘴, 多人张嘴, 口型大开, 身份漂移, 肢体穿模, 手指畸形, 背景闪烁, 拖影, 鬼影, 色彩断层, 画面撕裂, 文字出现, 水印
 ```
@@ -118,15 +118,15 @@ output_schema: "{工作流节点配置单(模型+锁脸+控制+采样段逐项�
 ✅ **Good Case**：
 > 节点单：`Flux.1-dev + PuLID(flux)0.7(@林烬面部特写) + Depth 0.6(MidasDepth) ｜ euler+simple, steps 24, guidance 3.5 ｜ 1344×768`；正向EN：`masterpiece, (1boy:1.2), black outfit, high ponytail, a young sword cultivator stands center of stone arena, robe hem and loose strands lifted by wind force…`；负向母版全挂；中文存档行含 `@林烬…@画风锁`。——单据化可复现交付。
 
-### 对比组 2：模式B口型
+### 对比组 2：音频替换处理
 
 ❌ **Bad Case**：
 > Wan 视频：@李梅情绪饱满地大声说话，嘴型夸张开合，台词激昂，生成后我再用对口型软件配音。
 
-**扣分点**：模式B写"嘴型夸张开合"——LatentSync 后期对口型与原视频大嘴型重影打架（崩坏16 一票否决）。
+**扣分点**：旧"强制闭嘴+LatentSync"管线已废止（R9-20261005-2）——口型照常写，音频后期静音原轨换 TTS 手动对齐即可，微表情全保留。
 
 ✅ **Good Case**：
-> Wan 无声输出 + `lips naturally closed or near-closed micro movement (clean base for post lip-sync)`；微表情链保留（eye smile→gaze lowers→lash flutter）；台词按 NARR-03 控制符串由 Fish Audio 克隆 → LatentSync/剪映对口型 → 音画 ±2 帧微调。
+> Wan 无声输出，口型照常写（`lips moving naturally with the dialogue`）+微表情链保留（eye smile→gaze lowers→lash flutter）；台词按 NARR-03 控制符串由 Fish Audio 克隆 → 剪辑静音原轨导入 TTS → 逐句 ±2 帧手动对齐（需 AI 加速时才用 LatentSync）。
 
 ## 六、边界情况处理（Edge Cases）
 

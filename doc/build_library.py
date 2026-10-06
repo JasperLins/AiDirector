@@ -15,7 +15,7 @@ OUT  = ROOT / "doc" / "library.html"
 
 GROUPS = [
     ("总控路由",                  ["AGENTS.md"]),
-    ("KB 工具书 · 12 册",         sorted(str(p.relative_to(ROOT)).replace("\\", "/") for p in (ROOT/"kb_library").glob("*.md"))),
+    ("KB 工具书 · 15 册",         sorted(str(p.relative_to(ROOT)).replace("\\", "/") for p in (ROOT/"kb_library").glob("*.md"))),
     ("技能索引",                  ["skills/SKILL_INDEX.md"]),
     ("✍️ 编剧叙事",               sorted(str(p.relative_to(ROOT)).replace("\\", "/") for p in (ROOT/"skills/01_narrative_skills").glob("*.md"))),
     ("🎬 导演·美术·场记",         sorted(str(p.relative_to(ROOT)).replace("\\", "/") for p in (ROOT/"skills/02_visual_director_skills").glob("*.md"))),

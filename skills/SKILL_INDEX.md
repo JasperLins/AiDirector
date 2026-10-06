@@ -13,15 +13,18 @@
 | NARR-01 市场钩子调研 | `01_narrative_skills/skill_market_hook_research.md` | KB_01 | 当需要分析目标市场受众、设计黄金前3秒钩子或情绪曲线时 |
 | NARR-02 世界观与人物弧光 | `01_narrative_skills/skill_world_character_arc.md` | KB_01、KB_02 | 当需要构建世界观、人物立体小传、性格缺陷与潜台词时 |
 | NARR-03 台词秒数精算 | `01_narrative_skills/skill_dialogue_second_calc.md` | KB_11、KB_12 | 当台词需要按字数/语速精算镜头时长与重音节点（声画先行）时 |
+| NARR-04 单集剧本与脚本转化 | `01_narrative_skills/skill_episode_script_writer.md` | KB_01、KB_02、KB_12 | 当需要撰写单集完整文学剧本、把大纲/小说改编为可拍摄剧本、或界定"文学剧本/分镜脚本/生成提示词"三层边界（台词双轨隔离+音频ID 预埋）时 |
 
 ## 02 导演美术场记类（visual_director）
 
 | 技能ID | 路径 | 挂载KB | WHEN 触发条件 |
 |---|---|---|---|
-| VIS-01 导演分镜拆解 | `02_visual_director_skills/skill_director_storyboard.md` | KB_07、KB_11 | 当需要拆解分镜、标注S/A/B算力分级、规划Cutaway缓冲镜时 |
+| VIS-01 导演分镜拆解 | `02_visual_director_skills/skill_director_storyboard.md` | KB_07、KB_11、KB_15（运镜选型按需） | 当需要拆解分镜、标注S/A/B算力分级、规划Cutaway缓冲镜时 |
 | VIS-02 美术风格穿搭道具 | `02_visual_director_skills/skill_art_style_costume_prop.md` | KB_03、KB_04、KB_05 | 当需要确定画风、色彩脚本、人物穿搭、场景与道具视觉设定时 |
 | VIS-03 纯中文零光影资产 | `02_visual_director_skills/skill_asset_pure_chinese_no_light.md` | KB_06、KB_08 | 当需要策划重要资产图并执行 @纯中文命名 与零高光阴影铁律时（核心） |
 | VIS-04 连续性轴线守卫 | `02_visual_director_skills/skill_continuity_axis_guard.md` | KB_07 | 当需要校验180度轴线、左右站位、服装战损与跨集快照时 |
+| SBM-01 分镜图总控 | `02_visual_director_skills/skill_storyboard_master.md` | KB_14、KB_06、KB_07、KB_15（渐变白名单按需） | 当 R2 分镜表定稿后规划分镜图生产（镜组四模式路由/一致性链/长视频分段），或用户问"这些镜头怎么出图/怎么保持一致/长镜头怎么办"时（R10 专属技能·R9-20261007-14） |
+| VIS-05 资产设定板式路由器 | `02_visual_director_skills/skill_asset_sheet_board_router.md` | KB_06、KB_02、KB_03 | 当框架识别资产复杂度高（人物头部记忆点≥3项并发/服饰层次≥3层/非人形多形态/大型道具）需宫格设定板，或需宫格备用抽卡方案时按需触发——默认传统单视图五件套，同 IMG-02 多宫格分镜一样按需使用（R9-20261006-9） |
 
 ## 03 生图技法类（image_gen）
 
@@ -34,7 +37,7 @@
 
 | 技能ID | 路径 | 挂载KB | WHEN 触发条件 |
 |---|---|---|---|
-| VID-01 秒级切片器 | `04_video_gen_skills/skill_vid_second_slicer.md` | KB_08、KB_11 | 当需要按秒切分视频、执行一镜一动一主体台词、差分编译、口型排他锁与双管线分流时 |
+| VID-01 秒级切片器 | `04_video_gen_skills/skill_vid_second_slicer.md` | KB_08、KB_11、KB_15（运镜选型按需） | 当需要按秒切分视频、执行一镜一动一主体台词、差分编译、口型排他锁与音频可替换原则时 |
 | VID-02 技法选择器 | `04_video_gen_skills/skill_vid_method_selector.md` | KB_08、KB_09 | 当需要在首帧图生视频/首尾帧控制/分镜图转视频/多图参考融合/尾帧接力之间选型时 |
 
 ## 05 平台专属插件类（platform_plugins · 互斥加载）
@@ -47,6 +50,8 @@
 | PLAT-03 ComfyUI | `05_platform_plugins/plat_comfyui.md` | KB_06、KB_09 | 当用户指定ComfyUI（Flux/Wan2.1/2.2）时 |
 | PLAT-04 MiniMax H3 | `05_platform_plugins/plat_minimax_h3.md` | KB_08、KB_11 | 当用户指定MiniMax海螺H3生视频时 |
 | PLAT-05 可灵 | `05_platform_plugins/plat_kling.md` | KB_08、KB_11 | 当用户指定可灵/Kling生视频时 |
+| PLAT-06 ChatGPT生图 | `05_platform_plugins/plat_chatgpt_image.md` | KB_06、KB_08 | 当用户指定ChatGPT/GPT-4o生图，或需要记忆点精确锁定/文字入画/道具特写时（R9-20261005实测新增·工业级完整版） |
+| PLAT-07 大香蕉生图 | `05_platform_plugins/plat_nano_banana.md` | KB_06、KB_08 | 当用户指定大香蕉/Nano Banana/Gemini生图，或需要气质定调/材质微光/多轮编辑修图时（R9-20261005实测新增·工业级完整版） |
 
 ## 06 音频后期质检类（audio_edit_qc）
 

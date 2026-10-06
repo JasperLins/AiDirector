@@ -1,6 +1,9 @@
 # ZCode 会话工件（计划缓存等，不属于框架交付物）
 .zcode/
 
+# IDE 配置（PyCharm/IDEA 等，不属于框架交付物）
+.idea/
+
 # 系统杂物
 .DS_Store
 Thumbs.db
@@ -15,9 +18,30 @@ memory/projects/*
 # 小说/剧本文本素材（放于 memory 根目录的原始文本）
 memory/*.txt
 
-# 分集视频产出——仅保留示范第01集作为产出文档格式示范
-workspace/episodes/*
-!workspace/episodes/第01集_视频生成提示词.md
+# workspace 按剧隔离（R9-20261005-2）：各剧产出本地管理，不上传远端；
+# 仅入库两处格式示范——①示范剧集_苍穹与烟火/（旧版格式示范，配套 memory 三件套）
+# ②两界食单/ 的两份新格式示范文档（AGENTS.md 产出文档硬性格式所引用）
+workspace/*
+!workspace/示范剧集_苍穹与烟火/
+!workspace/两界食单/
+workspace/两界食单/*
+!workspace/两界食单/E01_视频生成提示词.md
+!workspace/两界食单/重要资产图片提示词.md
+
+# reference/ 外部参考资料：三份资料知识已全量吸收进 KB（登记见 reference/README.md 档案卡）；
+# 资料本体体量过大（运镜50 47张PNG ~99MB / 图鉴合集PDF ~12MB / 分镜表格模板.xlsx ~8.4MB），本地保留不上传
+reference/运镜50/
+reference/运镜50_图鉴合集.pdf
+reference/分镜表格模板.xlsx
+reference/分镜提示词.txt
 
 # 临时校验/比对产物
 check_part*.txt
+
+# 剧本工作区按剧隔离（R9-20261005-2 目录迁移后）——除示例外整目录本地管理
+workspace/两界食单/
+workspace/两界食单_豆包测试版/
+workspace/_audit.py
+
+# IDE 配置
+.idea/
