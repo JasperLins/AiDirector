@@ -24,10 +24,9 @@ memory/*.txt
 workspace/*
 !workspace/示范剧集_苍穹与烟火/
 
-# reference/ 外部参考资料：三份资料知识已全量吸收进 KB（登记见 reference/README.md 档案卡）；
-# 资料本体体量过大（运镜50 47张PNG ~99MB / 图鉴合集PDF ~12MB / 分镜表格模板.xlsx ~8.4MB），本地保留不上传
-reference/运镜50/
-reference/运镜50_图鉴合集.pdf
+# reference/ 外部参考资料（档案卡见 reference/README.md）：
+# 运镜50 47张PNG 与 整包PDF 随库上传——KB_15 〇节读图协议按路径 Read 原图，跨机克隆需可用；
+# 分镜表格模板.xlsx（8.4MB）与 分镜提示词.txt 知识已全量吸收（仅采景别渐变箭头记法），本体本地保留
 reference/分镜表格模板.xlsx
 reference/分镜提示词.txt
 
