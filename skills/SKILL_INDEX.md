@@ -20,11 +20,11 @@
 
 | 技能ID | 路径 | 挂载KB | WHEN 触发条件 |
 |---|---|---|---|
-| VIS-01 导演分镜拆解 | `02_visual_director_skills/skill_director_storyboard.md` | KB_07、KB_11、KB_15（运镜选型按需） | 当需要拆解分镜、标注S/A/B算力分级、规划Cutaway缓冲镜时 |
+| VIS-01 导演分镜拆解 | `02_visual_director_skills/skill_director_storyboard.md` | KB_07、KB_11、KB_15（运镜选型按需） | 当需要拆解分镜、标注S/A/B算力分级（含冗余覆盖档·机位数×条数）、产出场次覆盖调度表（Master主镜+覆盖镜+blocking走位+平面点位·S/A级强制·2026-10-18）、规划Cutaway缓冲镜时 |
 | VIS-02 美术风格穿搭道具 | `02_visual_director_skills/skill_art_style_costume_prop.md` | KB_03、KB_04、KB_05 | 当需要确定画风、色彩脚本、人物穿搭、场景与道具视觉设定时 |
 | VIS-03 纯中文零光影资产 | `02_visual_director_skills/skill_asset_pure_chinese_no_light.md` | KB_06、KB_08 | 当需要策划重要资产图并执行 @纯中文命名 与零高光阴影铁律时（核心） |
 | VIS-04 连续性轴线守卫 | `02_visual_director_skills/skill_continuity_axis_guard.md` | KB_07 | 当需要校验180度轴线、左右站位、服装战损与跨集快照时 |
-| SBM-01 分镜图总控 | `02_visual_director_skills/skill_storyboard_master.md` | KB_14、KB_06、KB_07、KB_15（渐变白名单按需） | 当 R2 分镜表定稿后规划分镜图生产（镜组四模式路由·A 分镜序列组双通道 A-1 宫格/A-2 逐镜序列/一致性链/**视频段分组·实验路径⑤段级直出（2026-10-18 降格·黑名单45 复测②）**），或用户问"这些镜头怎么出图/怎么保持一致/长镜头怎么办/九宫格质量差怎么办/怎么切段"时（R10 专属技能·R9-20261007-14 立·R9-20261007-16 修订·R9-20261010-18 修订·2026-10-18 回滚修订） |
+| SBM-01 分镜图总控 | `02_visual_director_skills/skill_storyboard_master.md` | KB_14、KB_06、KB_07、KB_15（渐变白名单按需） | 当 R2 分镜表定稿后规划分镜图生产（镜组四模式路由·A 分镜序列组双通道 A-1 宫格/A-2 逐镜序列/一致性链/**视频段分组·实验路径⑤段级直出（2026-10-18 降格·黑名单45 复测②）**/**冗余覆盖与素材留存规划（3机位×3条·S/A/B 投保·Step 5.7）**/**生产排期表与批次通告（拍摄顺序≠叙事顺序·Step 5.8）**），或用户问"这些镜头怎么出图/怎么保持一致/长镜头怎么办/九宫格质量差怎么办/怎么切段/怎么排生产顺序"时（R10 专属技能·R9-20261007-14 立·R9-20261007-16 修订·R9-20261010-18 修订·2026-10-18 回滚修订+传统拍摄制度化扩容） |
 | VIS-05 资产设定板式路由器 | `02_visual_director_skills/skill_asset_sheet_board_router.md` | KB_06、KB_02、KB_03 | 当框架识别资产复杂度高（人物头部记忆点≥3项并发/服饰层次≥3层/非人形多形态/大型道具）需宫格设定板，或需宫格备用抽卡方案时按需触发——默认传统单视图五件套，同 IMG-02 多宫格分镜一样按需使用（R9-20261006-9） |
 
 ## 03 生图技法类（image_gen）
