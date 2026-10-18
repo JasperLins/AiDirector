@@ -72,7 +72,7 @@ def audit_details_zero_blank_lines(filepath: Path, text: str, errors: list):
             errors.append(f"[DETAILS_BLANK_LINE] {filepath.relative_to(ROOT)} 第 {idx} 个 <details> 块内部存在空行（违反纯HTML零空行封包法）")
 
 def audit_video_time_nodes(filepath: Path, block_idx: int, prompt_text: str, errors: list):
-    """时间轴数学校验（R9-20261010-18 段级制修订）：
+    """时间轴数学校验（R9-20261010-18 段级制修订·2026-10-18 回滚注记：单镜≤3 为默认口径，段级序列式仅为实验路径⑤产物）：
     - 单镜 Prompt：时间轴节点数 <=3；
     - 段级序列 Prompt（含总起句"参考图顺序推进"/`图N`/`对应素材位N` 绑定特征）：
       区间数=段内镜数，不受 <=3 限（KB_10 V4 段级口径），但须起止不倒挂、区间升序无重叠。
@@ -95,7 +95,7 @@ def audit_video_time_nodes(filepath: Path, block_idx: int, prompt_text: str, err
     else:
         limit = 3
     if len(nodes) > limit:
-        errors.append(f"[VIDEO_NODE_OVERFLOW] {filepath.relative_to(ROOT)} 主代码块 #{block_idx} 时间轴节点数为 {len(nodes)}（超上限 {limit}：标准单镜≤3/长条≤7/段级=段内镜数·R9-20261010-18）")
+        errors.append(f"[VIDEO_NODE_OVERFLOW] {filepath.relative_to(ROOT)} 主代码块 #{block_idx} 时间轴节点数为 {len(nodes)}（超上限 {limit}：标准单镜≤3(默认)/长条≤7/段级=段内镜数(实验⑤)）")
     prev_end = 0.0
     for start_s, end_s in nodes:
         dur = float(end_s) - float(start_s)
