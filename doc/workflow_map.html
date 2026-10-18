@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AiDirector · 框架底层工作模式全景图</title>
+<style>
+  :root{
+    --bg:#0d1117; --panel:#161b22; --line:#30363d; --txt:#c9d1d9; --dim:#9aa4b2; --faint:#7d8590;
+    --amber:#e3b341; --gold:#d29922; --purple:#bc8cff; --blue:#58a6ff; --lblue:#79c0ff; --cyan:#39c5cf;
+    --green:#3fb950; --red:#f85149; --salmon:#ff7b72; --orange:#db6d28; --slate:#8b949e;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--txt);font-family:'SF Pro','Microsoft YaHei','PingFang SC',sans-serif;line-height:1.6}
+  .wrap{max-width:1760px;margin:0 auto;padding:34px 28px 60px}
+  header h1{font-size:26px;color:#fff;letter-spacing:1px}
+  header h1 .accent{color:var(--amber)}
+  header p.sub{color:var(--dim);font-size:13.5px;margin-top:6px}
+  .oneliner{margin:22px 0 8px;padding:14px 18px;background:var(--panel);border:1px solid var(--line);border-radius:12px;
+    font-size:13.5px;color:var(--txt);display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+  .oneliner b{color:#fff}
+  .oneliner .st{padding:2px 10px;border-radius:999px;border:1px solid var(--line);background:#10161d;white-space:nowrap}
+  .oneliner .st.s1{border-color:var(--purple)} .oneliner .st.s2{border-color:var(--blue)}
+  .oneliner .st.s3{border-color:var(--amber)} .oneliner .st.s4{border-color:var(--green)}
+  .oneliner .st.s5{border-color:var(--orange)} .oneliner .ar{color:var(--faint)}
+  .svg-card{margin-top:18px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px}
+  .svg-card svg{width:100%;height:auto;display:block}
+  p.caption{color:var(--faint);font-size:12.5px;text-align:center;margin-top:10px}
+  h2.sec{margin:38px 0 14px;font-size:19px;color:#fff;border-left:4px solid var(--amber);padding-left:12px}
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:16px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px 20px}
+  .card h3{font-size:15.5px;margin-bottom:10px}
+  .card.c1 h3{color:var(--amber)} .card.c2 h3{color:var(--red)} .card.c3 h3{color:var(--cyan)} .card.c4 h3{color:var(--orange)}
+  .card ul{list-style:none}
+  .card li{font-size:13px;color:var(--dim);padding:3px 0 3px 16px;position:relative}
+  .card li::before{content:'▸';position:absolute;left:0;color:var(--faint)}
+  .card li b{color:var(--txt);font-weight:600}
+  table.codes{width:100%;border-collapse:collapse;background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden;font-size:13px}
+  table.codes th{background:#10161d;color:#fff;text-align:left;padding:10px 14px;font-size:13px;border-bottom:1px solid var(--line)}
+  table.codes td{padding:8px 14px;border-bottom:1px solid #21262d;color:var(--dim)}
+  table.codes td:first-child{color:var(--txt);white-space:nowrap}
+  table.codes td code{background:#10161d;border:1px solid var(--line);border-radius:6px;padding:1px 7px;color:var(--lblue);font-size:12px;white-space:nowrap}
+  table.codes tr:last-child td{border-bottom:none}
+  footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--line);color:var(--faint);font-size:12.5px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+  @media (max-width:900px){ .wrap{padding:20px 12px 40px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>AiDirector · <span class="accent">框架底层工作模式全景图</span></h1>
+  <p class="sub">状态机（4-Gate Pipeline）× 10 大角色智能体 × 双擎门禁 × 自进化闭环 —— 产出内容的时间先后与角色交接总图 ｜ 对齐立法 R9-20261007-17</p>
+</header>
+
+<div class="oneliner">
+  <b>一屏速览：</b>
+  <span class="st s1">新剧：NARR-00 立项闸（0.0 拍板）</span><span class="ar">→</span>
+  <span class="st s1">R1 编剧</span><span class="ar">→</span>
+  <span class="st s2">R2 导演＋R3 美术＋R4 场记</span><span class="ar">→</span>
+  <span class="st s3">R10 分镜图总控（生产单开工令）</span><span class="ar">→</span>
+  <span class="st s4">R5 生图＋R6 视频</span><span class="ar">→</span>
+  <span class="st s4">R7 门禁 ≥9.0</span><span class="ar">→</span>
+  <span class="st s4">R8 剪辑调音指南</span><span class="ar">→</span>
+  <span class="st s5">定稿</span><span class="ar">→</span>
+  <span class="st s5">用户实跑复测</span><span class="ar">→</span>
+  <span class="st s5">R9 复盘自进化</span><span class="ar">⟲ 连坐刷新回流</span>
+</div>
+
+<div class="svg-card">
+<svg viewBox="0 0 1720 1090" xmlns="http://www.w3.org/2000/svg" font-family="'SF Pro','Microsoft YaHei','PingFang SC',sans-serif">
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#8b949e"/></marker>
+    <marker id="arRed" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f85149"/></marker>
+    <marker id="arGold" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d29922"/></marker>
+    <marker id="arOr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#db6d28"/></marker>
+  </defs>
+
+  <!-- ================= 分带背景 ================= -->
+  <g>
+    <rect x="56" y="8"   width="1316" height="104" rx="10" fill="#0f141b" stroke="#21262d"/>
+    <rect x="56" y="116" width="1316" height="152" rx="10" fill="#0f141b" stroke="#21262d"/>
+    <rect x="56" y="272" width="1316" height="198" rx="10" fill="#0f141b" stroke="#21262d"/>
+    <rect x="56" y="474" width="1316" height="130" rx="10" fill="#0f141b" stroke="#21262d"/>
+    <rect x="56" y="608" width="1316" height="272" rx="10" fill="#0f141b" stroke="#21262d"/>
+    <rect x="56" y="884" width="1316" height="146" rx="10" fill="#0f141b" stroke="#21262d"/>
+    <rect x="56" y="8"   width="4" height="104" fill="#8b949e"/>
+    <rect x="56" y="116" width="4" height="152" fill="#bc8cff"/>
+    <rect x="56" y="272" width="4" height="198" fill="#58a6ff"/>
+    <rect x="56" y="474" width="4" height="130" fill="#e3b341"/>
+    <rect x="56" y="608" width="4" height="272" fill="#3fb950"/>
+    <rect x="56" y="884" width="4" height="146" fill="#db6d28"/>
+    <text x="44" y="60"  transform="rotate(-90 44 60)"  text-anchor="middle" fill="#8b949e" font-size="13" font-weight="700" letter-spacing="2">启动 · 路由</text>
+    <text x="44" y="192" transform="rotate(-90 44 192)" text-anchor="middle" fill="#bc8cff" font-size="13" font-weight="700" letter-spacing="2">阶段Ⅰ 剧本</text>
+    <text x="44" y="371" transform="rotate(-90 44 371)" text-anchor="middle" fill="#58a6ff" font-size="13" font-weight="700" letter-spacing="2">阶段Ⅱ 视觉开发</text>
+    <text x="44" y="539" transform="rotate(-90 44 539)" text-anchor="middle" fill="#e3b341" font-size="13" font-weight="700" letter-spacing="2">阶段Ⅱ.5 分镜图总控</text>
+    <text x="44" y="744" transform="rotate(-90 44 744)" text-anchor="middle" fill="#3fb950" font-size="13" font-weight="700" letter-spacing="2">阶段Ⅲ 提示词生产</text>
+    <text x="44" y="957" transform="rotate(-90 44 957)" text-anchor="middle" fill="#db6d28" font-size="13" font-weight="700" letter-spacing="2">阶段Ⅳ 实拍 ＋ Ⅴ 自进化</text>
+  </g>
+
+  <!-- ================= 带0 启动路由 ================= -->
+  <g>
+    <rect x="76" y="30" width="170" height="56" rx="10" fill="#161b22" stroke="#8b949e" stroke-width="1.5"/>
+    <text x="161" y="53" text-anchor="middle" fill="#fff" font-size="14" font-weight="700">用户任务输入</text>
+    <text x="161" y="72" text-anchor="middle" fill="#9aa4b2" font-size="11.5">（关键词触发总控路由）</text>
+    <line x1="246" y1="58" x2="292" y2="58" stroke="#8b949e" stroke-width="1.6" marker-end="url(#ar)"/>
+
+    <rect x="296" y="22" width="340" height="74" rx="10" fill="#161b22" stroke="#e3b341" stroke-width="1.8"/>
+    <text x="466" y="42" text-anchor="middle" fill="#e3b341" font-size="14" font-weight="700">AGENTS.md 总控路由（操作系统内核）</text>
+    <text x="312" y="58" fill="#9aa4b2" font-size="11">① 读 AGENTS.md：状态机＋角色路由</text>
+    <text x="312" y="72" fill="#9aa4b2" font-size="11">② 读 skills/SKILL_INDEX.md：技能索引</text>
+    <text x="312" y="86" fill="#9aa4b2" font-size="11">③ 任务路由表匹配 → ④ 读 memory 三件套</text>
+
+    <rect x="676" y="30" width="286" height="56" rx="8" fill="#10161d" stroke="#30363d"/>
+    <text x="819" y="52" text-anchor="middle" fill="#c9d1d9" font-size="11.5">上下文预算：≤1 平台插件 ＋ 2 KB ＋ 3 技法 Skill</text>
+    <text x="819" y="70" text-anchor="middle" fill="#7d8590" font-size="11">阶段切换主动释放（防上下文滚雪球）</text>
+    <rect x="982" y="30" width="180" height="56" rx="8" fill="#10161d" stroke="#30363d"/>
+    <text x="1072" y="52" text-anchor="middle" fill="#c9d1d9" font-size="11.5">冷热记忆隔离锁</text>
+    <text x="1072" y="70" text-anchor="middle" fill="#7d8590" font-size="11">严禁读冷归档全文</text>
+    <rect x="1178" y="30" width="186" height="56" rx="8" fill="#10161d" stroke="#30363d"/>
+    <text x="1271" y="52" text-anchor="middle" fill="#c9d1d9" font-size="11.5">证据位阶铁律（〇节9）</text>
+    <text x="1271" y="70" text-anchor="middle" fill="#7d8590" font-size="11">实测＞档案＞官方＞教程</text>
+  </g>
+  <path d="M466,96 V114 H256 V136" fill="none" stroke="#8b949e" stroke-width="1.6" marker-end="url(#ar)"/>
+
+  <!-- ================= 带1 阶段Ⅰ 剧本 ================= -->
+  <g>
+    <rect x="76" y="140" width="368" height="104" rx="10" fill="#161b22" stroke="#bc8cff" stroke-width="1.8"/>
+    <text x="92" y="162" fill="#bc8cff" font-size="14.5" font-weight="700">R1 高级编剧大师</text>
+    <text x="92" y="182" fill="#9aa4b2" font-size="11.5">· 黄金前3秒钩子 · 情绪曲线（压抑→反转→爆发爽点）</text>
+    <text x="92" y="198" fill="#9aa4b2" font-size="11.5">· 分场文学剧本（NARR-04 画面口型/画外OS 双轨台词）</text>
+    <text x="92" y="214" fill="#9aa4b2" font-size="11.5">· 声画先行总表（NARR-03 语速×字数精算至 0.5s）</text>
+    <text x="92" y="230" fill="#7d8590" font-size="11">· 挂载：01编剧技能×4 ｜ KB_01/02/11/12</text>
+    <line x1="444" y1="192" x2="480" y2="192" stroke="#8b949e" stroke-width="1.6" marker-end="url(#ar)"/>
+
+    <rect x="484" y="148" width="256" height="88" rx="10" fill="#1a1f28" stroke="#d29922" stroke-width="1.6" stroke-dasharray="6 3"/>
+    <text x="500" y="170" fill="#d29922" font-size="13" font-weight="700">◆ 0.5 剧本闸 · 用户裁决位</text>
+    <text x="500" y="188" fill="#9aa4b2" font-size="11.5">一页式大纲（场次/核心爽点/</text>
+    <text x="500" y="204" fill="#9aa4b2" font-size="11.5">关键桥段/集末钩子）</text>
+    <text x="500" y="222" fill="#7d8590" font-size="11">→ 用户放行 → 修订复批（违反即打回）</text>
+    <line x1="740" y1="192" x2="776" y2="192" stroke="#8b949e" stroke-width="1.6" marker-end="url(#ar)"/>
+
+    <rect x="780" y="148" width="292" height="88" rx="10" fill="#161b22" stroke="#bc8cff" stroke-width="1.4"/>
+    <text x="796" y="170" fill="#d2a8ff" font-size="13" font-weight="700">N 三查（剧本结构门禁）</text>
+    <text x="796" y="188" fill="#9aa4b2" font-size="11.5">① 转场动机链　② S级钩子回收</text>
+    <text x="796" y="204" fill="#9aa4b2" font-size="11.5">③ 人物登场必要性</text>
+    <text x="796" y="222" fill="#7d8590" font-size="11">（R1 自审 ＋ R7 复核，任一不过打回）</text>
+    <line x1="1072" y1="192" x2="1108" y2="192" stroke="#8b949e" stroke-width="1.6" marker-end="url(#ar)"/>
+
+    <rect x="1112" y="168" width="196" height="48" rx="8" fill="#10161d" stroke="#bc8cff" stroke-width="1.2"/>
+    <text x="1210" y="188" text-anchor="middle" fill="#d2a8ff" font-size="12.5" font-weight="700">剧本定稿</text>
+    <text x="1210" y="205" text-anchor="middle" fill="#7d8590" font-size="11">（Schema 交棒 R2）</text>
+  </g>
+  <path d="M1210,216 V260 H256 V296" fill="none" stroke="#8b949e" stroke-width="1.6" marker-end="url(#ar)"/>
+
+  <!-- ================= 带2 阶段Ⅱ 视觉开发 ================= -->
+  <g>
+    <rect x="76" y="300" width="344" height="124" rx="10" fill="#161b22" stroke="#58a6ff" stroke-width="1.8"/>
+    <text x="92" y="322" fill="#58a6ff" font-size="14.5" font-weight="700">R2 高级导演</text>
+    <text x="92" y="342" fill="#9aa4b2" font-size="11.5">· 分镜总表 7列/14字段 · S/A/B 算力分级</text>
+    <text x="92" y="358" fill="#9aa4b2" font-size="11.5">· One-Take First：每场默认一镜到底</text>
+    <text x="92" y="374" fill="#9aa4b2" font-size="11.5">· R段镜号 02R-A/B/C（接力链声明）</text>
+    <text x="92" y="390" fill="#9aa4b2" font-size="11.5">· 文转镜信息守恒 · 无损膨胀</text>
+    <text x="92" y="410" fill="#7d8590" font-size="11">· 挂载：skill_director_storyboard ｜ KB_07/11/15</text>
+    <line x1="420" y1="362" x2="452" y2="362" stroke="#8b949e" stroke-width="1.6" marker-end="url(#ar)"/>
+
+    <rect x="456" y="292" width="352" height="140" rx="10" fill="#161b22" stroke="#79c0ff" stroke-width="1.8"/>
+    <text x="472" y="314" fill="#79c0ff" font-size="14.5" font-weight="700">R3 美术指导兼高级画师</text>
+    <text x="472" y="334" fill="#9aa4b2" font-size="11.5">· @画风锁三级（≤35字）＋ @光位常量（≤25字）</text>
+    <text x="472" y="350" fill="#9aa4b2" font-size="11.5">· 色彩脚本 60-30-10</text>
+    <text x="472" y="366" fill="#9aa4b2" font-size="11.5">· 人物视觉卡 / 音色卡 / 道具卡</text>
+    <text x="472" y="382" fill="#9aa4b2" font-size="11.5">· 场景卡：全景基准＋空镜基准＋机位库宫格</text>
+    <text x="472" y="398" fill="#7d8590" font-size="11">　（S/A级主场景强制配置）</text>
+    <text x="472" y="418" fill="#7d8590" font-size="11">· 挂载：VIS-02/03 ｜ KB_02~05/12</text>
+    <line x1="808" y1="362" x2="840" y2="362" stroke="#8b949e" stroke-width="1.6" marker-end="url(#ar)"/>
+
+    <rect x="844" y="300" width="304" height="124" rx="10" fill="#161b22" stroke="#8b949e" stroke-width="1.6"/>
+    <text x="860" y="322" fill="#c9d1d9" font-size="14.5" font-weight="700">R4 场记 · 连续性监督</text>
+    <text x="860" y="342" fill="#9aa4b2" font-size="11.5">· 轴线声明（180° / 允许机位半圆）</text>
+    <text x="860" y="358" fill="#9aa4b2" font-size="11.5">· @资产唯一中文名（注册表执法）</text>
+    <text x="860" y="374" fill="#9aa4b2" font-size="11.5">· 道具左右手 / 服装战损跨镜跨集核对</text>
+    <text x="860" y="390" fill="#9aa4b2" font-size="11.5">· 集末 State Diff 快照</text>
+    <text x="860" y="410" fill="#7d8590" font-size="11">· 挂载：skill_continuity_axis_guard</text>
+
+    <line x1="1148" y1="340" x2="1156" y2="340" stroke="#8b949e" stroke-width="1.6" marker-end="url(#ar)"/>
+    <rect x="1160" y="288" width="200" height="80" rx="10" fill="#1a1f28" stroke="#e3b341" stroke-width="1.6"/>
+    <text x="1176" y="310" fill="#e3b341" font-size="12.5" font-weight="700">◆ Gate 1 三图试金石</text>
+    <text x="1176" y="328" fill="#9aa4b2" font-size="11">主角立绘/特殊配角/主场景空镜</text>
+    <text x="1176" y="344" fill="#7d8590" font-size="11">（A级风格包强制过闸）</text>
+    <line x1="1260" y1="368" x2="1260" y2="380" stroke="#8b949e" stroke-width="1.6" marker-end="url(#ar)"/>
+    <rect x="1160" y="384" width="200" height="80" rx="10" fill="#1a1f28" stroke="#e3b341" stroke-width="1.6"/>
+    <text x="1176" y="406" fill="#e3b341" font-size="12.5" font-weight="700">◆ Gate 2 资产扩展</text>
+    <text x="1176" y="424" fill="#9aa4b2" font-size="11">逐资产过 R7 门禁＋盯片清单</text>
+    <text x="1176" y="440" fill="#7d8590" font-size="11">（资产生产＝R3策划＋R5执行）</text>
+
+    <rect x="76" y="432" width="620" height="30" rx="8" fill="#10161d" stroke="#30363d"/>
+    <text x="86" y="452" fill="#9aa4b2" font-size="11.5">交棒物料：分镜表 ＋ 资产卡 ＋ 资产注册表 ＋ PACK-XX 风格包</text>
+  </g>
+  <path d="M256,424 V490" fill="none" stroke="#8b949e" stroke-width="1.6" marker-end="url(#ar)"/>
+  <text x="266" y="462" fill="#7d8590" font-size="11">分镜表</text>
+  <path d="M996,424 V466 H376 V490" fill="none" stroke="#8b949e" stroke-width="1.6" marker-end="url(#ar)"/>
+  <text x="700" y="480" fill="#7d8590" font-size="11">资产卡＋注册表＋轴线声明</text>
+
+  <!-- ================= 带3 阶段Ⅱ.5 分镜图总控 ================= -->
+  <g>
+    <rect x="76" y="494" width="616" height="92" rx="10" fill="#161b22" stroke="#e3b341" stroke-width="1.8"/>
+    <text x="92" y="516" fill="#e3b341" font-size="14.5" font-weight="700">R10 分镜图总控大师（SBM-01 · 分镜图生产总关卡）</text>
+    <text x="92" y="536" fill="#9aa4b2" font-size="11.5">· 镜组四模式：A-1 宫格 / A-2 逐镜序列（双通道）· B 双锚 · C 接力链 · D 多图参考</text>
+    <text x="92" y="552" fill="#9aa4b2" font-size="11.5">· 一致性链：参考图分配表 ＋ 锚点传递路径 ＋ 同源策略</text>
+    <text x="92" y="570" fill="#7d8590" font-size="11">· 视频段分组（技法⑤长视频直出）· IMG-02 铁律9 三查执法</text>
+    <line x1="692" y1="540" x2="728" y2="540" stroke="#8b949e" stroke-width="1.6" marker-end="url(#ar)"/>
+
+    <rect x="732" y="508" width="256" height="64" rx="10" fill="#1a1f28" stroke="#d29922" stroke-width="1.6" stroke-dasharray="6 3"/>
+    <text x="748" y="530" fill="#d29922" font-size="12.5" font-weight="700">◆ 0.6 分镜图闸</text>
+    <text x="748" y="548" fill="#9aa4b2" font-size="11">生产单＝R5 唯一开工令（过 R7 核验）</text>
+    <text x="748" y="563" fill="#7d8590" font-size="10.5">防「无生产单·无一致性链的裸逐镜」回潮</text>
+    <line x1="988" y1="540" x2="1024" y2="540" stroke="#8b949e" stroke-width="1.6" marker-end="url(#ar)"/>
+
+    <rect x="1028" y="514" width="208" height="52" rx="8" fill="#10161d" stroke="#e3b341" stroke-width="1.2"/>
+    <text x="1132" y="534" text-anchor="middle" fill="#e3b341" font-size="12.5" font-weight="700">分镜图生产单</text>
+    <text x="1132" y="552" text-anchor="middle" fill="#7d8590" font-size="10.5">（镜组×图位×锚链×段分组×预算）</text>
+  </g>
+  <path d="M256,586 V624" fill="none" stroke="#8b949e" stroke-width="1.6" marker-end="url(#ar)"/>
+  <text x="266" y="610" fill="#7d8590" font-size="11">R5 执行指令（开工令）</text>
+
+  <!-- ================= 带4 阶段Ⅲ 提示词生产 ================= -->
+  <g>
+    <!-- 打回回路（画在盒子下层） -->
+    <path d="M872,632 V614 H456 V624" fill="none" stroke="#f85149" stroke-width="1.6" stroke-dasharray="6 4" marker-end="url(#arRed)"/>
+    <path d="M912,632 V604 H226 V624" fill="none" stroke="#f85149" stroke-width="1.6" stroke-dasharray="6 4" marker-end="url(#arRed)"/>
+    <text x="240" y="598" fill="#f85149" font-size="11">＜9.0 强制打回：修改指令随发重写，复审至 ≥9.0（最多3轮→人工裁决）</text>
+
+    <rect x="76" y="628" width="304" height="128" rx="10" fill="#161b22" stroke="#39c5cf" stroke-width="1.8"/>
+    <text x="92" y="650" fill="#39c5cf" font-size="14.5" font-weight="700">R5 AI 生图高级专家</text>
+    <text x="92" y="670" fill="#9aa4b2" font-size="11.5">· 前置资源 IMG-02：S双锚 / A单锚 / B静态</text>
+    <text x="92" y="686" fill="#9aa4b2" font-size="11.5">· A-2 序列关键帧图（三重序列约束）</text>
+    <text x="92" y="702" fill="#9aa4b2" font-size="11.5">· IMG-01 技法路由 ＋ plat_* 平台语法</text>
+    <text x="92" y="718" fill="#9aa4b2" font-size="11.5">· 默认：豆包 Seedream / ComfyUI Flux</text>
+    <text x="92" y="742" fill="#7d8590" font-size="11">· 挂载：KB_06/08/09</text>
+    <line x1="380" y1="690" x2="412" y2="690" stroke="#8b949e" stroke-width="1.6" marker-end="url(#ar)"/>
+
+    <rect x="416" y="628" width="368" height="128" rx="10" fill="#161b22" stroke="#3fb950" stroke-width="1.8"/>
+    <text x="432" y="650" fill="#3fb950" font-size="14.5" font-weight="700">R6 AI 视频提示词专家（产线主责）</text>
+    <text x="432" y="670" fill="#9aa4b2" font-size="11.5">· VID-02 技法选型：① 首帧I2V　② 首尾帧控制</text>
+    <text x="448" y="686" fill="#9aa4b2" font-size="11.5">③ 多图融合　④ 尾帧接力　⑤ 分镜序列长视频</text>
+    <text x="432" y="702" fill="#9aa4b2" font-size="11.5">· VID-01 秒级差分编译（20%锚点＋80%动态）</text>
+    <text x="432" y="718" fill="#9aa4b2" font-size="11.5">· 口型排他锁 · 音频可替换 → plat_* 落地</text>
+    <text x="432" y="742" fill="#7d8590" font-size="11">· 挂载：KB_08/09/11/15</text>
+    <line x1="784" y1="690" x2="816" y2="690" stroke="#8b949e" stroke-width="1.6" marker-end="url(#ar)"/>
+
+    <rect x="820" y="632" width="212" height="102" rx="10" fill="#1a1f28" stroke="#f85149" stroke-width="1.8"/>
+    <text x="836" y="654" fill="#f85149" font-size="13.5" font-weight="700">R7 质量门禁（10分制）</text>
+    <text x="836" y="672" fill="#9aa4b2" font-size="11">· KB_10 V1~V13 ＋ KB_09 崩坏库</text>
+    <text x="836" y="688" fill="#9aa4b2" font-size="11">· L1 机检 ＋ L2 智检双签</text>
+    <text x="836" y="704" fill="#9aa4b2" font-size="11">· ≥9.0 放行 ／ ＜9.0 打回</text>
+    <text x="836" y="722" fill="#7d8590" font-size="10.5">（每条独立过审·不搞整集平均）</text>
+
+    <rect x="1068" y="620" width="292" height="56" rx="8" fill="#10161d" stroke="#ff7b72" stroke-width="1.2" stroke-dasharray="5 3"/>
+    <text x="1214" y="642" text-anchor="middle" fill="#ff7b72" font-size="11.5" font-weight="700">TTS 音色克隆支线：R3 音色卡 → 克隆</text>
+    <text x="1214" y="660" text-anchor="middle" fill="#7d8590" font-size="11">→ 后期静音原轨 · TTS 对齐口型（±2帧）</text>
+
+    <path d="M1032,700 H1064" fill="none" stroke="#8b949e" stroke-width="1.6" marker-end="url(#ar)"/>
+    <text x="1038" y="692" fill="#7d8590" font-size="10.5">≥9.0</text>
+
+    <rect x="1068" y="684" width="292" height="80" rx="10" fill="#161b22" stroke="#ff7b72" stroke-width="1.8"/>
+    <text x="1084" y="706" fill="#ff7b72" font-size="13.5" font-weight="700">R8 剪映剪辑调音大师</text>
+    <text x="1084" y="724" fill="#9aa4b2" font-size="11">· 接力段拼接＝伪一镜到底（帧级对位）</text>
+    <text x="1084" y="740" fill="#9aa4b2" font-size="11">· 卡点秒 / J·L-Cut / 音效搜索词</text>
+    <text x="1084" y="756" fill="#7d8590" font-size="10.5">· KB_12 真实菜单铁律 ｜ 挂载：KB_12</text>
+
+    <rect x="76" y="772" width="336" height="44" rx="8" fill="#1a1f28" stroke="#e3b341" stroke-width="1.4"/>
+    <text x="90" y="790" fill="#e3b341" font-size="11.5" font-weight="700">◆ Gate 3 样板首帧</text>
+    <text x="90" y="806" fill="#9aa4b2" font-size="11">先试跑 1~2 个 S 级核心分镜首帧</text>
+    <rect x="432" y="772" width="384" height="44" rx="8" fill="#1a1f28" stroke="#e3b341" stroke-width="1.4"/>
+    <text x="446" y="790" fill="#e3b341" font-size="11.5" font-weight="700">◆ Gate 4 全集放行</text>
+    <text x="446" y="806" fill="#9aa4b2" font-size="11">批量展开 · 仍逐条过 R7 门禁 · 不再回退闸门</text>
+
+    <path d="M1214,764 V772" fill="none" stroke="#8b949e" stroke-width="1.6" marker-end="url(#ar)"/>
+    <rect x="836" y="772" width="524" height="44" rx="8" fill="#10161d" stroke="#3fb950" stroke-width="1.4"/>
+    <text x="1098" y="790" text-anchor="middle" fill="#3fb950" font-size="12" font-weight="700">产出文档定稿：workspace/＜剧名＞/ENN_视频生成提示词.md</text>
+    <text x="1098" y="807" text-anchor="middle" fill="#7d8590" font-size="10.5">每镜四件套（得分/评分明细/使用建议/复盘占位）＋ 集末 State Diff 快照</text>
+  </g>
+  <path d="M1098,816 V888 H226 V902" fill="none" stroke="#8b949e" stroke-width="1.6" marker-end="url(#ar)"/>
+  <text x="1112" y="866" fill="#7d8590" font-size="11">交用户实跑</text>
+
+  <!-- ================= 带5 阶段Ⅳ/Ⅴ ================= -->
+  <g>
+    <rect x="76" y="906" width="312" height="76" rx="10" fill="#161b22" stroke="#8b949e" stroke-width="1.8"/>
+    <text x="92" y="928" fill="#c9d1d9" font-size="13.5" font-weight="700">阶段Ⅳ 用户实拍复测</text>
+    <text x="92" y="946" fill="#9aa4b2" font-size="11">跑图/跑视频 → 每生成一张/段即填复盘占位</text>
+    <text x="92" y="962" fill="#7d8590" font-size="10.5">（单点即时反馈 · 不等整批跑完）</text>
+    <line x1="388" y1="944" x2="420" y2="944" stroke="#8b949e" stroke-width="1.6" marker-end="url(#ar)"/>
+
+    <rect x="424" y="898" width="436" height="96" rx="10" fill="#161b22" stroke="#db6d28" stroke-width="1.8"/>
+    <text x="440" y="920" fill="#db6d28" font-size="13.5" font-weight="700">R9 复盘自进化引擎（EVO-01 · Micro-Macro 双环）</text>
+    <text x="440" y="938" fill="#9aa4b2" font-size="11">· 归因：匹配黑名单 39 类崩坏或立新编号</text>
+    <text x="440" y="954" fill="#9aa4b2" font-size="11">· 三层根因：L1 个例 / L2 同族 / L3 全局风格包</text>
+    <text x="440" y="970" fill="#9aa4b2" font-size="11">· 当前项就地重写 V+1 ＋ 全局连坐刷新清单</text>
+    <text x="440" y="986" fill="#7d8590" font-size="10.5">· 挂载：黑名单 · KB_09/10 · 全部 plat_* ｜ 沙盘三问后回流</text>
+    <line x1="860" y1="946" x2="892" y2="946" stroke="#8b949e" stroke-width="1.6" marker-end="url(#ar)"/>
+
+    <rect x="896" y="912" width="456" height="64" rx="8" fill="#10161d" stroke="#db6d28" stroke-width="1.2" stroke-dasharray="5 3"/>
+    <text x="1124" y="934" text-anchor="middle" fill="#db6d28" font-size="11.5" font-weight="700">双环：Micro 单点即时反馈 ＋ Macro 批末汇总归档</text>
+    <text x="1124" y="952" text-anchor="middle" fill="#9aa4b2" font-size="11">高频崩坏（同类≥3次）→ 自动升级 KB_10 一票否决题</text>
+    <text x="1124" y="968" text-anchor="middle" fill="#7d8590" font-size="10.5">双态沉淀：项目注册表 ＋ 全局黑名单 ＋ PACK-XX</text>
+  </g>
+  <path d="M860,976 H1378 V196 H1396" fill="none" stroke="#db6d28" stroke-width="1.8" stroke-dasharray="7 4" marker-end="url(#arOr)"/>
+  <text x="1010" y="992" fill="#db6d28" font-size="11">连坐刷新回流：黑名单 / KB_09 / KB_10 / plat_* / PACK</text>
+
+  <!-- ================= 右侧：全局记忆层 ================= -->
+  <g>
+    <rect x="1400" y="116" width="304" height="914" rx="12" fill="#0f141b" stroke="#30363d" stroke-dasharray="7 4"/>
+    <text x="1552" y="144" text-anchor="middle" fill="#fff" font-size="15" font-weight="700">全局记忆层</text>
+    <text x="1552" y="163" text-anchor="middle" fill="#7d8590" font-size="11">按需加载 ↓ ／ 连坐刷新 ↑</text>
+
+    <rect x="1416" y="176" width="272" height="64" rx="8" fill="#161b22" stroke="#7d8590" stroke-width="1.4"/>
+    <text x="1430" y="198" fill="#c9d1d9" font-size="12" font-weight="700">memory/global/ 全局复盘避坑黑名单</text>
+    <text x="1430" y="216" fill="#7d8590" font-size="10.5">39 条崩坏模式 ＋ 动态档案区（R9 热区）</text>
+    <rect x="1416" y="252" width="272" height="52" rx="8" fill="#161b22" stroke="#7d8590" stroke-width="1.4"/>
+    <text x="1430" y="274" fill="#c9d1d9" font-size="12" font-weight="700">kb_library/ KB_01 ~ KB_15</text>
+    <text x="1430" y="292" fill="#7d8590" font-size="10.5">15 册词典 · 查表编译 · 拒绝自由造句</text>
+    <rect x="1416" y="316" width="272" height="52" rx="8" fill="#161b22" stroke="#7d8590" stroke-width="1.4"/>
+    <text x="1430" y="338" fill="#c9d1d9" font-size="12" font-weight="700">skills/ 27 个技能插件</text>
+    <text x="1430" y="356" fill="#7d8590" font-size="10.5">SKILL_INDEX.md 索引 · 按需加载</text>
+    <rect x="1416" y="380" width="272" height="64" rx="8" fill="#161b22" stroke="#7d8590" stroke-width="1.4"/>
+    <text x="1430" y="402" fill="#c9d1d9" font-size="12" font-weight="700">memory/projects/＜剧名＞/三件套</text>
+    <text x="1430" y="420" fill="#7d8590" font-size="10.5">圣经 · 资产注册表 · 状态快照（热记忆）</text>
+    <text x="1430" y="436" fill="#7d8590" font-size="10.5">目录纯洁性：永久仅三件套</text>
+    <rect x="1416" y="456" width="272" height="52" rx="8" fill="#161b22" stroke="#7d8590" stroke-width="1.4"/>
+    <text x="1430" y="478" fill="#c9d1d9" font-size="12" font-weight="700">reference/ 运镜50图鉴 47式</text>
+    <text x="1430" y="496" fill="#7d8590" font-size="10.5">KB_15 〇节读图协议（按路径读原图）</text>
+    <rect x="1416" y="520" width="272" height="64" rx="8" fill="#161b22" stroke="#7d8590" stroke-width="1.4"/>
+    <text x="1430" y="542" fill="#c9d1d9" font-size="12" font-weight="700">workspace/＜剧名＞/</text>
+    <text x="1430" y="560" fill="#7d8590" font-size="10.5">按剧物理隔离 · _archive/ 冷归档</text>
+    <text x="1430" y="576" fill="#7d8590" font-size="10.5">（示范：两界食单）</text>
+
+    <!-- 按需加载短箭头 -->
+    <path d="M1400,540 H1376" fill="none" stroke="#d29922" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#arGold)"/>
+    <path d="M1400,672 H1368" fill="none" stroke="#d29922" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#arGold)"/>
+    <path d="M1400,700 H1368" fill="none" stroke="#d29922" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#arGold)"/>
+    <text x="1392" y="620" transform="rotate(-90 1392 620)" text-anchor="middle" fill="#d29922" font-size="11">按需加载（KB × 技能 × 平台插件）</text>
+  </g>
+
+  <!-- ================= 图例 ================= -->
+  <g>
+    <line x1="76" y1="1056" x2="126" y2="1056" stroke="#8b949e" stroke-width="1.8" marker-end="url(#ar)"/>
+    <text x="134" y="1060" fill="#9aa4b2" font-size="11.5">Schema 物料流（结构化交接 · 不传散文闲聊）</text>
+    <line x1="420" y1="1056" x2="470" y2="1056" stroke="#f85149" stroke-width="1.8" stroke-dasharray="6 4" marker-end="url(#arRed)"/>
+    <text x="478" y="1060" fill="#9aa4b2" font-size="11.5">门禁打回线（＜9.0）</text>
+    <line x1="620" y1="1056" x2="670" y2="1056" stroke="#d29922" stroke-width="1.8" stroke-dasharray="5 3" marker-end="url(#arGold)"/>
+    <text x="678" y="1060" fill="#9aa4b2" font-size="11.5">记忆按需加载</text>
+    <line x1="790" y1="1056" x2="840" y2="1056" stroke="#db6d28" stroke-width="1.8" stroke-dasharray="7 4" marker-end="url(#arOr)"/>
+    <text x="848" y="1060" fill="#9aa4b2" font-size="11.5">R9 连坐刷新回流</text>
+    <text x="1000" y="1060" fill="#e3b341" font-size="11.5">◆ 闸门（4-Gate ／ 状态机细则 0.5 / 0.6）</text>
+    <text x="1240" y="1060" fill="#7d8590" font-size="11">对齐立法：R9-20261007-16</text>
+  </g>
+</svg>
+<p class="caption">图 1 · 框架底层工作模式全景：状态机（6 带产线）× 4-Gate 闸门 × R7 门禁打回环 × R9 自进化回流 × 全局记忆层按需加载</p>
+</div>
+
+<h2 class="sec">四大底层机制（图中的隐含协议）</h2>
+<div class="cards">
+  <div class="card c1">
+    <h3>① 状态机 · 四道闸门（4-Gate Pipeline）</h3>
+    <ul>
+      <li><b>G1 三图试金石 → G2 资产扩展 → G3 样板首帧 → G4 全集放行</b>：任一闸失败回上一闸修正重测，严禁跳闸批量</li>
+      <li><b>三级用户裁决位</b>：0.0 项目立项（NARR-00 两层参数收口＋方案骨架轮＋一页式立项书拍板·R9-20261007-17）→ 0.5 剧本大纲（一页式放行）→ 0.6 分镜图生产单（R10 开工令）</li>
+      <li>细则 0 剧本闸（N 三查：转场动机链/钩子回收/登场必要性）——0.0 管"宪法级"、0.5 管"法律级"，粒度分明</li>
+      <li>每条 Prompt 独立过门禁，<b>不搞整集平均分</b>——一镜不合格即该镜打回</li>
+      <li>阶段切换主动释放上一阶段挂载（上下文预算：≤1 平台插件＋2 KB＋3 技法）</li>
+    </ul>
+  </div>
+  <div class="card c2">
+    <h3>② 双擎门禁（L1 ＋ L2 双签定稿制）</h3>
+    <ul>
+      <li><b>L1 机检</b>：<code>python scripts/qc_linter.py</code>——禁词/变量外壳/句首媒介/画幅/details 零空行/时间轴/注册表对账，0 错误才进 L2</li>
+      <li><b>L2 智检</b>：R7 按 KB_10 G/V 双扣分表＋KB_09 崩坏题库语义核验 ≥9.0</li>
+      <li>评分行统一双签：<b>「L1机检: PASS ｜ L2智检得分: 9.X / 10（通过）」</b></li>
+      <li>＜9.0 强制打回并下发修改指令，最多 3 轮 → 升级人工裁决（记录在案）</li>
+    </ul>
+  </div>
+  <div class="card c3">
+    <h3>③ 冷热记忆隔离（Token 防滚雪球）</h3>
+    <ul>
+      <li>阶段Ⅲ 只读热记忆：<b>资产注册表</b>（外貌锁定摘要/音色ID）＋<b>跨集状态快照</b></li>
+      <li>严禁全文读取冷归档：示范剧集模板 / 往集产出 / <code>workspace/＜剧名＞/_archive/</code></li>
+      <li><code>memory/projects/＜剧名＞/</code> 目录纯洁性：永久只允许三件套</li>
+      <li>单集超 8 分镜按<b>每批 4~6 镜</b>分段产出，逐批过门禁</li>
+    </ul>
+  </div>
+  <div class="card c4">
+    <h3>④ 自进化双环（EVO-01 · 单点即时＋全局连坐）</h3>
+    <ul>
+      <li><b>Micro 环</b>：用户每生成一张/段即填「Prompt 实际产出复盘」（不等整批）</li>
+      <li><b>Macro 环</b>：批末汇总归档；下一轮对话总控扫描非空复盘字段自动激活 R9</li>
+      <li>R9 四步：归因 → 三层根因（L1/L2/L3）→ 全局防偏三问沙盘 → 连坐刷新黑名单/KB_09/KB_10/plat_*/PACK</li>
+      <li>高频崩坏（同类 ≥3 次）→ 自动升级为 <b>KB_10 一票否决题</b></li>
+    </ul>
+  </div>
+</div>
+
+<h2 class="sec">技能插件代号速查（图中角色挂载的执行工具层）</h2>
+<table class="codes">
+  <tr><th>层</th><th>代号</th><th>名称</th><th>归属角色</th></tr>
+  <tr><td>编剧</td><td><code>NARR-00~04</code></td><td>新剧立项问询器（0.0 闸）· 市场钩子研究 · 世界观人物弧光 · 台词秒算（声画先行总表） · 剧本正文双轨</td><td>R1（NARR-00 为全管线前置）</td></tr>
+  <tr><td>视觉</td><td><code>VIS-01~05</code></td><td>导演分镜 · 美术画风服饰道具 · 纯中文零光影资产 · 连续性轴线守卫 · 资产板式路由</td><td>R2 / R3 / R4 / R5</td></tr>
+  <tr><td>总控</td><td><code>SBM-01</code></td><td>分镜图总控（镜组四模式 A-1/A-2/B/C/D · 一致性链 · 视频段分组）</td><td>R10</td></tr>
+  <tr><td>生图</td><td><code>IMG-01 / IMG-02</code></td><td>生图技法路由 · 前置资源策划（首帧/尾帧/中帧/序列关键帧）</td><td>R5</td></tr>
+  <tr><td>视频</td><td><code>VID-01 / VID-02</code></td><td>秒级切片器（差分编译） · 技法选择器（五大技法①~⑤）</td><td>R6</td></tr>
+  <tr><td>平台</td><td><code>PLAT-00~07</code></td><td>公用默认 · 豆包 · 即梦 · ComfyUI · MiniMax H3 · 可灵 · ChatGPT · 大香蕉</td><td>R5 / R6（单条 Prompt 仅挂一个平台）</td></tr>
+  <tr><td>质检</td><td><code>QC-01</code></td><td>10 分制评分器（KB_10 G/V 表＋KB_09 崩坏库）</td><td>R7</td></tr>
+  <tr><td>音频</td><td><code>TTS 工作流</code></td><td>配音 · 克隆音色（R3 音色卡 → 后期 TTS 轨替换）</td><td>R3 / R8</td></tr>
+  <tr><td>后期</td><td><code>剪映大师</code></td><td>剪辑 · 卡点 · 转场 · 音效（KB_12 真实菜单）</td><td>R8</td></tr>
+  <tr><td>进化</td><td><code>EVO-01</code></td><td>复盘自进化（归因 → 连坐刷新 → 双态沉淀）</td><td>R9</td></tr>
+</table>
+
+<footer>
+  <span>AiDirector · AIGC 影视与短剧多智能体工业化创作框架 —— 底层工作模式全景图</span>
+  <span>浏览器双击打开 · 内容对齐 AGENTS.md（含 R9-20261007-16 分镜图双通道＋技法⑤ / R9-20261007-17 零号立项闸立法）</span>
+</footer>
+
+</div>
+</body>
+</html>

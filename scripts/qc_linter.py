@@ -37,6 +37,10 @@ PACK01_FORBIDDEN_IN_PROMPT = [
 VALID_MEDIA_PREFIXES = (
     "国风仙侠漫剧插画",
     "现代都市漫剧插画",
+    # PACK-03 3D 国漫 CG 系句首媒介（KB_05 四节 ①句首前置词 + ②锁文本场景/道具变体）
+    "3D国漫次世代CG渲染",
+    "3D国漫CG场景渲染",
+    "3D国漫CG道具渲染",
 )
 
 def audit_era_mixing(filepath: Path, block_idx: int, prompt_text: str, errors: list):
@@ -68,16 +72,38 @@ def audit_details_zero_blank_lines(filepath: Path, text: str, errors: list):
             errors.append(f"[DETAILS_BLANK_LINE] {filepath.relative_to(ROOT)} 第 {idx} 个 <details> 块内部存在空行（违反纯HTML零空行封包法）")
 
 def audit_video_time_nodes(filepath: Path, block_idx: int, prompt_text: str, errors: list):
-    """当代码块含 [xx-xxs] 视频时间轴时，执行数学校验：节点数 <=3，单段时长 >=0.4s"""
-    nodes = re.findall(r"\[(\d+(?:\.\d+)?)\s*-\s*(\d+(?:\.\d+)?)\s*(?:s\vert{}秒)\]", prompt_text)
+    """时间轴数学校验（R9-20261010-18 段级制修订）：
+    - 单镜 Prompt：时间轴节点数 <=3；
+    - 段级序列 Prompt（含总起句"参考图顺序推进"/`图N`/`对应素材位N` 绑定特征）：
+      区间数=段内镜数，不受 <=3 限（KB_10 V4 段级口径），但须起止不倒挂、区间升序无重叠。
+    - 修复留痕：旧正则 `(?:s\\vert{}秒)` 转义损坏致节点全不匹配、本检查整体失效（R9-20261010-18）。"""
+    nodes = re.findall(r"\[(\d+(?:\.\d+)?)\s*-\s*(\d+(?:\.\d+)?)\s*(?:s|秒)\]", prompt_text)
     if not nodes:
         return
-    if len(nodes) > 3:
-        errors.append(f"[VIDEO_NODE_OVERFLOW] {filepath.relative_to(ROOT)} 主代码块 #{block_idx} 时间轴节点数为 {len(nodes)}（违反 <=3 铁律）")
+    is_segment_prompt = bool(
+        re.search(r"参考图顺序推进", prompt_text)
+        or re.search(r"对应素材位\d+", prompt_text)
+        or re.search(r"\]\s*图\s*\d+", prompt_text)
+    )
+    # 节点数上限按 KB_08 四节 1/5 与 VID-01 边界 4 编码（R9-20261010-18 修复留痕）：
+    # 标准单镜 ≤3；长条式（末节点止点 >8s，如 10s 母版 4 节点/30s 加密 5~7 段）≤7；段级序列=段内镜数（≤12 兜底）
+    max_end = max(float(e) for _, e in nodes)
+    if is_segment_prompt:
+        limit = 12
+    elif max_end > 8.0:
+        limit = 7
+    else:
+        limit = 3
+    if len(nodes) > limit:
+        errors.append(f"[VIDEO_NODE_OVERFLOW] {filepath.relative_to(ROOT)} 主代码块 #{block_idx} 时间轴节点数为 {len(nodes)}（超上限 {limit}：标准单镜≤3/长条≤7/段级=段内镜数·R9-20261010-18）")
+    prev_end = 0.0
     for start_s, end_s in nodes:
         dur = float(end_s) - float(start_s)
         if dur <= 0:
             errors.append(f"[VIDEO_TIME_INVALID] {filepath.relative_to(ROOT)} 主代码块 #{block_idx} 时间轴起止倒挂 [{start_s}-{end_s}s]")
+        if float(start_s) < prev_end - 1e-9:
+            errors.append(f"[VIDEO_SEG_OVERLAP] {filepath.relative_to(ROOT)} 主代码块 #{block_idx} 时间轴区间重叠（上一区间止于 {prev_end}s，本区间起于 {start_s}s）")
+        prev_end = max(prev_end, float(end_s))
 
 def audit_workspace_doc(
     filepath: Path,
@@ -149,7 +175,7 @@ def audit_blacklist(errors: list):
         errors.append("[MISSING_FILE] 找不到 memory/global/全局复盘避坑黑名单.md")
         return
     txt = bl.read_text(encoding="utf-8")
-    for num in range(18, 27):
+    for num in range(18, 46):
         if f"| {num} |" not in txt and f"| {num:02d} |" not in txt:
             errors.append(f"[BLACKLIST_INDEX] 全局复盘避坑黑名单第一部分速查表缺少正式编号 {num}")
 
@@ -186,6 +212,7 @@ def main():
         "E01_视频生成提示词_豆包版.md",
         "E02_视频生成提示词_豆包版.md",
         "E03_视频生成提示词_豆包版.md",
+        "E04_视频生成提示词_豆包版.md",
     ):
         audit_workspace_doc(
             ROOT / "workspace/两界食单_豆包测试版" / ep_doc,
@@ -212,7 +239,26 @@ def main():
         errors=errors,
         stats=stats,
     )
-    # 3. 审 KB_05、黑名单 18~26、VIS-01 蒙太奇B计划
+    # 3. 审《我在南沙造火箭》（科普大赛2026 · PACK-03 轨道；生图口径：句首媒介+去@）
+    reg_rocket = ROOT / "memory/projects/我在南沙造火箭/资产注册表.md"
+    audit_workspace_doc(
+        ROOT / "workspace/科普大赛2026/重要资产图片提示词.md",
+        reg_path=reg_rocket,
+        require_media_prefix=True,
+        check_no_at_in_image=True,
+        errors=errors,
+        stats=stats,
+    )
+    # 3.5 《我在南沙造火箭》E01 视频文档（视频口径：不强制媒介前缀，@资产走注册表对账）
+    audit_workspace_doc(
+        ROOT / "workspace/科普大赛2026/E01_视频生成提示词.md",
+        reg_path=reg_rocket,
+        require_media_prefix=False,
+        check_no_at_in_image=False,
+        errors=errors,
+        stats=stats,
+    )
+    # 4. 审 KB_05、黑名单 18~45、VIS-01 蒙太奇B计划
     audit_kb05_style_packs(errors)
     audit_blacklist(errors)
     audit_montage_plan_b(errors)
