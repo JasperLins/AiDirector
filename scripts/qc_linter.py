@@ -4,7 +4,8 @@
 AiDirector 双擎联审门禁 · L1 硬核语法与数学检查器 (scripts/qc_linter.py)
 职责分工：
   - L1 (本脚本): 查风格包禁词、变量外壳残留、句首媒介前置、资产注册表跨文件对账、
-                 视频秒级时间轴数学规范、[details]零空行封包法、蒙太奇B计划落位。
+                 视频秒级时间轴数学规范、[details]零空行封包法、蒙太奇B计划落位、
+                 技能 YAML 头完整性（SKILL_FRONTMATTER_*，2026-10-25 立·黑名单 47）。
   - L2 (R7 智能体): 在本脚本 PASS 后，按 KB_10 V3 维度制（视频 8 维/生图八层）执行证据核查——
                  每维必引证据（Prompt 行/镜头卡字段/注册表行），无证据=判缺失；缺一即打回，不打总分（2026-10-25 维度制立法）。
 """
@@ -252,9 +253,55 @@ def audit_blacklist(errors: list):
         errors.append("[MISSING_FILE] 找不到 memory/global/全局复盘避坑黑名单.md")
         return
     txt = bl.read_text(encoding="utf-8")
-    for num in range(18, 47):
+    for num in range(18, 48):
         if f"| {num} |" not in txt and f"| {num:02d} |" not in txt:
             errors.append(f"[BLACKLIST_INDEX] 全局复盘避坑黑名单第一部分速查表缺少正式编号 {num}")
+
+def audit_skill_frontmatter(errors: list):
+    """技能 YAML 头完整性门禁（2026-10-25 立·黑名单 47·技能头损坏·门禁盲区）：
+    扫描 skills/ 全部子目录技能 .md（排除 SKILL_INDEX.md），逐文件校验——
+      ① 以 --- 开头且存在第二个 --- 闭合头区；
+      ② 头区内 name:/description:/required_kbs: 三键各自成完整键行（裸 nam 拼断残行=键缺失）；
+      ③ name 值非空；
+      ④ 头区内不允许"不以合法键名开头却含冒号"的断裂残行（如法则正文滞留头部+`e: xxx` 拼接残片）。
+    损坏计 ERROR 硬失败——修 443b30b 法则迁移劈断 NARR-04 name 字段以"双门禁绿"入库的盲区
+    （此前 qc_linter 与 audit_consistency 均不解析技能 YAML 头）。"""
+    skills_dir = ROOT / "skills"
+    if not skills_dir.exists():
+        errors.append("[MISSING_FILE] 找不到 skills/ 目录")
+        return
+    targets = [p for p in sorted(skills_dir.rglob("*.md")) if p.name != "SKILL_INDEX.md"]
+    if not targets:
+        errors.append("[SKILL_FRONTMATTER_NO_FILES] skills/ 下未发现任何技能 .md 文件（扫描面异常）")
+        return
+    for fp in targets:
+        rel = fp.relative_to(ROOT)
+        lines = fp.read_text(encoding="utf-8").splitlines()
+        if not lines or lines[0].strip() != "---":
+            errors.append(f"[SKILL_FRONTMATTER_OPEN] {rel} 未以 --- 开头，缺 YAML 头")
+            continue
+        close = None
+        for i in range(1, len(lines)):
+            if lines[i].strip() == "---":
+                close = i
+                break
+        if close is None:
+            errors.append(f"[SKILL_FRONTMATTER_CLOSE] {rel} YAML 头未闭合（缺第二个 ---）")
+            continue
+        header = [ln.strip() for ln in lines[1:close] if ln.strip()]
+        keys_seen = set()
+        for stripped in header:
+            m = re.match(r"^([A-Za-z_][A-Za-z0-9_]*):", stripped)
+            if m:
+                keys_seen.add(m.group(1))
+            elif ":" in stripped:
+                errors.append(f"[SKILL_FRONTMATTER_BROKEN_LINE] {rel} 头区存在断裂残行（不以合法键名开头却含冒号）: '{stripped[:40]}...'")
+        for need in ("name", "description", "required_kbs"):
+            if need not in keys_seen:
+                errors.append(f"[SKILL_FRONTMATTER_MISSING_KEY] {rel} YAML 头缺少完整键行 '{need}:'")
+        name_line = next((s for s in header if s.startswith("name:")), None)
+        if name_line is not None and not name_line[len("name:"):].strip():
+            errors.append(f"[SKILL_FRONTMATTER_EMPTY_NAME] {rel} name 值为空")
 
 def audit_montage_plan_b(errors: list):
     vis01 = ROOT / "skills" / "02_visual_director_skills" / "skill_director_storyboard.md"
@@ -321,10 +368,11 @@ def main():
             warnings=warnings,
             forbidden_terms=PACK_FORBIDDEN_MAP[detect_pack(reg_path)],
         )
-    # 审 KB_05、黑名单 18~45、VIS-01 蒙太奇B计划
+    # 审 KB_05、黑名单 18~47、VIS-01 蒙太奇B计划、技能 YAML 头完整性
     audit_kb05_style_packs(errors)
     audit_blacklist(errors)
     audit_montage_plan_b(errors)
+    audit_skill_frontmatter(errors)
 
     print("=" * 72)
     if warnings:
