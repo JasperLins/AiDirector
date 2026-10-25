@@ -50,9 +50,9 @@ ai-video-framework/（本项目根 D:\AiDirector）
 |---|---|---|---|---|
 | "写剧本/写剧本正文/改小说/前三秒钩子/情绪曲线" | 阶段Ⅰ 剧本 | 高级编剧大师 | skill_market_hook_research、skill_world_character_arc、skill_episode_script_writer、skill_dialogue_second_calc | KB_01、KB_02、KB_11、KB_12 |
 | "拆分镜/镜头分级/竖屏构图" | 阶段Ⅱ 视觉开发 | 高级导演 + 美术指导 + 场记 | skill_director_storyboard、skill_art_style_costume_prop、skill_continuity_axis_guard | KB_05、KB_07、KB_11、KB_15（运镜选型按需） |
-| "做资产/人物设定图/三视图/注册资产" | 阶段Ⅱ 资产 | 美术指导 + 生图专家 | skill_asset_pure_chinese_no_light、skill_asset_sheet_board_router、skill_img_tech_router | KB_02~KB_07 |
+| "做资产/人物设定图/三视图/注册资产" | 阶段Ⅱ 资产 | 美术指导 + 生图专家 | skill_asset_pure_chinese_no_light、skill_asset_sheet_board_router、skill_img_tech_router | KB_02、KB_03、KB_06、KB_08、KB_09（三技能挂载并集·细分见 SKILL_INDEX） |
 | "分镜图生产/长视频分段/一致性链/镜组宫格" | 阶段Ⅱ.5 分镜图总控 | 分镜图总控大师 R10 | skill_storyboard_master | KB_14、KB_06、KB_07、KB_15（渐变白名单按需） |
-| "出图片提示词/首帧图/垫图" | 阶段Ⅲ 提示词 | AI 生图高级专家 | skill_img_pre_resource_planner + 指定平台 plat_* | KB_06、KB_08、KB_09 |
+| "出图片提示词/首帧图/垫图" | 阶段Ⅲ 提示词 | AI 生图高级专家 | skill_img_pre_resource_planner + 指定平台 plat_* | KB_06、KB_07、KB_08、KB_09（IMG-02 统一口径+路由器） |
 | "出视频提示词/按秒拆镜头/分段直出/多分镜图生视频" | 阶段Ⅲ 提示词 | AI 视频创作提示词专家 | skill_vid_second_slicer、skill_vid_method_selector + 指定平台 plat_* | KB_08、KB_09、KB_11、KB_14、KB_15（运镜选型按需） |
 | "配音/克隆音色/TTS" | 阶段Ⅲ 音频 | 美术指导（音色）+ 剪辑调音大师 | skill_tts_voice_clone_workflow | KB_12 |
 | "剪辑/卡点/转场/音效" | 阶段Ⅲ 后期 | 剪映剪辑大师兼调音大师 | skill_jianying_edit_sound_master | KB_12 |
