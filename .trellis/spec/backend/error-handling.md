@@ -1,51 +1,6 @@
-# Error Handling
+# 问题处置与门禁失败流程
 
-> How errors are handled in this project.
-
----
-
-## Overview
-
-<!--
-Document your project's error handling conventions here.
-
-Questions to answer:
-- What error types do you define?
-- How are errors propagated?
-- How are errors logged?
-- How are errors returned to clients?
--->
-
-(To be filled by the team)
-
----
-
-## Error Types
-
-<!-- Custom error classes/types -->
-
-(To be filled by the team)
-
----
-
-## Error Handling Patterns
-
-<!-- Try-catch patterns, error propagation -->
-
-(To be filled by the team)
-
----
-
-## API Error Responses
-
-<!-- Standard error response format -->
-
-(To be filled by the team)
-
----
-
-## Common Mistakes
-
-<!-- Error handling mistakes your team has made -->
-
-(To be filled by the team)
+- L1 机检失败（qc_linter.py 退出码 1）：逐条修复至 0 错误，禁越权放行；注入缺陷法回归：删时间节点/未注册@名/时间倒挂三类必须被抓住。
+- L2 维度核查缺维：出具《打回重写指令单》（逐缺维证据引用+可执行修改指令），打回≤3 轮，第 3 轮仍有缺→人工裁决上报。
+- 实测问题=问题直通（2026-10-25 立法）：用户口述/贴截图→先修当前项→EVO-01 归因（症状字典→崩坏编号→三问定位树）→L2/L3 层执行连坐刷新→沉淀黑名单。禁要求用户"填复盘字段"（已废除）。
+- 证据位阶（AGENTS 〇9）：①实测＞②黑名单＞③官方文档＞④教程；③④级结论必须标"未经本项目实测"，禁立首选/强制档。

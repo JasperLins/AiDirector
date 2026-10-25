@@ -1,54 +1,5 @@
-# Directory Structure
+# 产出文档结构（前端页面等价物=提示词文档）
 
-> How frontend code is organized in this project.
-
----
-
-## Overview
-
-<!--
-Document your project's frontend directory structure here.
-
-Questions to answer:
-- Where do components live?
-- How are features/modules organized?
-- Where are shared utilities?
-- How are assets organized?
--->
-
-(To be filled by the team)
-
----
-
-## Directory Layout
-
-```
-<!-- Replace with your actual structure -->
-src/
-├── ...
-└── ...
-```
-
----
-
-## Module Organization
-
-<!-- How should new features be organized? -->
-
-(To be filled by the team)
-
----
-
-## Naming Conventions
-
-<!-- File and folder naming rules -->
-
-(To be filled by the team)
-
----
-
-## Examples
-
-<!-- Link to well-organized modules as examples -->
-
-(To be filled by the team)
+- `workspace/<剧名>/重要资产图片提示词.md`：画风锁→人物（主图/三视图/表情矩阵/音色卡）→场景（全景+空镜+机位库宫格）→道具；每条 Prompt 附八层核查行。
+- `ENN_视频生成提示词.md` 逐镜死锁模块链：`## 镜 XX`→【空间镜头卡（KB_11 九节附 8 字段）】→【7 列单镜脚本卡】→📸垫图指引（@名只写此处，禁入代码块）→分镜图 Prompt（纯净代码块+维度核查行）→秒级视频 Prompt（+使用建议）→剪辑建议。落盘 Grep 自检：分镜图块=视频块（多切镜按拆分镜数计）、脚本卡=镜头数。
+- 文档头必挂：📖 术语速查（KB_13 全局常驻）+ 🗄️ 代际注记（历史文档）；details 折叠区纯 HTML 零空行（Typora 兼容）。

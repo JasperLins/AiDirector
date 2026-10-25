@@ -1,51 +1,5 @@
-# Database Guidelines
+# 记忆库规范（数据库等价物=Markdown 记忆）
 
-> Database patterns and conventions for this project.
-
----
-
-## Overview
-
-<!--
-Document your project's database conventions here.
-
-Questions to answer:
-- What ORM/query library do you use?
-- How are migrations managed?
-- What are the naming conventions for tables/columns?
-- How do you handle transactions?
--->
-
-(To be filled by the team)
-
----
-
-## Query Patterns
-
-<!-- How should queries be written? Batch operations? -->
-
-(To be filled by the team)
-
----
-
-## Migrations
-
-<!-- How to create and run migrations -->
-
-(To be filled by the team)
-
----
-
-## Naming Conventions
-
-<!-- Table names, column names, index names -->
-
-(To be filled by the team)
-
----
-
-## Common Mistakes
-
-<!-- Database-related mistakes your team has made -->
-
-(To be filled by the team)
+- 三件套是"数据库"：注册表=唯一合法 @纯中文资产名索引（派生资产 `@原名+状态词` 先登记后使用）；圣经=世界观宪法（〇0 立项书，改动走复批留痕）；StateDiff=每集末增量快照。
+- 冷热隔离（AGENTS 〇6）：阶段Ⅲ只读注册表+快照两件热记忆，禁全文读冷归档；memory/projects 目录纯洁性禁令：除三件套外任何文件一律落 workspace/<剧名>/_archive/。
+- 音色ID 列格式：`描述名｜平台:voice-id`（未注册写 ⏳待注册，禁留空）。基准图列=文件名+平台+日期，跨平台垫图须声明垫图类型。

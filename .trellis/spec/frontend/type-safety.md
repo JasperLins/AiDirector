@@ -1,51 +1,5 @@
-# Type Safety
+# 术语与引用规范（类型安全等价物=命名与引用一致性）
 
-> Type safety patterns in this project.
-
----
-
-## Overview
-
-<!--
-Document your project's type safety conventions here.
-
-Questions to answer:
-- What type system do you use?
-- How are types organized?
-- What validation library do you use?
-- How do you handle type inference?
--->
-
-(To be filled by the team)
-
----
-
-## Type Organization
-
-<!-- Where types are defined, shared types vs local types -->
-
-(To be filled by the team)
-
----
-
-## Validation
-
-<!-- Runtime validation patterns (Zod, Yup, io-ts, etc.) -->
-
-(To be filled by the team)
-
----
-
-## Common Patterns
-
-<!-- Type utilities, generics, type guards -->
-
-(To be filled by the team)
-
----
-
-## Forbidden Patterns
-
-<!-- any, type assertions, etc. -->
-
-(To be filled by the team)
+- @资产名：纯中文 2~8 字，未注册即 ILLEGAL/UNREGISTERED（L1 机检硬拦）；首次文生图块内去 @ 直书。
+- 新术语先在 KB_13 登记再入产出文档；英文术语中文主导+英文括注（Cutaway（缓冲镜）式）。
+- 节号引用必须实存（引用修正后跑 grep 抽查）；"默认+段级"相邻表述必须带"仅实验路径⑤启用"限定（回滚口径）；措辞禁用已废词：智检得分/低于9.0/评分官/复盘占位（历史档案除外）。

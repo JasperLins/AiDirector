@@ -1,51 +1,5 @@
-# Hook Guidelines
+# 技能文件写作规范（hook 等价物=Skill 插件）
 
-> How hooks are used in this project.
-
----
-
-## Overview
-
-<!--
-Document your project's hook conventions here.
-
-Questions to answer:
-- What custom hooks do you have?
-- How do you handle data fetching?
-- What are the naming conventions?
-- How do you share stateful logic?
--->
-
-(To be filled by the team)
-
----
-
-## Custom Hook Patterns
-
-<!-- How to create and structure custom hooks -->
-
-(To be filled by the team)
-
----
-
-## Data Fetching
-
-<!-- How data fetching is handled (React Query, SWR, etc.) -->
-
-(To be filled by the team)
-
----
-
-## Naming Conventions
-
-<!-- Hook naming rules (use*, etc.) -->
-
-(To be filled by the team)
-
----
-
-## Common Mistakes
-
-<!-- Hook-related mistakes your team has made -->
-
-(To be filled by the team)
+- frontmatter 必含 name/description/required_kbs（挂载=唯一事实源，与 SKILL_INDEX 行严格一致）；文件名即路由键，改名=断链（QC-01 文件名沿用 skill_qc_prompt_scorer_10pt 但内容已是维度核查官——名实分离须在文内注明）。
+- 结构：铁律（编号+立法日期）→SOP Step→输入/输出契约→专项工具箱→正反例（Bad/Good）→Edge Cases；KB 词表只存指针禁抄副本（防两处漂移）。
+- 新技能三连坐：登记 SKILL_INDEX（ID/路径/挂载/WHEN）+ AGENTS 路由表 + audit_consistency 自动对账；措辞随现行范式（核查/问题直通/实验路径⑤限定）。

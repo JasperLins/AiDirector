@@ -1,51 +1,6 @@
-# Quality Guidelines
+# 双门禁口径（代码评审等价物=双门禁+验收grep）
 
-> Code quality standards for backend development.
-
----
-
-## Overview
-
-<!--
-Document your project's quality standards here.
-
-Questions to answer:
-- What patterns are forbidden?
-- What linting rules do you enforce?
-- What are your testing requirements?
-- What code review standards apply?
--->
-
-(To be filled by the team)
-
----
-
-## Forbidden Patterns
-
-<!-- Patterns that should never be used and why -->
-
-(To be filled by the team)
-
----
-
-## Required Patterns
-
-<!-- Patterns that must always be used -->
-
-(To be filled by the team)
-
----
-
-## Testing Requirements
-
-<!-- What level of testing is expected -->
-
-(To be filled by the team)
-
----
-
-## Code Review Checklist
-
-<!-- What reviewers should check -->
-
-(To be filled by the team)
+- L1：`python scripts/qc_linter.py`（禁词/外壳/媒介/画幅/details 零空行/时间轴/注册表对账；fresh-clone 可运行，本地目录缺失=跳过警告）。
+- L2：R7 维度核查（KB_10 V3：视频 8 维/生图八层，缺一即不通过、不打总分、每维必引证据）；核查行双签 `L1机检: PASS ｜ L2维度核查: 8/8 通过`。
+- 一致性：`python scripts/audit_consistency.py`（技能三方对账+KB 区间展开，硬差异退出码 1）。
+- 任何 KB/技能改动后：跑双门禁+`python doc/build_library.py` 重生成文库；提交信息用中文长描述（立法内容+验收结论），一处语义一个提交。

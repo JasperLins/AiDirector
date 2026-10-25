@@ -1,51 +1,5 @@
-# Logging Guidelines
+# 立法留痕规范（日志等价物=法条注记）
 
-> How logging is done in this project.
-
----
-
-## Overview
-
-<!--
-Document your project's logging conventions here.
-
-Questions to answer:
-- What logging library do you use?
-- What are the log levels and when to use each?
-- What should be logged?
-- What should NOT be logged (PII, secrets)?
--->
-
-(To be filled by the team)
-
----
-
-## Log Levels
-
-<!-- When to use each level: debug, info, warn, error -->
-
-(To be filled by the team)
-
----
-
-## Structured Logging
-
-<!-- Log format, required fields -->
-
-(To be filled by the team)
-
----
-
-## What to Log
-
-<!-- Important events to log -->
-
-(To be filled by the team)
-
----
-
-## What NOT to Log
-
-<!-- Sensitive data, PII, secrets -->
-
-(To be filled by the team)
+- 一切范式/口径变更必须显式留痕：废止声明（"旧X废止，以本条为准"）、修订注记（`<!-- EVO 修订 YYYY-MM-DD -->` 或行内"·2026-10-25 订正"）、重编号注记（如 KB_08 七节"原误编为八节"）。
+- 历史档案禁静默改写：历史文档评分行/复盘字段不回写清除，只加"🗄️ 历史代际注记"头注；黑名单写错可修正但须显式留痕。
+- 计数声明与实数一致：节标题"（N 条/级/类）"改动后必须现场清点复核（教训：KB_12 曾按类别行误计词条数）。

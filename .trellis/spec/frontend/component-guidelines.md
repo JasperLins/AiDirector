@@ -1,59 +1,6 @@
-# Component Guidelines
+# Prompt 代码块规范（组件等价物=提示词块）
 
-> How components are built in this project.
-
----
-
-## Overview
-
-<!--
-Document your project's component conventions here.
-
-Questions to answer:
-- What component patterns do you use?
-- How are props defined?
-- How do you handle composition?
-- What accessibility standards apply?
--->
-
-(To be filled by the team)
-
----
-
-## Component Structure
-
-<!-- Standard structure of a component file -->
-
-(To be filled by the team)
-
----
-
-## Props Conventions
-
-<!-- How props should be defined and typed -->
-
-(To be filled by the team)
-
----
-
-## Styling Patterns
-
-<!-- How styles are applied (CSS modules, styled-components, Tailwind, etc.) -->
-
-(To be filled by the team)
-
----
-
-## Accessibility
-
-<!-- A11y requirements and patterns -->
-
-(To be filled by the team)
-
----
-
-## Common Mistakes
-
-<!-- Component-related mistakes your team has made -->
-
-(To be filled by the team)
+- ```prompt 代码块=100% 纯净直发：展开后的锁纯文本，禁 `@画风锁`/`[光位锁：…]` 外壳与编译备注；锁类别说明移至块下"核查明细"行。
+- 生图=KB_08 一节八层黄金语序（句首媒介/表情+构图锚/骨相记忆点/服饰四件套/姿态/空间三层/光影轨道/尾锁规格）；视频=二节差分（20% @锚点+80% 动态，骨相≤2词/人）。
+- 台词五要素必备（补丁8）：说话者/原文/起止节点 `起X.Xs-止Y.Ys`/语气语速声调/重音停顿+音色ID；无台词必须静默声明。多人=口型排他锁+象限分区（补丁1）。
+- 金标准回归：李梅母子例（QC-01 五节 Bad=5 维缺失打回/Good=8/8）——改模板后必跑此判例。

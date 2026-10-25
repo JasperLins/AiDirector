@@ -1,51 +1,5 @@
-# State Management
+# 状态与对账规范（状态管理等价物=快照与计数）
 
-> How state is managed in this project.
-
----
-
-## Overview
-
-<!--
-Document your project's state management conventions here.
-
-Questions to answer:
-- What state management solution do you use?
-- How is local vs global state decided?
-- How do you handle server state?
-- What are the patterns for derived state?
--->
-
-(To be filled by the team)
-
----
-
-## State Categories
-
-<!-- Local state, global state, server state, URL state -->
-
-(To be filled by the team)
-
----
-
-## When to Use Global State
-
-<!-- Criteria for promoting state to global -->
-
-(To be filled by the team)
-
----
-
-## Server State
-
-<!-- How server data is cached and synchronized -->
-
-(To be filled by the team)
-
----
-
-## Common Mistakes
-
-<!-- State management mistakes your team has made -->
-
-(To be filled by the team)
+- 跨集状态：每集末产 State Diff 快照（战损/道具/时间天气/情绪刻度）同步 memory/projects/<剧名>/。
+- 计数对账：一切"N 条/式/级/类"声明与实际行数一致；修改前现场清点，改后复检（KB_13 一节=59 条、KB_11 一节=9 级/二节=13 等为 2026-10-25 基准）。
+- 生产状态：分镜表/生产单头部状态注记（已产/未产/搁置+裁决日期）；E02/E03 已裁决搁置（2026-10-25），排期表仅 E01 批次生效。
