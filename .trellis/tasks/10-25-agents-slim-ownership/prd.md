@@ -1,0 +1,19 @@
+# AGENTS瘦身为纯路由+法则所有权立法（诊断转任务·2026-10-25）
+
+## Goal
+
+诊断来源：用户质询'Skills散文化/四处同写无所有权'（2026-10-25 评估轮确认）。三实证：①法则层双全文（One-Take/蒙太奇B/场次覆盖调度表列定义在AGENTS R2卡与VIS-01各写一遍）；②两处产物所有权冲突（轴线声明表：VIS-01 Step2生产vs AGENTS R4卡Schema也声称产出；StateDiff快照：VIS-04 Step5生产vs R4卡Schema含之）；③AGENTS三节角色卡已成第二立法层（229行/53KB）。修法：法则所有权表立法+AGENTS R1~R10卡瘦身（一句职责+Schema+挂载+指针）；audit_consistency增法则单源检查。验收：AGENTS≤130行、双全文归零、两处所有权单点化、全回归绿。详见prd/design。规划教训：本建议第二轮曾提但漏出优先级三档——'诊断即登记'纪律由此立（发现即建planning任务，consent后移至开工）。
+
+## Requirements
+
+- TBD
+
+## Acceptance Criteria
+
+- [ ] TBD
+
+## Notes
+
+- Keep `prd.md` focused on requirements, constraints, and acceptance criteria.
+- Lightweight tasks can remain PRD-only.
+- For complex tasks, add `design.md` for technical design and `implement.md` for execution planning before `task.py start`.
