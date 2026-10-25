@@ -16,11 +16,21 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 
-# 1. PACK-01 主代码块绝对禁词与未展开外壳（出现任一即报错）
-PACK01_FORBIDDEN_IN_PROMPT = [
+# 1. 主代码块禁词与未展开外壳（2026-10-25 按画风包分流：通用外壳/版式禁词全包生效，
+#    包级排斥禁词按项目注册表第五节 PACK-XX 绑定取表——修 PACK-02 A 轨词组被误杀缺口，
+#    "环形无影棚/Flat Lit Albedo/正交投影相机" 在 PACK-02 项目是 KB_06 A 轨立法必挂词）
+COMMON_FORBIDDEN_IN_PROMPT = [
     "严禁设定集排版",
     "严禁多视图分格",
     "画中画特写",
+    "@画风锁",
+    "[光位锁",
+    "体积光替换为",
+    "体积光氛围替换为",
+]
+
+# PACK-01 专属禁词（A 轨摄影工程词 + 写实引力词 = 漫剧包排斥项）
+PACK01_ONLY_FORBIDDEN = [
     "环形无影棚",
     "Flat Lit Albedo",
     "正交投影相机",
@@ -29,11 +39,38 @@ PACK01_FORBIDDEN_IN_PROMPT = [
     "电影感构图",
     "毛孔可见",
     "轻熟",
-    "@画风锁",
-    "[光位锁",
-    "体积光替换为",
-    "体积光氛围替换为",
 ]
+
+# PACK-02 专属禁词（KB_05 PACK-02 ④画种排斥表：绘画/卡通引力词）
+PACK02_ONLY_FORBIDDEN = [
+    "插画",
+    "漫剧",
+    "二次元",
+    "厚涂笔触",
+    "平涂",
+    "赛璐璐",
+    "水墨晕染",
+    "卡通渲染",
+    "过度磨皮塑料感",
+]
+
+# PACK-03 专属禁词（我在南沙造火箭注册表第五节登记的 ④表全量）
+PACK03_ONLY_FORBIDDEN = [
+    "二维平涂",
+    "赛璐璐硬边",
+    "水彩手绘",
+    "真人实拍写真",
+    "粗粝毛孔",
+    "塑料反光过曝",
+    "低多边形",
+]
+
+PACK_FORBIDDEN_MAP = {
+    "PACK-01": COMMON_FORBIDDEN_IN_PROMPT + PACK01_ONLY_FORBIDDEN,
+    "PACK-02": COMMON_FORBIDDEN_IN_PROMPT + PACK02_ONLY_FORBIDDEN,
+    "PACK-03": COMMON_FORBIDDEN_IN_PROMPT + PACK03_ONLY_FORBIDDEN,
+    "PACK-04": COMMON_FORBIDDEN_IN_PROMPT,  # PACK-04 ④禁词表未立法前仅通用表
+}
 
 VALID_MEDIA_PREFIXES = (
     "国风仙侠漫剧插画",
@@ -42,7 +79,22 @@ VALID_MEDIA_PREFIXES = (
     "3D国漫次世代CG渲染",
     "3D国漫CG场景渲染",
     "3D国漫CG道具渲染",
+    # PACK-02 真人写实系句首媒介（KB_05 PACK-02 ① + 剧集派生乡村/城镇变体，注册表登记后合法）
+    "古装真人实拍电影剧照",
+    "现代都市真人实拍电影剧照",
+    "现代乡村真人实拍电影剧照",
+    # PACK-04 赛璐璐系句首媒介（KB_05 PACK-04 ①）
+    "二维日式赛璐璐动画番剧作画",
 )
+
+
+def detect_pack(reg_path: Path) -> str:
+    """从项目《资产注册表.md》第五节画风绑定声明提取 PACK-XX；无法识别时回落 PACK-01（最保守禁词表，维持历史行为）"""
+    if not reg_path.exists():
+        return "PACK-01"
+    txt = reg_path.read_text(encoding="utf-8")
+    m = re.search(r"PACK-0[1-4]", txt)
+    return m.group(0) if m else "PACK-01"
 
 def audit_era_mixing(filepath: Path, block_idx: int, prompt_text: str, errors: list):
     """拦截句首现代媒介 + 句尾仙侠锁的跨时代混挂"""
@@ -115,6 +167,7 @@ def audit_workspace_doc(
     stats: dict,
     optional: bool = False,
     warnings: list = None,
+    forbidden_terms: list = None,
 ):
     if not filepath.exists():
         if optional:
@@ -137,16 +190,21 @@ def audit_workspace_doc(
         return
 
     stats[str(filepath.relative_to(ROOT))] = len(prompts)
+    if forbidden_terms is None:
+        forbidden_terms = PACK_FORBIDDEN_MAP["PACK-01"]
+    pack_label = next(
+        (k for k, v in PACK_FORBIDDEN_MAP.items() if v is forbidden_terms), "?"
+    )
 
     for i, p in enumerate(prompts, 1):
         p_clean = p.strip()
         # 1. 检查省略号偷懒
         if "..." in p_clean or ("…" in p_clean and ("（略）" in p_clean or "同上" in p_clean)):
             errors.append(f"[LAZY_ELLIPSIS] {filepath.relative_to(ROOT)} 主代码块 #{i} 含有偷懒省略符")
-        # 2. 检查 PACK-01 禁词与外壳残留
-        for bad in PACK01_FORBIDDEN_IN_PROMPT:
+        # 2. 检查本包禁词与外壳残留（按注册表 PACK 绑定分流，{pack_label} 表）
+        for bad in forbidden_terms:
             if bad in p_clean:
-                errors.append(f"[FORBIDDEN_TERM] {filepath.relative_to(ROOT)} 主代码块 #{i} 命中禁词/外壳: '{bad}'")
+                errors.append(f"[FORBIDDEN_TERM] {filepath.relative_to(ROOT)} 主代码块 #{i} 命中禁词/外壳({pack_label}): '{bad}'")
         # 3. 检查句首媒介声明
         if require_media_prefix and not p_clean.startswith(VALID_MEDIA_PREFIXES):
             head = p_clean[:25].replace("\n", " ")
@@ -194,7 +252,7 @@ def audit_blacklist(errors: list):
         errors.append("[MISSING_FILE] 找不到 memory/global/全局复盘避坑黑名单.md")
         return
     txt = bl.read_text(encoding="utf-8")
-    for num in range(18, 46):
+    for num in range(18, 47):
         if f"| {num} |" not in txt and f"| {num:02d} |" not in txt:
             errors.append(f"[BLACKLIST_INDEX] 全局复盘避坑黑名单第一部分速查表缺少正式编号 {num}")
 
@@ -251,15 +309,17 @@ def main():
             warnings.append(f"[DISCOVER_NO_REG] 自动发现 {rel}，但未找到 memory/projects/{doc.parent.name}/资产注册表.md——@资产对账降级（仅查名称合法性）")
 
     for rel_doc, rel_reg, kind in AUDIT_TARGETS:
+        reg_path = ROOT / rel_reg if rel_reg else ROOT / "_无注册表.md"
         audit_workspace_doc(
             ROOT / rel_doc,
-            ROOT / rel_reg if rel_reg else ROOT / "_无注册表.md",
+            reg_path,
             require_media_prefix=(kind == "image"),
             check_no_at_in_image=(kind == "image"),
             errors=errors,
             stats=stats,
             optional=True,  # 本地管理目录缺失=跳过警告（fresh-clone 可运行）
             warnings=warnings,
+            forbidden_terms=PACK_FORBIDDEN_MAP[detect_pack(reg_path)],
         )
     # 审 KB_05、黑名单 18~45、VIS-01 蒙太奇B计划
     audit_kb05_style_packs(errors)

@@ -75,6 +75,7 @@ ai-video-framework/（本项目根 D:\AiDirector）
 | 法则族 | 唯一立法源 |
 |---|---|
 | 立项闸两层收口/一页式立项书拍板 | NARR-00（skill_series_intake） |
+| 世界视觉档案采集轮（AI主导提案制/三态来源标注/视觉设定卡裁决/圣经视觉档案节承载/AI补全🤖标记） | NARR-00 第三层（skill_series_intake）＋NARR-02 铁律7（skill_world_character_arc） |
 | 剧本闸用户裁决位/N 三查/双轨台词/音频ID 预埋 | NARR-04（skill_episode_script_writer） |
 | 台词五要素秒算与交棒 | NARR-03 + KB_08 四节4 |
 | 拆镜法则族（One-Take/蒙太奇B/信息守恒/无损膨胀/时空唯一/接力标记/场次覆盖调度/段级实验限定） | VIS-01（skill_director_storyboard） |
