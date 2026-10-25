@@ -3,9 +3,11 @@
 build_single_file.py — 把 training.html 里的 ../reference/运镜50/N.png 引用
 压缩（≈820px JPEG）并内嵌为 base64，原地写回，生成"单文件版"。
 
+【2026-10-25 退役注记】reference/运镜50/ 图片载体已按用户裁决移除（减包）——
+本脚本转为退役护栏：图片源不存在时直接提示退出；training.html（已内嵌版）
+继续可用，重新生成 training 页面需用户日后自行恢复图片源。
+
 用法：python doc/build_single_file.py
-以后修改了 training.html（含新增图片引用）后重跑本脚本即可重新内嵌；
-没有待内嵌引用时脚本会直接退出（幂等）。
 """
 import base64
 import io
@@ -39,6 +41,9 @@ def to_data_uri(png: Path) -> str:
 
 
 def main() -> None:
+    if not IMGDIR.exists():
+        print("[退役] reference/运镜50/ 已于 2026-10-25 移除（减包裁决）——无可内嵌图片源，脚本退出。")
+        return
     html = HTML.read_text(encoding="utf-8")
     nums = sorted({int(m.group(1)) for m in PAT.finditer(html)})
     if not nums:

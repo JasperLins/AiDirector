@@ -25,10 +25,13 @@ workspace/*
 !workspace/示范剧集_苍穹与烟火/
 
 # reference/ 外部参考资料（档案卡见 reference/README.md）：
-# 运镜50 47张PNG 与 整包PDF 随库上传——KB_15 〇节读图协议按路径 Read 原图，跨机克隆需可用；
+# 运镜50 47张PNG 与 整包PDF 已于 2026-10-25 移除减包（用户裁决：未使用·表是权威——KB_15 一节主表+KB_11 十节为唯一权威源）；
 # 分镜表格模板.xlsx（8.4MB）与 分镜提示词.txt 知识已全量吸收（仅采景别渐变箭头记法），本体本地保留
 reference/分镜表格模板.xlsx
 reference/分镜提示词.txt
 
 # 临时校验/比对产物
 check_part*.txt
+
+# Python 缓存
+__pycache__/
