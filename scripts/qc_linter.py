@@ -253,7 +253,7 @@ def audit_blacklist(errors: list):
         errors.append("[MISSING_FILE] 找不到 memory/global/全局复盘避坑黑名单.md")
         return
     txt = bl.read_text(encoding="utf-8")
-    for num in range(18, 49):
+    for num in range(18, 50):
         if f"| {num} |" not in txt and f"| {num:02d} |" not in txt:
             errors.append(f"[BLACKLIST_INDEX] 全局复盘避坑黑名单第一部分速查表缺少正式编号 {num}")
 
@@ -368,7 +368,7 @@ def main():
             warnings=warnings,
             forbidden_terms=PACK_FORBIDDEN_MAP[detect_pack(reg_path)],
         )
-    # 审 KB_05、黑名单 18~48、VIS-01 蒙太奇B计划、技能 YAML 头完整性
+    # 审 KB_05、黑名单 18~49、VIS-01 蒙太奇B计划、技能 YAML 头完整性
     audit_kb05_style_packs(errors)
     audit_blacklist(errors)
     audit_montage_plan_b(errors)
