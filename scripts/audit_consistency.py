@@ -78,11 +78,48 @@ def main():
     report.append("--- KB references in README.md ---")
     report.append(f"KBs in README.md: {sorted(list(readme_kbs))}")
 
+    # 5. 法则单源门禁（2026-10-25 agents-slim-ownership）
+    law_fail = []
+    LAW_OWNERSHIP = [
+        ('一场一镜到底', 'skills/02_visual_director_skills/skill_director_storyboard.md'),
+        ('蒙太奇', 'skills/02_visual_director_skills/skill_director_storyboard.md'),
+        ('场次覆盖调度表', 'skills/02_visual_director_skills/skill_director_storyboard.md'),
+        ('唯一立法源声明', 'skills/02_visual_director_skills/skill_director_storyboard.md'),
+        ('轴线校验', 'skills/02_visual_director_skills/skill_continuity_axis_guard.md'),
+        ('State Diff', 'skills/02_visual_director_skills/skill_continuity_axis_guard.md'),
+        ('唯一立法源声明', 'skills/02_visual_director_skills/skill_continuity_axis_guard.md'),
+        ('一页式立项书', 'skills/01_narrative_skills/skill_series_intake.md'),
+        ('N 三查', 'skills/01_narrative_skills/skill_episode_script_writer.md'),
+        ('剧本闸前用户裁决位', 'skills/01_narrative_skills/skill_episode_script_writer.md'),
+        ('三段管线', 'skills/04_video_gen_skills/skill_vid_method_selector.md'),
+        ('Step 5.8', 'skills/02_visual_director_skills/skill_storyboard_master.md'),
+        ('焦段数值表', 'kb_library/KB_11_导演镜头与动态运镜词典.md'),
+        ('八层黄金语序', 'kb_library/KB_08_Prompt编译器.md'),
+    ]
+    for kw, owner in LAW_OWNERSHIP:
+        try:
+            ok = kw in open(owner, encoding='utf-8').read()
+        except FileNotFoundError:
+            ok = False
+        if not ok:
+            law_fail.append(f'{kw} -> {owner}')
+            print(f"[LAW_OWNERSHIP] 缺失：'{kw}' 不在唯一源 {owner}")
+    sec3 = re.search(r'## 三、.*?(?=\n## 四、)', agents_content, re.S)
+    if sec3:
+        for m in re.finditer(r'### R\d+.*?(?=\n### |\Z)', sec3.group(0), re.S):
+            size = len(m.group(0).encode('utf-8'))
+            if size > 1400:
+                law_fail.append(f"角色卡超重 {m.group(0).splitlines()[0]} ({size}B>1400B)")
+        for kw in ['【一场一镜到底优先法则', '【蒙太奇拆镜防崩法则', '【文转镜信息守恒法则', '【剧本无损膨胀法则', '【单镜时空唯一性铁律', '【接力段分镜标记条款']:
+            if kw in sec3.group(0):
+                law_fail.append(f'AGENTS 三节残留法则全文标记：{kw}')
+    report.append(f"Law ownership checks: {len(LAW_OWNERSHIP)} positive checks, fail={len(law_fail)}")
+
     for line in report:
         print(line)
 
     # 5. 硬性差异判定（非零退出，可入闸）
-    hard_fail = bool(missing_in_index or missing_in_dir or missing_in_agents)
+    hard_fail = bool(missing_in_index or missing_in_dir or missing_in_agents or law_fail)
     if hard_fail:
         print("=" * 60)
         print("❌ [CONSISTENCY GATE: FAILED] 技能三方对账存在差异（见上）——exit 1")
