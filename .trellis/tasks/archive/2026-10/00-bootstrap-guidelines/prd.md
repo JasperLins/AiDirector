@@ -21,9 +21,9 @@ the rest conversationally.
 
 ## Status (update the checkboxes as you complete each item)
 
-- [ ] Fill backend guidelines
-- [ ] Fill frontend guidelines
-- [ ] Add code examples
+- [x] Fill backend guidelines（2026-10-25 改写为文档框架工程规范：结构命名/记忆库/问题处置/立法留痕/双门禁——backend/ 5 册+index）
+- [x] Fill frontend guidelines（改写为产出文档规范：文档死锁结构/Prompt代码块/技能写作/状态对账/术语引用/验收清单——frontend/ 6 册+index）
+- [x] Add code examples（各册内嵌真实文件引用与金标准判例：李梅母子例/双门禁命令/死锁模块链——未另设示例文件）
 
 ---
 
