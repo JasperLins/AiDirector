@@ -5,7 +5,8 @@ AiDirector 双擎联审门禁 · L1 硬核语法与数学检查器 (scripts/qc_l
 职责分工：
   - L1 (本脚本): 查风格包禁词、变量外壳残留、句首媒介前置、资产注册表跨文件对账、
                  视频秒级时间轴数学规范、[details]零空行封包法、蒙太奇B计划落位。
-  - L2 (R7 智能体): 在本脚本 PASS 后，对脚本输出的《L2 导演语义智检必查清单》执行深度视听逻辑评分。
+  - L2 (R7 智能体): 在本脚本 PASS 后，按 KB_10 V3 维度制（视频 8 维/生图八层）执行证据核查——
+                 每维必引证据（Prompt 行/镜头卡字段/注册表行），无证据=判缺失；缺一即打回，不打总分（2026-10-25 维度制立法）。
 """
 import re
 import sys
@@ -112,9 +113,18 @@ def audit_workspace_doc(
     check_no_at_in_image: bool,
     errors: list,
     stats: dict,
+    optional: bool = False,
+    warnings: list = None,
 ):
     if not filepath.exists():
-        errors.append(f"[MISSING_FILE] 找不到文件: {filepath.relative_to(ROOT)}")
+        if optional:
+            # 2026-10-25 修复 fresh-clone 必挂：workspace/* 与 memory/projects/* 为本地管理目录
+            # （.gitignore），他机克隆天然缺失——降级为跳过警告而非硬错误
+            if warnings is not None:
+                shown = filepath.relative_to(ROOT) if filepath.is_absolute() else filepath
+                warnings.append(f"[SKIP_LOCAL_ONLY] {shown} 不存在于本机（本地管理目录），跳过审计")
+        else:
+            errors.append(f"[MISSING_FILE] 找不到文件: {filepath.relative_to(ROOT)}")
         return
     raw = filepath.read_text(encoding="utf-8")
     audit_details_zero_blank_lines(filepath, raw, errors)
@@ -154,6 +164,15 @@ def audit_workspace_doc(
                     errors.append(f"[UNREGISTERED_ASSET] {filepath.relative_to(ROOT)} 主代码块 #{i} 引用了未在资产注册表登记的资产: '{ua}'")
         # 5. 视频时间轴数学校验
         audit_video_time_nodes(filepath, i, p_clean, errors)
+        # 5b. 台词镜时间轴收口（2026-10-25 维度制联动·⑦⑧维）：含台词/口型标记的 Prompt
+        #     必须有时间节点或时长声明；分镜图（图像）块不含台词标记，天然免误伤
+        if not check_no_at_in_image and re.search(r"张嘴|嘴唇|双唇|台词", p_clean):
+            has_node = re.search(r"\[\d+(?:\.\d+)?\s*-\s*\d+(?:\.\d+)?\s*(?:s|秒)\]", p_clean)
+            has_duration = re.search(r"\d+(?:\.\d+)?\s*(?:s|秒)\b", p_clean)
+            if not has_node and not has_duration and warnings is not None:
+                warnings.append(
+                    f"[VIDEO_NO_TIMELINE] {filepath.relative_to(ROOT)} 主代码块 #{i} 含台词/口型标记但无秒级节点亦无时长声明（⑦动作与时间维嫌疑缺失，交 R7 维度核查）"
+                )
         # 6. 跨时代混挂拦截（句首现代媒介 + 句尾仙侠锁）
         audit_era_mixing(filepath, i, p_clean, errors)
 
@@ -193,79 +212,67 @@ def audit_montage_plan_b(errors: list):
 
 def main():
     errors = []
+    warnings = []
     stats = {}
-    reg_doubao = ROOT / "memory/projects/两界食单_豆包测试版/资产注册表.md"
-    reg_main = ROOT / "memory/projects/两界食单/资产注册表.md"
 
-    # 1. 审豆包测试版核心产出文档（资产文档=生图口径：句首媒介+去@）
-    audit_workspace_doc(
-        ROOT / "workspace/两界食单_豆包测试版/重要资产图片提示词_豆包版.md",
-        reg_path=reg_doubao,
-        require_media_prefix=True,
-        check_no_at_in_image=True,
-        errors=errors,
-        stats=stats,
-    )
-    # 1b. 审 E01/E02 合体单文档（AGENTS 第七节规范 · R9-20261006-6 收口：首帧块+视频块同档——
-    #     媒介前缀项对视频块天然不适用，故沿用合体口径 False；@对账走注册表登记制）
-    for ep_doc in (
-        "E01_视频生成提示词_豆包版.md",
-        "E02_视频生成提示词_豆包版.md",
-        "E03_视频生成提示词_豆包版.md",
-        "E04_视频生成提示词_豆包版.md",
-    ):
+    # ── 审计对象注册表（2026-10-25 重构：表驱动+自动发现，修 fresh-clone 必挂）──
+    # 口径：image=句首媒介+去@（生图）；video=注册表对账（含台词时间轴收口警告）
+    AUDIT_TARGETS = [
+        ("workspace/两界食单_豆包测试版/重要资产图片提示词_豆包版.md", "memory/projects/两界食单_豆包测试版/资产注册表.md", "image"),
+        ("workspace/两界食单_豆包测试版/E01_视频生成提示词_豆包版.md", "memory/projects/两界食单_豆包测试版/资产注册表.md", "video"),
+        ("workspace/两界食单_豆包测试版/E02_视频生成提示词_豆包版.md", "memory/projects/两界食单_豆包测试版/资产注册表.md", "video"),
+        ("workspace/两界食单_豆包测试版/E03_视频生成提示词_豆包版.md", "memory/projects/两界食单_豆包测试版/资产注册表.md", "video"),
+        ("workspace/两界食单_豆包测试版/E04_视频生成提示词_豆包版.md", "memory/projects/两界食单_豆包测试版/资产注册表.md", "video"),
+        ("workspace/两界食单/重要资产图片提示词.md", "memory/projects/两界食单/资产注册表.md", "image"),
+        ("workspace/两界食单/E01_视频生成提示词.md", "memory/projects/两界食单/资产注册表.md", "video"),
+        ("workspace/科普大赛2026/重要资产图片提示词.md", "memory/projects/我在南沙造火箭/资产注册表.md", "image"),
+        ("workspace/科普大赛2026/E01_视频生成提示词.md", "memory/projects/我在南沙造火箭/资产注册表.md", "video"),
+    ]
+    # 旧代际样张豁免：示范剧集为 V1 历史格式（P2-I 将加代际头注），不入审
+    LEGACY_SKIP = {"workspace/示范剧集_苍穹与烟火"}
+    listed = {t[0] for t in AUDIT_TARGETS}
+
+    # ── 自动发现：新剧集文档免改脚本入审（注册表按同名目录约定寻位）──
+    for doc in sorted(ROOT.glob("workspace/*/*.md")):
+        rel = doc.relative_to(ROOT).as_posix()
+        if rel in listed or doc.parent.name.startswith("_") or f"workspace/{doc.parent.name}" in LEGACY_SKIP:
+            continue
+        if doc.name.startswith("重要资产图片提示词"):
+            kind = "image"
+        elif re.match(r"E\d+", doc.name) and "视频生成提示词" in doc.name:
+            kind = "video"
+        else:
+            continue
+        reg = ROOT / "memory/projects" / doc.parent.name / "资产注册表.md"
+        if reg.exists():
+            AUDIT_TARGETS.append((rel, reg.relative_to(ROOT).as_posix(), kind))
+        else:
+            AUDIT_TARGETS.append((rel, "", kind))
+            warnings.append(f"[DISCOVER_NO_REG] 自动发现 {rel}，但未找到 memory/projects/{doc.parent.name}/资产注册表.md——@资产对账降级（仅查名称合法性）")
+
+    for rel_doc, rel_reg, kind in AUDIT_TARGETS:
         audit_workspace_doc(
-            ROOT / "workspace/两界食单_豆包测试版" / ep_doc,
-            reg_path=reg_doubao,
-            require_media_prefix=False,
-            check_no_at_in_image=False,
+            ROOT / rel_doc,
+            ROOT / rel_reg if rel_reg else ROOT / "_无注册表.md",
+            require_media_prefix=(kind == "image"),
+            check_no_at_in_image=(kind == "image"),
             errors=errors,
             stats=stats,
+            optional=True,  # 本地管理目录缺失=跳过警告（fresh-clone 可运行）
+            warnings=warnings,
         )
-    # 2. 审原项目资产文档与 E01 文档
-    audit_workspace_doc(
-        ROOT / "workspace/两界食单/重要资产图片提示词.md",
-        reg_path=reg_main,
-        require_media_prefix=True,
-        check_no_at_in_image=True,
-        errors=errors,
-        stats=stats,
-    )
-    audit_workspace_doc(
-        ROOT / "workspace/两界食单/E01_视频生成提示词.md",
-        reg_path=reg_main,
-        require_media_prefix=False,
-        check_no_at_in_image=False,
-        errors=errors,
-        stats=stats,
-    )
-    # 3. 审《我在南沙造火箭》（科普大赛2026 · PACK-03 轨道；生图口径：句首媒介+去@）
-    reg_rocket = ROOT / "memory/projects/我在南沙造火箭/资产注册表.md"
-    audit_workspace_doc(
-        ROOT / "workspace/科普大赛2026/重要资产图片提示词.md",
-        reg_path=reg_rocket,
-        require_media_prefix=True,
-        check_no_at_in_image=True,
-        errors=errors,
-        stats=stats,
-    )
-    # 3.5 《我在南沙造火箭》E01 视频文档（视频口径：不强制媒介前缀，@资产走注册表对账）
-    audit_workspace_doc(
-        ROOT / "workspace/科普大赛2026/E01_视频生成提示词.md",
-        reg_path=reg_rocket,
-        require_media_prefix=False,
-        check_no_at_in_image=False,
-        errors=errors,
-        stats=stats,
-    )
-    # 4. 审 KB_05、黑名单 18~45、VIS-01 蒙太奇B计划
+    # 审 KB_05、黑名单 18~45、VIS-01 蒙太奇B计划
     audit_kb05_style_packs(errors)
     audit_blacklist(errors)
     audit_montage_plan_b(errors)
 
     print("=" * 72)
+    if warnings:
+        print(f"⚠️ [L1 WARNINGS] — {len(warnings)} 条提示（不计入门禁，供 R7 维度核查/用户关注）：")
+        for w in warnings:
+            print(f"  · {w}")
     if errors:
-        print(f"❌ [L1 MACHINE GATE: FAILED] — 共检出 {len(errors)} 处硬性违规（R7 评分锁定为 0 分，请立即修复）：")
+        print(f"❌ [L1 MACHINE GATE: FAILED] — 共检出 {len(errors)} 处硬性违规（强制打回，请立即修复）：")
         for idx, err in enumerate(errors, 1):
             print(f"  {idx:02d}. {err}")
         print("=" * 72)
@@ -277,12 +284,10 @@ def main():
         for k, v in stats.items():
             print(f"   • {k}: {v} 个主 Prompt 代码块")
         print("-" * 72)
-        print("🧠 [交棒 L2 · R7 导演语义智检必答核验单]（请 R7 在汇报中逐项确认）：")
-        print("   [Q1 人设与关系色语义] 记忆点是否均具备(画面绝对方位+形态比喻+数量上限)？主仆/情侣服色与身高差是否写透？")
-        print("   [Q2 单镜动作与B计划] 是否严格'一镜一主动作一机位'？镜06等高危肢体抓握是否已配齐3切蒙太奇B计划？")
-        print("   [Q3 空间分区与排他锁] 多人同框是否具备左中右/前中后象限隔离？说话者张嘴+倾听者闭嘴是否零歧义？")
-        print("   [Q4 20/80差分纯度] 视频Prompt是否严守<=2骨相词、无冗余静态穿搭堆砌？")
-        print("   [Q5 光位与轴线连续性] 各镜内联光位文本与左右站位是否同180度轴线声明及StateDiff快照完全一致？")
+        print("🧠 [交棒 L2 · R7 维度核查必答单]（每维必引证据：Prompt 行/镜头卡字段/注册表行；无证据=判缺失；缺一即打回·不打总分）：")
+        print("   [生图八层] ①句首媒介（PACK-XX 维度①） ②表情+正向构图锚 ③身份骨相记忆点+@注册在案 ④服饰四件套 ⑤单一姿态（微距配饰已剥离） ⑥空间三层/背景规范 ⑦光影轨道逐字（跨轨=缺层） ⑧尾锁+画幅规格；全层横切：崩坏词/语言纯净")
+        print("   [视频 8 维] ①镜头规格（卡列↔Prompt 一致） ②构图（竖屏铁律） ③人物站位（象限+体型差+绑定） ④透视与空间（三层分句无悖论） ⑤一致性（@注册/骨相≤2/锁挂载/禁词零命中） ⑥连续性（轴线/光位/StateDiff） ⑦动作与时间（节点齐+单一主动作链；B级须时长声明） ⑧台词音色口型（五要素+口型锁；无台词须静默声明）")
+        print("   [实验路径⑤启用时] ⑦维按段级口径（区间=段内镜数+图N绑定）；⑤维段内禁复述外貌")
         print("=" * 72)
         sys.exit(0)
 

@@ -20,7 +20,7 @@
 
 | 技能ID | 路径 | 挂载KB | WHEN 触发条件 |
 |---|---|---|---|
-| VIS-01 导演分镜拆解 | `02_visual_director_skills/skill_director_storyboard.md` | KB_07、KB_11、KB_15（运镜选型按需） | 当需要拆解分镜、标注S/A/B算力分级（含冗余覆盖档·机位数×条数）、产出场次覆盖调度表（Master主镜+覆盖镜+blocking走位+平面点位·S/A级强制·2026-10-18）、规划Cutaway缓冲镜时 |
+| VIS-01 导演分镜拆解 | `02_visual_director_skills/skill_director_storyboard.md` | KB_07、KB_11、KB_15（运镜选型按需） | 当需要拆解分镜、标注S/A/B算力分级（含冗余覆盖档·机位数×条数）、产出场次覆盖调度表（Master主镜+覆盖镜+blocking走位+平面点位·S/A级强制·2026-10-18）、**逐镜先填空间镜头卡（几何先行 8 字段+焦段数值表·KB_11 九节附·2026-10-25）**、规划Cutaway缓冲镜时 |
 | VIS-02 美术风格穿搭道具 | `02_visual_director_skills/skill_art_style_costume_prop.md` | KB_03、KB_04、KB_05 | 当需要确定画风、色彩脚本、人物穿搭、场景与道具视觉设定时 |
 | VIS-03 纯中文零光影资产 | `02_visual_director_skills/skill_asset_pure_chinese_no_light.md` | KB_06、KB_08 | 当需要策划重要资产图并执行 @纯中文命名 与零高光阴影铁律时（核心） |
 | VIS-04 连续性轴线守卫 | `02_visual_director_skills/skill_continuity_axis_guard.md` | KB_07 | 当需要校验180度轴线、左右站位、服装战损与跨集快照时 |
@@ -38,7 +38,7 @@
 
 | 技能ID | 路径 | 挂载KB | WHEN 触发条件 |
 |---|---|---|---|
-| VID-01 秒级切片器 | `04_video_gen_skills/skill_vid_second_slicer.md` | KB_08、KB_11、KB_15（运镜选型按需） | 当需要按秒切分视频（单镜差分编译·默认，或实验路径⑤段级序列区间内容写作）、执行一镜一动一主体台词、差分编译、口型排他锁与音频可替换原则时 |
+| VID-01 秒级切片器 | `04_video_gen_skills/skill_vid_second_slicer.md` | KB_08、KB_11、KB_15（运镜选型按需） | 当需要按秒切分视频（单镜差分编译·默认，或实验路径⑤段级序列区间内容写作）、执行一镜一动一主体台词、台词五要素与静默声明必备件（补丁8）、差分编译、口型排他锁与音频可替换原则时 |
 | VID-02 技法选择器 | `04_video_gen_skills/skill_vid_method_selector.md` | KB_08、KB_09 | 当需要选技法时——四大默认技法（首帧I2V/首尾帧控制/多图参考融合/尾帧接力）与**⑤分镜序列长视频（段级直出·实验路径·2026-10-18 降格·仅用户明示启用）**之间路由；用户说"多张分镜图生成长视频/分段直出"时直达⑤（实验） |
 
 ## 05 平台专属插件类（platform_plugins · 互斥加载）
@@ -58,16 +58,16 @@
 
 | 技能ID | 路径 | 挂载KB | WHEN 触发条件 |
 |---|---|---|---|
-| QC-01 十分制评分官 | `06_audio_edit_qc_skills/skill_qc_prompt_scorer_10pt.md` | KB_10、KB_09 | 每条提示词产出后必触发（<9.0 打回重写） |
-| AUD-01 音色克隆工作流 | `06_audio_edit_qc_skills/skill_tts_voice_clone_workflow.md` | KB_12 | 当需要制作角色音色或执行TTS克隆生成时 |
+| QC-01 维度核查官 | `06_audio_edit_qc_skills/skill_qc_prompt_scorer_10pt.md` | KB_10、KB_09 | 每条提示词产出后必触发——视频 8 维/生图八层证据核查，缺一即打回重写（不打总分·2026-10-25 维度制立法，废 10 分自评） |
+| AUD-01 音色克隆工作流 | `06_audio_edit_qc_skills/skill_tts_voice_clone_workflow.md` | KB_12 | 当需要制作角色音色（音色五维+平台注册号·补丁8）、执行TTS克隆生成或登记音色ID时 |
 | EDT-01 剪映剪辑调音 | `06_audio_edit_qc_skills/skill_jianying_edit_sound_master.md` | KB_12 | 当需要输出剪辑手法、语速声调、音效BGM配置时 |
-| EVO-01 复盘自进化 | `06_audio_edit_qc_skills/skill_retrospective_optimizer.md` | KB_09、KB_10 | 当用户填写"实际产出复盘"后自动触发 |
+| EVO-01 问题直通与知识沉淀 | `06_audio_edit_qc_skills/skill_retrospective_optimizer.md` | KB_09、KB_10 | 当用户反馈"翻车/崩了/效果不对"要求即时修复，或要求"优化框架/更新黑名单/沉淀知识"时触发（2026-10-25 裁决：废逐条复盘占位，问题直通） |
 
 ---
 
 ## 互斥与组合规则
 
 1. **平台互斥**：05 类一次仅激活一个 plat_*；跨平台对比需分次产出独立代码块。
-2. **固定组合**：任何 `plat_*` 激活时必伴随 KB_08（编译器）；评分 QC-01 对每条 Prompt 无条件触发。
+2. **固定组合**：任何 `plat_*` 激活时必伴随 KB_08（编译器）；质检 QC-01 对每条 Prompt 无条件触发（维度制）。
 3. **上下文预算**：单次任务建议挂载 ≤1 个平台插件 + ≤2 个 KB + ≤3 个技法 Skill。
 4. **索引自检**：新增 Skill 必须同步登记本表（技能ID/路径/挂载KB/WHEN），否则总控视为不存在。
