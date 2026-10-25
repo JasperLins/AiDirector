@@ -1,0 +1,33 @@
+{
+  "id": "paradigm-switch-20261025",
+  "name": "paradigm-switch-20261025",
+  "title": "质检范式切换与新立法总控（废10分制→维度证据核查）",
+  "description": "用户2026-10-25裁决总控：废10分自评与复盘占位（自己骗自己）；视频8维/生图八层证据核查制（缺一即不通过、无证据=判缺失、不打总分）。子任务：qc-dimension-tables/dialogue-voice-mandatory/spatial-shot-card/retro-simplify；关联：gate-engineering-fix/repo-slimming-mit。约束：不推远程、提交由用户执行。",
+  "status": "planning",
+  "dev_type": null,
+  "scope": null,
+  "package": null,
+  "priority": "P0",
+  "creator": "JasperLins",
+  "assignee": "JasperLins",
+  "createdAt": "2026-10-25",
+  "completedAt": null,
+  "branch": null,
+  "base_branch": "main",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [
+    "10-25-qc-dimension-tables",
+    "10-25-dialogue-voice-mandatory",
+    "10-25-spatial-shot-card",
+    "10-25-retro-simplify",
+    "10-25-gate-engineering-fix",
+    "10-25-repo-slimming-mit"
+  ],
+  "parent": null,
+  "relatedFiles": [],
+  "notes": "",
+  "meta": {}
+}
