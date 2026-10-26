@@ -234,6 +234,12 @@ def audit_workspace_doc(
                 )
         # 6. 跨时代混挂拦截（句首现代媒介 + 句尾仙侠锁）
         audit_era_mixing(filepath, i, p_clean, errors)
+        # 7. 块内元话语污染（补丁6·2026-10-26 立）：勘误/词源/注册表/日期等编译器备注禁入 prompt 块
+        meta_hit = re.search(r"勘误|注册表|黑名单|词源|脑补|自洽·|R9-\d{8}|20\d{2}-\d{2}-\d{2}", p_clean)
+        if meta_hit:
+            errors.append(
+                f"[META_NOTE_IN_BLOCK] {filepath.relative_to(ROOT)} 主代码块 #{i} 含编译器备注元话语（补丁6 违例·移至核查行）: '{meta_hit.group(0)}'"
+            )
 
 def audit_kb05_style_packs(errors: list):
     kb05 = ROOT / "kb_library" / "KB_05_视觉风格词典.md"
