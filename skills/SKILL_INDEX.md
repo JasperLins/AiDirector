@@ -10,9 +10,9 @@
 
 | 技能ID | 路径 | 挂载KB | WHEN 触发条件 |
 |---|---|---|---|
-| NARR-00 新剧立项问询器 | `01_narrative_skills/skill_series_intake.md` | KB_05、KB_01 | 当用户"新建一部剧/立项/开新项目"时第一个触发（先于三件套建立与 NARR-01/02）——两层立项参数收口（必答 7 项未声明必追问）+方案选择制构思轮+一页式立项书用户拍板（0.0 项目立项裁决位·R9-20261007-17） |
+| NARR-00 新剧立项问询器 | `01_narrative_skills/skill_series_intake.md` | KB_05、KB_01 | 当用户"新建一部剧/立项/开新项目"时第一个触发（先于三件套建立与 NARR-01/02）——两层立项参数收口（必答 7 项未声明必追问）+方案选择制构思轮+**第三层世界视觉档案采集轮（AI 主导提案制：五区草案三态标注→视觉设定卡用户裁决→修改重确认·R9-20261025-46）**+一页式立项书用户拍板（0.0 项目立项裁决位·R9-20261007-17） |
 | NARR-01 市场钩子调研 | `01_narrative_skills/skill_market_hook_research.md` | KB_01 | 当需要分析目标市场受众、设计黄金前3秒钩子或情绪曲线时 |
-| NARR-02 世界观与人物弧光 | `01_narrative_skills/skill_world_character_arc.md` | KB_01、KB_02 | 当需要构建世界观、人物立体小传、性格缺陷与潜台词时 |
+| NARR-02 世界观与人物弧光 | `01_narrative_skills/skill_world_character_arc.md` | KB_01、KB_02 | 当需要构建世界观、人物立体小传、性格缺陷与潜台词时；含圣经「世界视觉档案」节承载规范+小传"履历与体态来源"必填字段+AI补全🤖标记铁律（铁律7·R9-20261025-46——未经确认🤖项不得作编译词源） |
 | NARR-03 台词秒数精算 | `01_narrative_skills/skill_dialogue_second_calc.md` | KB_11、KB_12 | 当台词需要按字数/语速精算镜头时长与重音节点（声画先行）时 |
 | NARR-04 单集剧本与脚本转化 | `01_narrative_skills/skill_episode_script_writer.md` | KB_01、KB_02、KB_12 | 当需要撰写单集完整文学剧本、把大纲/小说改编为可拍摄剧本、或界定"文学剧本/分镜脚本/生成提示词"三层边界（台词双轨隔离+音频ID 预埋）时 |
 
