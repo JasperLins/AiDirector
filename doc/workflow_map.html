@@ -60,11 +60,11 @@
   <span class="st s2">R2 导演＋R3 美术＋R4 场记</span><span class="ar">→</span>
   <span class="st s3">R10 分镜图总控（生产单开工令）</span><span class="ar">→</span>
   <span class="st s4">R5 生图＋R6 视频</span><span class="ar">→</span>
-  <span class="st s4">R7 门禁 ≥9.0</span><span class="ar">→</span>
+  <span class="st s4">R7 维度门禁 8/8</span><span class="ar">→</span>
   <span class="st s4">R8 剪辑调音指南</span><span class="ar">→</span>
   <span class="st s5">定稿</span><span class="ar">→</span>
   <span class="st s5">用户实跑复测</span><span class="ar">→</span>
-  <span class="st s5">R9 复盘自进化</span><span class="ar">⟲ 连坐刷新回流</span>
+  <span class="st s5">R9 问题直通·连坐刷新</span><span class="ar">⟲ 知识沉淀回流</span>
 </div>
 
 <div class="svg-card">
@@ -228,7 +228,7 @@
     <!-- 打回回路（画在盒子下层） -->
     <path d="M872,632 V614 H456 V624" fill="none" stroke="#f85149" stroke-width="1.6" stroke-dasharray="6 4" marker-end="url(#arRed)"/>
     <path d="M912,632 V604 H226 V624" fill="none" stroke="#f85149" stroke-width="1.6" stroke-dasharray="6 4" marker-end="url(#arRed)"/>
-    <text x="240" y="598" fill="#f85149" font-size="11">＜9.0 强制打回：修改指令随发重写，复审至 ≥9.0（最多3轮→人工裁决）</text>
+    <text x="240" y="598" fill="#f85149" font-size="11">缺维强制打回：修改指令随发重写，复审至 8/8 或八层齐（最多3轮→人工裁决）</text>
 
     <rect x="76" y="628" width="304" height="128" rx="10" fill="#161b22" stroke="#39c5cf" stroke-width="1.8"/>
     <text x="92" y="650" fill="#39c5cf" font-size="14.5" font-weight="700">R5 AI 生图高级专家</text>
@@ -252,7 +252,7 @@
     <text x="836" y="654" fill="#f85149" font-size="13.5" font-weight="700">R7 质量门禁（10分制）</text>
     <text x="836" y="672" fill="#9aa4b2" font-size="11">· KB_10 V1~V13 ＋ KB_09 崩坏库</text>
     <text x="836" y="688" fill="#9aa4b2" font-size="11">· L1 机检 ＋ L2 智检双签</text>
-    <text x="836" y="704" fill="#9aa4b2" font-size="11">· ≥9.0 放行 ／ ＜9.0 打回</text>
+    <text x="836" y="704" fill="#9aa4b2" font-size="11">· 8/8 或八层齐放行 ／ 缺维打回</text>
     <text x="836" y="722" fill="#7d8590" font-size="10.5">（每条独立过审·不搞整集平均）</text>
 
     <rect x="1068" y="620" width="292" height="56" rx="8" fill="#10161d" stroke="#ff7b72" stroke-width="1.2" stroke-dasharray="5 3"/>
@@ -260,7 +260,7 @@
     <text x="1214" y="660" text-anchor="middle" fill="#7d8590" font-size="11">→ 后期静音原轨 · TTS 对齐口型（±2帧）</text>
 
     <path d="M1032,700 H1064" fill="none" stroke="#8b949e" stroke-width="1.6" marker-end="url(#ar)"/>
-    <text x="1038" y="692" fill="#7d8590" font-size="10.5">≥9.0</text>
+    <text x="1038" y="692" fill="#7d8590" font-size="10.5">8/8</text>
 
     <rect x="1068" y="684" width="292" height="80" rx="10" fill="#161b22" stroke="#ff7b72" stroke-width="1.8"/>
     <text x="1084" y="706" fill="#ff7b72" font-size="13.5" font-weight="700">R8 剪映剪辑调音大师</text>
@@ -292,7 +292,7 @@
     <line x1="388" y1="944" x2="420" y2="944" stroke="#8b949e" stroke-width="1.6" marker-end="url(#ar)"/>
 
     <rect x="424" y="898" width="436" height="96" rx="10" fill="#161b22" stroke="#db6d28" stroke-width="1.8"/>
-    <text x="440" y="920" fill="#db6d28" font-size="13.5" font-weight="700">R9 复盘自进化引擎（EVO-01 · Micro-Macro 双环）</text>
+    <text x="440" y="920" fill="#db6d28" font-size="13.5" font-weight="700">R9 问题直通与知识沉淀引擎（EVO-01）</text>
     <text x="440" y="938" fill="#9aa4b2" font-size="11">· 归因：匹配黑名单 39 类崩坏或立新编号</text>
     <text x="440" y="954" fill="#9aa4b2" font-size="11">· 三层根因：L1 个例 / L2 同族 / L3 全局风格包</text>
     <text x="440" y="970" fill="#9aa4b2" font-size="11">· 当前项就地重写 V+1 ＋ 全局连坐刷新清单</text>
@@ -374,7 +374,7 @@
     <h3>② 双擎门禁（L1 ＋ L2 双签定稿制）</h3>
     <ul>
       <li><b>L1 机检</b>：<code>python scripts/qc_linter.py</code>——禁词/变量外壳/句首媒介/画幅/details 零空行/时间轴/注册表对账，0 错误才进 L2</li>
-      <li><b>L2 智检</b>：R7 按 KB_10 G/V 双扣分表＋KB_09 崩坏题库语义核验 ≥9.0</li>
+      <li><b>L2 维度核查</b>：R7 按 KB_10 V3 维度表（视频 8 维/生图八层）逐维取证核查，缺一打回</li>
       <li>评分行统一双签：<b>「L1机检: PASS ｜ L2智检得分: 9.X / 10（通过）」</b></li>
       <li>＜9.0 强制打回并下发修改指令，最多 3 轮 → 升级人工裁决（记录在案）</li>
     </ul>
