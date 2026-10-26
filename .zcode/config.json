@@ -1,0 +1,52 @@
+{
+  "hooks": {
+    "enabled": true,
+    "events": {
+      "SessionStart": [
+        {
+          "matcher": "startup|clear|compact",
+          "hooks": [
+            {
+              "type": "command",
+              "command": "cd \"${ZCODE_PROJECT_DIR:-.}\" 2>/dev/null; python .zcode/hooks/session-start.py 2>/dev/null || true",
+              "timeout": 30
+            }
+          ]
+        }
+      ],
+      "UserPromptSubmit": [
+        {
+          "hooks": [
+            {
+              "type": "command",
+              "command": "cd \"${ZCODE_PROJECT_DIR:-.}\" 2>/dev/null; python .zcode/hooks/inject-workflow-state.py 2>/dev/null || true",
+              "timeout": 15
+            }
+          ]
+        }
+      ],
+      "PreToolUse": [
+        {
+          "matcher": "Agent|Task",
+          "hooks": [
+            {
+              "type": "command",
+              "command": "cd \"${ZCODE_PROJECT_DIR:-.}\" 2>/dev/null; python .zcode/hooks/inject-subagent-context.py 2>/dev/null || true",
+              "timeout": 30
+            }
+          ]
+        },
+        {
+          "matcher": "Bash",
+          "hooks": [
+            {
+              "type": "command",
+              "command": "cd \"${ZCODE_PROJECT_DIR:-.}\" 2>/dev/null; python .zcode/hooks/inject-shell-session-context.py 2>/dev/null || true",
+              "timeout": 5
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

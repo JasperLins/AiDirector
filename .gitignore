@@ -1,5 +1,12 @@
 # ZCode 会话工件（计划缓存等，不属于框架交付物）
-.zcode/
+# 2026-10-27 白名单放开核心三件（地基分发需要：同学们继承 Trellis 技能与 hooks）；plans/agents/commands 等个人会话工件仍忽略
+.zcode/*
+!.zcode/config.json
+!.zcode/skills/
+!.zcode/hooks/
+
+# 分发产物（本地构建，不入库）
+dist/
 
 # IDE 配置（PyCharm/IDEA 等，不属于框架交付物）
 .idea/
